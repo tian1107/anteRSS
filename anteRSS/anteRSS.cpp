@@ -125,7 +125,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    Shell_NotifyIcon(NIM_ADD, &niData) ? S_OK : E_FAIL;
    Shell_NotifyIcon(NIM_SETVERSION, &niData);
 
-   ShowWindow(hWnd, nCmdShow);
+   //ShowWindow(hWnd, nCmdShow);
+   SetParent(hWnd, HWND_MESSAGE);
    UpdateWindow(hWnd);
 
    return TRUE;
@@ -154,51 +155,66 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
+			case ID_ANTERSS_TRAYEXIT:
             case IDM_EXIT:
                 DestroyWindow(hWnd);
                 break;
+			case ID_ANTERSS_TRAYOPEN:
+				if (IsWindowVisible(hWnd))
+				{
+
+				}
+				else
+				{
+					SetParent(hWnd, nullptr);
+					ShowWindow(hWnd, SW_SHOW);
+				}
+				break;
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
         }
         break;
+	case WM_SYSCOMMAND:
+		switch (wParam)
+		{
+		case SC_MINIMIZE:
+			SetParent(hWnd, HWND_MESSAGE);
+			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+		break;
 	case MSG_TRAY_ICON:
 		switch (LOWORD(lParam))
 		{
 		case WM_CONTEXTMENU:
 		{
-			OutputDebugStringW(L"context event!");
-			niData.uFlags |= NIF_INFO;
-			niData.dwInfoFlags = NIIF_INFO;
+			int x = GET_X_LPARAM(wParam);
+			int y = GET_Y_LPARAM(wParam);
 
-			HRESULT hr = StringCchCopy(niData.szInfo,
-				ARRAYSIZE(niData.szInfo),
-				TEXT("Your message text goes here."));
+			HMENU trayMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_TRAYMENU));
+			trayMenu = GetSubMenu(trayMenu, 0);
 
-			if (FAILED(hr))
-			{
-				// TODO: Write an error handler in case the call to StringCchCopy fails.
-			}
-
-			HRESULT hr2 = StringCchCopy(niData.szInfoTitle,
-				ARRAYSIZE(niData.szInfoTitle),
-				TEXT("anteRSS"));
-
-			if (FAILED(hr2))
-			{
-				// TODO: Write an error handler in case the call to StringCchCopy fails.
-			}
-
-			Shell_NotifyIcon(NIM_MODIFY, &niData);
-
+			if(GetForegroundWindow() != hWnd)
+				SetForegroundWindow(hWnd);
+			TrackPopupMenu(trayMenu, TPM_LEFTBUTTON | TPM_NONOTIFY, x, y, 0, hWnd, NULL);
+			PostMessage(hWnd, WM_NULL, 0, 0);
 			break;
 		}
 		case NIN_POPUPOPEN:
-			OutputDebugStringW(L"open event!");
+			OutputDebugStringW(L"open event!\n");
 			break;
 		case NIN_SELECT:
-			OutputDebugStringW(L"Select event!");
-			MessageBoxW(hWnd, L"yay", L"things happened.", MB_OK);
+			if (IsWindowVisible(hWnd))
+			{
+
+			}
+			else
+			{
+				SetParent(hWnd, nullptr);
+				ShowWindow(hWnd, SW_SHOW);
+			}
 			break;
 		}
 		break;
