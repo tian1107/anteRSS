@@ -153,8 +153,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             switch (wmId)
             {
             case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
+			{
+				niData.uFlags |= NIF_INFO;
+				niData.dwInfoFlags = NIIF_INFO;
+
+				HRESULT hr = StringCchCopy(niData.szInfo,
+					ARRAYSIZE(niData.szInfo),
+					TEXT("Your message text goes here."));
+
+				if (FAILED(hr))
+				{
+					// TODO: Write an error handler in case the call to StringCchCopy fails.
+				}
+
+				HRESULT hr2 = StringCchCopy(niData.szInfoTitle,
+					ARRAYSIZE(niData.szInfoTitle),
+					TEXT("anteRSS"));
+
+				if (FAILED(hr2))
+				{
+					// TODO: Write an error handler in case the call to StringCchCopy fails.
+				}
+
+				Shell_NotifyIcon(NIM_MODIFY, &niData);
+
+				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+				break;
+			}
 			case ID_ANTERSS_TRAYEXIT:
             case IDM_EXIT:
                 DestroyWindow(hWnd);
