@@ -99,7 +99,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Store instance handle in our global variable
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -109,7 +109,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    // create shell icon
    niData.cbSize = sizeof(niData);
    niData.hWnd = hWnd;
-   niData.uFlags = NIF_ICON | NIF_TIP | NIF_GUID | NIF_MESSAGE;
+   niData.uFlags = NIF_ICON | NIF_TIP | NIF_GUID | NIF_MESSAGE | NIF_SHOWTIP;
 
    // {ECD20B38-A984-47EB-8F48-54517C7ABCEB}
    static const GUID iconGuid =
@@ -118,7 +118,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    niData.uCallbackMessage = MSG_TRAY_ICON;
    niData.uVersion = NOTIFYICON_VERSION_4;
 
-   StringCchCopy(niData.szTip, ARRAYSIZE(niData.szTip), L"anteRSS");
+   StringCchCopy(niData.szTip, ARRAYSIZE(niData.szTip), TEXT("anteRSS"));
 
    LoadIconMetric(hInst, MAKEINTRESOURCE(IDI_SMALL), LIM_SMALL, &(niData.hIcon));
 
@@ -126,7 +126,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    Shell_NotifyIcon(NIM_SETVERSION, &niData);
 
    //ShowWindow(hWnd, nCmdShow);
-   SetParent(hWnd, HWND_MESSAGE);
    UpdateWindow(hWnd);
 
    return TRUE;
@@ -241,6 +240,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				ShowWindow(hWnd, SW_SHOW);
 			}
 			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
     case WM_PAINT:
