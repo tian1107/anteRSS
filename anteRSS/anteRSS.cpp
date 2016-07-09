@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "anteRSS.h"
+#include "anteRSSParser\anteRSSParser.h"
 
 #define MAX_LOADSTRING 100
 
@@ -42,7 +43,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// initialize curl
 	curl_global_init(CURL_GLOBAL_ALL);
 
-	tinyxml2::XMLDocument doc;
+	anteRSSParser::RSSDocument doc;
+	doc.LoadFile("test.xml");
+	const char * sTitle = doc.FirstChildElement("html")->FirstChildElement("h1")->GetText();
+	OutputDebugString(anteRSSParser::convertToWide(sTitle).c_str());
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_ANTERSS));
 
