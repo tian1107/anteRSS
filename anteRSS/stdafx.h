@@ -25,3 +25,8 @@
 
 
 // TODO: reference additional headers your program requires here
+
+//curl
+#include <curl\curl.h>
+// tinyxml
+#include <tinyxml2.h>

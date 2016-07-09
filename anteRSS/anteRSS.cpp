@@ -10,7 +10,7 @@
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
-NOTIFYICONDATA niData = {};						// the tray icon data
+NOTIFYICONDATA niData = {0};					// the tray icon data
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -39,6 +39,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
+	// initialize curl
+	curl_global_init(CURL_GLOBAL_ALL);
+
+	tinyxml2::XMLDocument doc;
+
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_ANTERSS));
 
     MSG msg;
@@ -52,6 +57,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
     }
+
+
+	// destroy curl
+	curl_global_cleanup();
 
     return (int) msg.wParam;
 }
@@ -111,9 +120,16 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    niData.hWnd = hWnd;
    niData.uFlags = NIF_ICON | NIF_TIP | NIF_GUID | NIF_MESSAGE | NIF_SHOWTIP;
 
+#ifdef _DEBUG
    // {ECD20B38-A984-47EB-8F48-54517C7ABCEB}
    static const GUID iconGuid =
    { 0xecd20b38, 0xa984, 0x47eb,{ 0x8f, 0x48, 0x54, 0x51, 0x7c, 0x7a, 0xbc, 0xeb } };
+#else
+   // {2A6D05DC-0E5D-4FC6-AA5C-9C0B583F0CBF}
+   static const GUID iconGuid =
+   { 0x2a6d05dc, 0xe5d, 0x4fc6,{ 0xaa, 0x5c, 0x9c, 0xb, 0x58, 0x3f, 0xc, 0xbf } };
+#endif
+
    niData.guidItem = iconGuid;
    niData.uCallbackMessage = MSG_TRAY_ICON;
    niData.uVersion = NOTIFYICON_VERSION_4;
