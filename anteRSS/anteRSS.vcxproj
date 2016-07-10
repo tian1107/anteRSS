@@ -74,16 +74,16 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>Z:\Visual Studio 2015\Projects\anteRSS\deps\Debug\lib;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>Z:\Visual Studio 2015\Projects\anteRSS\deps\Debug\bin;$(ExecutablePath)</ExecutablePath>
+    <LibraryPath>$(SolutionDir)deps/$(Configuration)/lib;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(SolutionDir)deps/$(Configuration)/bin;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>Z:\Visual Studio 2015\Projects\anteRSS\deps\Release\lib;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>Z:\Visual Studio 2015\Projects\anteRSS\deps\Release\bin;$(ExecutablePath)</ExecutablePath>
+    <LibraryPath>$(SolutionDir)deps/$(Configuration)/lib;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(SolutionDir)deps/$(Configuration)/bin;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -105,7 +105,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>CURL_STATICLIB;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>Z:\Visual Studio 2015\Projects\anteRSS\deps\Debug\include;%(AdditionalIncludeDirectories);Z:\Visual Studio 2015\Projects\anteRSS</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)deps/$(Configuration)/include;$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,7 +139,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>CURL_STATICLIB;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>Z:\Visual Studio 2015\Projects\anteRSS\deps\Release\include;%(AdditionalIncludeDirectories);Z:\Visual Studio 2015\Projects\anteRSS</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)deps/$(Configuration)/include;$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
