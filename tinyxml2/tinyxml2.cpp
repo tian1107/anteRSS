@@ -1,5 +1,7 @@
 /*
 Original code by Lee Thomason (www.grinninglizard.com)
+Retrieved 10 July 2016
+Modified by Ian Christian Fernandez (antemeridiem, icbfernandez2012@gmail.com)
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -969,9 +971,14 @@ char* XMLNode::ParseDeep( char* p, StrPair* parentEnd )
                 // A declaration can only be the first child of a document.
                 // Set error, if document already has children.
                 if ( !_document->NoChildren() ) {
-                        _document->SetError( XML_ERROR_PARSING_DECLARATION, decl->Value(), 0);
-                        DeleteNode( decl );
-                        break;
+
+					// Test for multiple consecutive declarations
+					if (!_document->LastChild()->ToDeclaration())
+					{
+						_document->SetError(XML_ERROR_PARSING_DECLARATION, decl->Value(), 0);
+						DeleteNode(decl);
+						break;
+					}
                 }
         }
 
