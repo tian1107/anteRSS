@@ -12,6 +12,5 @@
 
 
 // TODO: reference additional headers your program requires here
-#include <tinyxml2.h>
 #include <codecvt>
 #include <string>
