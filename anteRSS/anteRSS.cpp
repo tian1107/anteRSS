@@ -45,8 +45,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	anteRSSParser::RSSDocument doc;
 	doc.LoadFile("test.xml");
-	const char * sTitle = doc.FirstChildElement("html")->FirstChildElement("h1")->GetText();
-	OutputDebugString(anteRSSParser::convertToWide(sTitle).c_str());
+	OutputDebugString(anteRSSParser::convertToWide(doc.getTitle()).c_str());
+	//const char * sTitle = doc.FirstChildElement("html")->FirstChildElement("h1")->GetText();
+	//OutputDebugString(anteRSSParser::convertToWide(sTitle).c_str());
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_ANTERSS));
 

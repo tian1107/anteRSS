@@ -28,8 +28,6 @@
 
 //curl
 #include <curl\curl.h>
-// tinyxml
-#include <tinyxml2.h>
 
 //others
 #include <string>
