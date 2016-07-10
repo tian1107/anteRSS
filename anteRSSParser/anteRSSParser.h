@@ -19,12 +19,9 @@ namespace anteRSSParser
 	public:
 		RSSItem(RSSFormat format, tinyxml2::XMLElement * element);
 		std::string getTitle();
-		bool hasNext();
 		RSSItem getNext();
 		bool isInvalid();
 	};
-
-	extern const RSSItem invalidItem;
 
 	class RSSDocument : public tinyxml2::XMLDocument 
 	{

@@ -15,7 +15,7 @@ namespace anteRSSParser
 	std::string RSSItem::getTitle()
 	{
 		if (format == RSSFormat::INVALID)
-			return "";
+			return "invalid";
 
 		if (format == RSSFormat::RSS2)
 		{
@@ -23,11 +23,6 @@ namespace anteRSSParser
 		}
 
 		return std::string();
-	}
-
-	bool RSSItem::hasNext()
-	{
-		return false;
 	}
 
 	RSSItem RSSItem::getNext()
@@ -63,6 +58,7 @@ namespace anteRSSParser
 		{
 			if (nodeCheck->Attribute("version", "2.0"))
 			{
+				// TODO more input checks
 				format = RSSFormat::RSS2;
 			}
 			else
