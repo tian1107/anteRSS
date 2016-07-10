@@ -4,6 +4,51 @@
 
 namespace anteRSSParser
 {
+	const RSSItem invalidItem = RSSItem(RSSFormat::INVALID, 0);
+
+	RSSItem::RSSItem(RSSFormat format, tinyxml2::XMLElement * element)
+	{
+		this->format = format;
+		this->asXML = element;
+	}
+
+	std::string RSSItem::getTitle()
+	{
+		if (format == RSSFormat::INVALID)
+			return "";
+
+		if (format == RSSFormat::RSS2)
+		{
+			return asXML->FirstChildElement("title")->GetText();
+		}
+
+		return std::string();
+	}
+
+	bool RSSItem::hasNext()
+	{
+		return false;
+	}
+
+	RSSItem RSSItem::getNext()
+	{
+		if (format == RSSFormat::RSS2)
+		{
+			tinyxml2::XMLElement * nextItem;
+			if (nextItem = asXML->NextSiblingElement("item"))
+				return RSSItem(format, nextItem);
+			else
+				return invalidItem;
+		}
+		else
+			return invalidItem;
+	}
+
+	bool RSSItem::isInvalid()
+	{
+		return (format == RSSFormat::INVALID);
+	}
+
 	// resolves the format of the xml document, returns true if it is a workable rss
 	bool RSSDocument::determineFormat()
 	{
@@ -53,6 +98,27 @@ namespace anteRSSParser
 		}
 
 		return std::string();
+	}
+
+	RSSItem RSSDocument::getFirstItem()
+	{
+		if (!determineFormat())
+			return invalidItem;
+
+		if (format == RSSFormat::RSS2)
+		{
+			tinyxml2::XMLElement * firstItem;
+			if (firstItem = FirstChildElement("rss")->FirstChildElement("channel")->FirstChildElement("item"))
+				return RSSItem(format, firstItem);
+			else
+				return invalidItem;
+		}
+		else
+		{
+			return invalidItem;
+		}
+
+		return invalidItem;
 	}
 
 	void RSSDocument::reset(bool makeEmpty)
