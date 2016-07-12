@@ -261,6 +261,14 @@ namespace anteRSSParser
 		return str.str();
 	}
 
+	void simpleSQL(sqlite3 * db, std::string query)
+	{
+		sqlite3_stmt * statement;
+		sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &statement, NULL);
+		sqlite3_step(statement);
+		sqlite3_finalize(statement);
+	}
+
 	RSSManager::RSSManager(std::string dbFile)
 	{
 		int rc = sqlite3_open(dbFile.c_str(), &db);
@@ -274,7 +282,12 @@ namespace anteRSSParser
 			//OutputDebugString(L"Opened it success!\n");
 		}
 
+		// create tables if not already there
+		simpleSQL(db, 
+			"CREATE TABLE IF NOT EXISTS \"FeedItems\" (\n\t`guid`\tTEXT NOT NULL UNIQUE,\n\t`title`\tTEXT NOT NULL,\n\t`description`\tTEXT NOT NULL,\n\t`feedid`\tINTEGER NOT NULL,\n\t`date`\tTEXT NOT NULL,\n\t`actualdate`\tTEXT,\n\t`status`\tINTEGER NOT NULL DEFAULT 0,\n\tPRIMARY KEY(guid)\n);");
 
+		simpleSQL(db, 
+			"CREATE TABLE IF NOT EXISTS \"FeedInfo\" (\n\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n\t`name`\tTEXT NOT NULL,\n\t`url`\tTEXT NOT NULL UNIQUE\n)");
 
 		std::string feedStr = "insert into FeedInfo (name, url) values (?1, ?2);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
