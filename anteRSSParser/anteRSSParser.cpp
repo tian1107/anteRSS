@@ -23,7 +23,11 @@ namespace anteRSSParser
 
 		if (format == RSSFormat::RSS2)
 		{
-			return asXML->FirstChildElement("title")->GetText();
+			tinyxml2::XMLElement * title;
+			if (title = asXML->FirstChildElement("title"))
+				return title->GetText();
+			else
+				return "no title";
 		}
 
 		return std::string();
