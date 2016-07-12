@@ -50,6 +50,17 @@ namespace anteRSSParser
 	// gets called when a feed is updated, would be in a different thread
 	typedef void(*RSSManagerCallback)(int feedid, bool success);
 
+	struct RSSFeedItem
+	{
+		std::string guid;
+		std::string title;
+		std::string description;
+		std::string feedid;
+		std::string date;
+		int status;
+	};
+	typedef std::vector<RSSFeedItem> RSSFeedItemVector;
+
 	struct RSSFeed
 	{
 		int id;

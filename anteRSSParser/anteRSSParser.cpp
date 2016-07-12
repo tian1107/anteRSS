@@ -274,6 +274,8 @@ namespace anteRSSParser
 			//OutputDebugString(L"Opened it success!\n");
 		}
 
+
+
 		std::string feedStr = "insert into FeedInfo (name, url) values (?1, ?2);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
 		feedStr = "select id, name, url from FeedInfo where id=?1;";
@@ -357,6 +359,12 @@ namespace anteRSSParser
 		RSSDocument doc;
 
 		RSSFeed & feed = getFeed(feedId);
+		if (feed.url.empty())
+		{
+			callback(feedId, false);
+			return;
+		}
+
 		// TODO replace with curl
 		doc.LoadFile(feed.url.c_str());
 
