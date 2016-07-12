@@ -26,6 +26,7 @@ namespace anteRSSParser
 		std::string getTitle();
 		std::string getUniqueId();
 		std::string getDescription();
+		std::string getDate();
 		RSSItem getNext();
 		bool isInvalid();
 	};
@@ -46,7 +47,7 @@ namespace anteRSSParser
 	};
 
 	// gets called when a feed is updated, would be in a different thread
-	typedef void(*RSSManagerCallback)(std::string url, bool success);
+	typedef void(*RSSManagerCallback)(int feedid, bool success);
 
 	struct RSSFeed
 	{
@@ -61,13 +62,15 @@ namespace anteRSSParser
 	private:
 		sqlite3* db;
 		sqlite3_stmt * addFeedStmt;
+		sqlite3_stmt * getFeedStmt;
 		sqlite3_stmt * getAllFeedsStmt;
 		sqlite3_stmt * removeFeedStmt;
-		std::map<std::string, RSSDocument> documentCache;
+		sqlite3_stmt * updateFeedStmt;
 	public:
 		RSSManager(std::string dbFile);
 		~RSSManager();
 		void addFeed(RSSFeed feed);
+		RSSFeed getFeed(int feedId);
 		RSSFeedVector getAllFeeds();
 		void removeFeed(int feedId);
 		void updateFeed(int feedId, RSSManagerCallback callback);
