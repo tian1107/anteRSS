@@ -356,12 +356,15 @@ namespace anteRSSParser
 
 	void RSSManager::updateFeed(int feedId, RSSManagerCallback callback)
 	{
+		RSSFeedItemVector result;
+
 		RSSDocument doc;
 
 		RSSFeed & feed = getFeed(feedId);
 		if (feed.url.empty())
 		{
-			callback(feedId, false);
+			if (callback)
+				callback(feedId, false, result);
 			return;
 		}
 
@@ -379,6 +382,20 @@ namespace anteRSSParser
 			sqlite3_bind_text(updateFeedStmt, 5, item.getDate().c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_text(updateFeedStmt, 6, item.getActualDate().c_str(), -1, SQLITE_TRANSIENT);
 			int rc = sqlite3_step(updateFeedStmt);
+		
+			// new thing!
+			if (rc == SQLITE_DONE)
+			{
+				RSSFeedItem feedItem;
+				feedItem.date = item.getDate();
+				feedItem.description = item.getDescription();
+				feedItem.feedid = feedId;
+				feedItem.guid = item.getUniqueId();
+				feedItem.status = 0;
+				feedItem.title = item.getTitle();
+				result.push_back(feedItem);
+			}
+
 			sqlite3_reset(updateFeedStmt);
 
 			item = item.getNext();
@@ -386,7 +403,7 @@ namespace anteRSSParser
 
 		if (callback)
 		{
-			callback(feedId, true);
+			callback(feedId, true, result);
 		}
 	}
 
