@@ -27,6 +27,7 @@ namespace anteRSSParser
 		std::string getUniqueId();
 		std::string getDescription();
 		std::string getDate();
+		std::string getActualDate();
 		RSSItem getNext();
 		bool isInvalid();
 	};
@@ -82,4 +83,7 @@ namespace anteRSSParser
 
 	// Converts utf8 strings to wstring
 	std::wstring convertToWide(const std::string& str);
+
+	// 
+	std::string getCurrentTime();
 }

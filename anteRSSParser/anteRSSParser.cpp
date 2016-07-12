@@ -2,6 +2,7 @@
 
 #include "anteRSSParser.h"
 
+#include <ctime>
 #include <sstream>
 #include <iomanip>
 
@@ -72,24 +73,65 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * desc;
 			if (desc = asXML->FirstChildElement("pubDate"))
-				return desc->GetText();
-			else
 			{
-				// give current time instead
-				std::time_t tt = std::time(NULL);
-				std::tm time;
-				_gmtime64_s(&time, &tt);
+				char month[4];
+				int day;
+				int year;
+				int hour;
+				int minute;
+				int second;
+				int monthn = 0;
 
+				// I don't care about timezones, since this is only for sorting
+				sscanf_s(desc->GetText(), "%*3s, %d %3s %d %d:%d:%d", &day, month, (unsigned)_countof(month), &year, &hour, &minute, &second);
+				
+				// strange years
+				if (year <= 2000)
+					return getCurrentTime();
+
+				//Determine month
+				const char ref[][4] = {"", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+				for (int i = 0; i <= 12; ++i)
+				{
+					if (!strcmp(month, ref[i]))
+					{
+						monthn = i;
+						break;
+					}
+				}
+
+				// strftime might have been better
 				std::stringstream str;
-				str << (time.tm_year + 1900) << "/" 
-					<< std::setfill('0') << std::setw(2) << (time.tm_mon + 1) << "/" 
-					<< std::setfill('0') << std::setw(2) << time.tm_mday << " " 
-					<< std::setfill('0') << std::setw(2) << time.tm_hour << ":" 
-					<< std::setfill('0') << std::setw(2) << time.tm_min << ":" 
-					<< std::setfill('0') << std::setw(2) << time.tm_sec;
+				str << year << "/"
+					<< std::setfill('0') << std::setw(2) << monthn << "/"
+					<< std::setfill('0') << std::setw(2) << day << " "
+					<< std::setfill('0') << std::setw(2) << hour << ":"
+					<< std::setfill('0') << std::setw(2) << minute << ":"
+					<< std::setfill('0') << std::setw(2) << second;
 
 				return str.str();
 			}
+			else
+			{
+				return getCurrentTime();
+			}
+		}
+
+		return std::string();
+	}
+
+	std::string RSSItem::getActualDate()
+	{
+		if (format == RSSFormat::INVALID)
+			return "invalid";
+
+		if (format == RSSFormat::RSS2)
+		{
+			tinyxml2::XMLElement * desc;
+			if (desc = asXML->FirstChildElement("pubDate"))
+				return desc->GetText();
+			else
+				return "no date";
 		}
 
 		return std::string();
@@ -201,6 +243,24 @@ namespace anteRSSParser
 		return myconv.from_bytes(str);
 	}
 
+	std::string getCurrentTime()
+	{
+		std::time_t tt = std::time(NULL);
+		std::tm time;
+		_gmtime64_s(&time, &tt);
+
+		// strftime might have been better
+		std::stringstream str;
+		str << (time.tm_year + 1900) << "/"
+			<< std::setfill('0') << std::setw(2) << (time.tm_mon + 1) << "/"
+			<< std::setfill('0') << std::setw(2) << time.tm_mday << " "
+			<< std::setfill('0') << std::setw(2) << time.tm_hour << ":"
+			<< std::setfill('0') << std::setw(2) << time.tm_min << ":"
+			<< std::setfill('0') << std::setw(2) << time.tm_sec;
+
+		return str.str();
+	}
+
 	RSSManager::RSSManager(std::string dbFile)
 	{
 		int rc = sqlite3_open(dbFile.c_str(), &db);
@@ -222,7 +282,7 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getAllFeedsStmt, NULL);
 		feedStr = "delete from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedStmt, NULL);
-		feedStr = "insert into FeedItems (guid, title, description, feedid, date) values (?1, ?2, ?3, ?4, ?5);";
+		feedStr = "insert into FeedItems (guid, title, description, feedid, date, actualdate) values (?1, ?2, ?3, ?4, ?5, ?6);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &updateFeedStmt, NULL);
 	}
 
@@ -309,6 +369,7 @@ namespace anteRSSParser
 			sqlite3_bind_text(updateFeedStmt, 3, item.getDescription().c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_int(updateFeedStmt, 4, feedId);
 			sqlite3_bind_text(updateFeedStmt, 5, item.getDate().c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(updateFeedStmt, 6, item.getActualDate().c_str(), -1, SQLITE_TRANSIENT);
 			int rc = sqlite3_step(updateFeedStmt);
 			sqlite3_reset(updateFeedStmt);
 
