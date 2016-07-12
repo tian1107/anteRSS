@@ -182,7 +182,7 @@ namespace anteRSSParser
 
 		std::string feedStr = "insert into FeedInfo (name, url) values (?1, ?2);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
-		feedStr = "select name, url from FeedInfo;";
+		feedStr = "select id, name, url from FeedInfo;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getAllFeedsStmt, NULL);
 	}
 
@@ -210,8 +210,9 @@ namespace anteRSSParser
 		while (rc == SQLITE_ROW)
 		{
 			RSSFeed feed;
-			feed.name = (const char *) sqlite3_column_text(getAllFeedsStmt, 0);
-			feed.url = (const char *) sqlite3_column_text(getAllFeedsStmt, 1);
+			feed.id = sqlite3_column_int(getAllFeedsStmt, 0);
+			feed.name = (const char *) sqlite3_column_text(getAllFeedsStmt, 1);
+			feed.url = (const char *) sqlite3_column_text(getAllFeedsStmt, 2);
 			result.push_back(feed);
 			rc = sqlite3_step(getAllFeedsStmt);
 		}

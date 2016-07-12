@@ -50,6 +50,7 @@ namespace anteRSSParser
 
 	struct RSSFeed
 	{
+		int id;
 		std::string name;
 		std::string url;
 	};
