@@ -2,6 +2,9 @@
 
 #include "anteRSSParser.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace anteRSSParser
 {
 	const RSSItem invalidItem = RSSItem(RSSFormat::INVALID, 0);
@@ -54,7 +57,7 @@ namespace anteRSSParser
 			if (desc = asXML->FirstChildElement("description"))
 				return desc->GetText();
 			else
-				return "no guid";
+				return "no description";
 		}
 
 		return std::string();
@@ -71,7 +74,22 @@ namespace anteRSSParser
 			if (desc = asXML->FirstChildElement("pubDate"))
 				return desc->GetText();
 			else
-				return "no guid";
+			{
+				// give current time instead
+				std::time_t tt = std::time(NULL);
+				std::tm time;
+				_gmtime64_s(&time, &tt);
+
+				std::stringstream str;
+				str << (time.tm_year + 1900) << "/" 
+					<< std::setfill('0') << std::setw(2) << (time.tm_mon + 1) << "/" 
+					<< std::setfill('0') << std::setw(2) << time.tm_mday << " " 
+					<< std::setfill('0') << std::setw(2) << time.tm_hour << ":" 
+					<< std::setfill('0') << std::setw(2) << time.tm_min << ":" 
+					<< std::setfill('0') << std::setw(2) << time.tm_sec;
+
+				return str.str();
+			}
 		}
 
 		return std::string();
