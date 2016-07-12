@@ -62,14 +62,15 @@ namespace anteRSSParser
 		sqlite3* db;
 		sqlite3_stmt * addFeedStmt;
 		sqlite3_stmt * getAllFeedsStmt;
+		sqlite3_stmt * removeFeedStmt;
 		std::map<std::string, RSSDocument> documentCache;
 	public:
 		RSSManager(std::string dbFile);
 		~RSSManager();
 		void addFeed(RSSFeed feed);
 		RSSFeedVector getAllFeeds();
-		void removeFeed(RSSFeed feed);
-		void updateFeed(RSSFeed feed, RSSManagerCallback callback);
+		void removeFeed(int feedId);
+		void updateFeed(int feedId, RSSManagerCallback callback);
 		void updateAll(RSSManagerCallback callback);
 		void markAsRead(std::string guid, bool read);
 		void markAsArchive(std::string guid, bool archive);
