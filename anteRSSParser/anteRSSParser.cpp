@@ -273,6 +273,35 @@ namespace anteRSSParser
 		sqlite3_finalize(statement);
 	}
 
+	size_t downloadTextFile_cb(void *buffer, size_t size, size_t nmemb, void * data)
+	{
+		std::stringstream & str = *((std::stringstream *) data);
+		char * buf = (char *)buffer;
+
+		str.write(buf, size * nmemb);
+
+		return size * nmemb;
+	}
+
+	std::string downloadTextFile(std::string url)
+	{
+		// the result
+		std::stringstream str;
+
+		// TODO shared curl stuff
+		CURL * curl = curl_easy_init();
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadTextFile_cb);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
+
+		// TODO error check!
+		curl_easy_perform(curl);
+
+		curl_easy_cleanup(curl);
+		return str.str();
+	}
+
 	RSSManager::RSSManager(std::string dbFile)
 	{
 		int rc = sqlite3_open(dbFile.c_str(), &db);
@@ -417,7 +446,8 @@ namespace anteRSSParser
 		else
 #endif
 		{
-			// TODO do curly things
+			// TODO do threaded things
+			doc.Parse(downloadTextFile(feed.url).c_str());
 		}
 		
 

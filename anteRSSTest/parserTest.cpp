@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include <windows.h>
+#include <curl/curl.h>
 #include "anteRSSParser\anteRSSParser.h"
 
 using namespace anteRSSParser;
@@ -15,12 +16,14 @@ namespace anteRSSTest
 		RSSManager * manager;
 		RSSManagerTest()
 		{
+			curl_global_init(CURL_GLOBAL_ALL);
 			manager = new RSSManager(":memory:");
 		}
 
 		~RSSManagerTest()
 		{
 			delete manager;
+			curl_global_cleanup();
 		}
 
 		TEST_METHOD(addFeedTest)
@@ -162,6 +165,12 @@ namespace anteRSSTest
 			CopyFile(L"test/rss-2.0-sample.xml", L"test/test.xml", false);
 
 			manager->updateFeed(1, updateFeedTestCallback, (void *) 1);
+		}
+
+		TEST_METHOD(downloadTest)
+		{
+			std::string result = downloadTextFile("http://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
+			Assert::AreEqual("testing", result.c_str(), L"download failed", LINE_INFO());
 		}
 
 	};

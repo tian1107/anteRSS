@@ -102,4 +102,7 @@ namespace anteRSSParser
 
 	// a query where nothing is returned, and nothing is inputted
 	void simpleSQL(sqlite3 * db, std::string query);
+
+	// just download a thing
+	std::string downloadTextFile(std::string url);
 }
