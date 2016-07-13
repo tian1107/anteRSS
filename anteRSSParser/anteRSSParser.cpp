@@ -297,6 +297,8 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
 		feedStr = "select id, name, url from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedStmt, NULL);
+		feedStr = "select id, name, url from FeedInfo where url=?1;";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedFromUrlStmt, NULL);
 		feedStr = "select id, name, url from FeedInfo;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getAllFeedsStmt, NULL);
 		feedStr = "delete from FeedInfo where id=?1;";
@@ -309,6 +311,7 @@ namespace anteRSSParser
 	{
 		sqlite3_finalize(addFeedStmt);
 		sqlite3_finalize(getFeedStmt);
+		sqlite3_finalize(getFeedFromUrlStmt);
 		sqlite3_finalize(getAllFeedsStmt);
 		sqlite3_finalize(removeFeedStmt);
 		sqlite3_finalize(updateFeedStmt);
@@ -339,6 +342,25 @@ namespace anteRSSParser
 		}
 
 		sqlite3_reset(getFeedStmt);
+
+		return result;
+	}
+
+	RSSFeed RSSManager::getFeedFromUrl(std::string url)
+	{
+		RSSFeed result = RSSFeed();
+		sqlite3_clear_bindings(getFeedFromUrlStmt);
+		sqlite3_bind_text(getFeedFromUrlStmt, 1, url.c_str(), -1, SQLITE_STATIC);
+		int rc = sqlite3_step(getFeedFromUrlStmt);
+
+		if (rc == SQLITE_ROW)
+		{
+			result.id = sqlite3_column_int(getFeedFromUrlStmt, 0);
+			result.name = (const char *)sqlite3_column_text(getFeedFromUrlStmt, 1);
+			result.url = (const char *)sqlite3_column_text(getFeedFromUrlStmt, 2);
+		}
+
+		sqlite3_reset(getFeedFromUrlStmt);
 
 		return result;
 	}

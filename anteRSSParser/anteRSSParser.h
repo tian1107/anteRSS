@@ -75,6 +75,7 @@ namespace anteRSSParser
 		sqlite3* db;
 		sqlite3_stmt * addFeedStmt;
 		sqlite3_stmt * getFeedStmt;
+		sqlite3_stmt * getFeedFromUrlStmt;
 		sqlite3_stmt * getAllFeedsStmt;
 		sqlite3_stmt * removeFeedStmt;
 		sqlite3_stmt * updateFeedStmt;

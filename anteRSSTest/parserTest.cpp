@@ -111,6 +111,25 @@ namespace anteRSSTest
 			Assert::AreNotEqual(feed.id, resultFeed.id, L"no new id", LINE_INFO());
 		}
 
+		TEST_METHOD(getFeedFromUrlTest)
+		{
+			RSSFeed feed;
+			feed.id = 0;
+			feed.name = "testtitle “ú–{Œê‚Å‚«‚é‚©‚ÈH@";
+			feed.url = "testurl";
+
+			manager->addFeed(feed);
+
+			RSSFeedVector result = manager->getAllFeeds();
+			Assert::AreEqual(1, (int)result.size(), L"feed not added", LINE_INFO());
+
+			RSSFeed resultFeed = manager->getFeedFromUrl(feed.url);
+
+			Assert::AreEqual(feed.name, resultFeed.name, L"name not preserved", LINE_INFO());
+			Assert::AreEqual(feed.url, resultFeed.url, L"url not preserved", LINE_INFO());
+			Assert::AreNotEqual(feed.id, resultFeed.id, L"no new id", LINE_INFO());
+		}
+
 		static void updateFeedTestCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data)
 		{
 			Assert::AreEqual(1, feedid, L"update callback incorrect feed", LINE_INFO());
