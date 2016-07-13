@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include <windows.h>
 #include "anteRSSParser\anteRSSParser.h"
 
 using namespace anteRSSParser;
@@ -92,6 +93,56 @@ namespace anteRSSTest
 
 			Assert::AreEqual(feed2.name, resultFeed2.name, L"name not preserved", LINE_INFO());
 			Assert::AreEqual(feed2.url, resultFeed2.url, L"url not preserved", LINE_INFO());
+		}
+
+		TEST_METHOD(getFeedTest)
+		{
+			RSSFeed feed;
+			feed.id = 0;
+			feed.name = "testtitle 日本語できるかな？　";
+			feed.url = "testurl";
+
+			manager->addFeed(feed);
+
+			RSSFeed resultFeed = manager->getFeed(1);
+
+			Assert::AreEqual(feed.name, resultFeed.name, L"name not preserved", LINE_INFO());
+			Assert::AreEqual(feed.url, resultFeed.url, L"url not preserved", LINE_INFO());
+			Assert::AreNotEqual(feed.id, resultFeed.id, L"no new id", LINE_INFO());
+		}
+
+		static void updateFeedTestCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data)
+		{
+			Assert::AreEqual(1, feedid, L"update callback incorrect feed", LINE_INFO());
+			Assert::IsTrue(success, L"unsuccessful update", LINE_INFO());
+
+			if ((int) data == 0)
+			{
+				Assert::AreEqual(3, (int) newItem.size(), L"wrong number of new items", LINE_INFO());
+			}
+			else if ((int) data == 1)
+			{
+				Assert::AreEqual(1, (int)newItem.size(), L"wrong number of new items", LINE_INFO());
+			}
+			
+		}
+
+		TEST_METHOD(updateFeedTest)
+		{
+			RSSFeed feed;
+			feed.id = 0;
+			feed.name = "testtitle 日本語できるかな？　";
+			feed.url = "\x7ftest/test.xml";
+
+			manager->addFeed(feed);
+
+			CopyFile(L"test/rss-2.0-sample-old.xml", L"test/test.xml", false);
+
+			manager->updateFeed(1, updateFeedTestCallback, 0);
+
+			CopyFile(L"test/rss-2.0-sample.xml", L"test/test.xml", false);
+
+			manager->updateFeed(1, updateFeedTestCallback, (void *) 1);
 		}
 
 	};
