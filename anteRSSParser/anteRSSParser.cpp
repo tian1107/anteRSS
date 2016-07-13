@@ -371,7 +371,7 @@ namespace anteRSSParser
 		sqlite3_reset(removeFeedStmt);
 	}
 
-	void RSSManager::updateFeed(int feedId, RSSManagerCallback callback)
+	void RSSManager::updateFeed(int feedId, RSSManagerCallback callback, void * data)
 	{
 		RSSFeedItemVector result;
 
@@ -381,12 +381,23 @@ namespace anteRSSParser
 		if (feed.url.empty())
 		{
 			if (callback)
-				callback(feedId, false, result);
+				callback(feedId, false, result, data);
 			return;
 		}
 
-		// TODO replace with curl
-		doc.LoadFile(feed.url.c_str());
+		// for debugging things
+#ifdef _DEBUG
+		//
+		if (feed.url.at(0) == 0x7f)
+		{
+			doc.LoadFile(feed.url.substr(1, std::string::npos).c_str());
+		}
+		else
+#endif
+		{
+			// TODO do curly things
+		}
+		
 
 		RSSItem item = doc.getFirstItem();
 		while (!item.isInvalid())
@@ -420,7 +431,7 @@ namespace anteRSSParser
 
 		if (callback)
 		{
-			callback(feedId, true, result);
+			callback(feedId, true, result, data);
 		}
 	}
 
