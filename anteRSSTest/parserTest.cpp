@@ -173,5 +173,13 @@ namespace anteRSSTest
 			Assert::AreEqual("testing", result.c_str(), L"download failed", LINE_INFO());
 		}
 
+		TEST_METHOD(downloadManagerTest)
+		{
+			DownloadManager dManager;
+			std::vector<char> result = dManager.downloadSingle("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
+			Assert::IsTrue(result.size() > 0, L"download empty", LINE_INFO());
+			Assert::AreEqual(0, strncmp("testing", result.data(), result.size()), L"download failed", LINE_INFO());
+		}
+
 	};
 }

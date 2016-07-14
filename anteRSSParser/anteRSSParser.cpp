@@ -446,7 +446,6 @@ namespace anteRSSParser
 		else
 #endif
 		{
-			// TODO do threaded things
 			doc.Parse(downloadTextFile(feed.url).c_str());
 		}
 		
@@ -487,4 +486,61 @@ namespace anteRSSParser
 		}
 	}
 
+	DownloadManager::DownloadManager()
+	{
+		share = curl_share_init();
+		curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
+		curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
+		curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
+	}
+
+	DownloadManager::~DownloadManager()
+	{
+		curl_share_cleanup(share);
+	}
+
+	size_t downloadSingle_cb(void *buffer, size_t size, size_t nmemb, void * data)
+	{
+		std::vector<char> & str = *((std::vector<char> *) data);
+		char * buf = (char *)buffer;
+		size_t start = str.size();
+
+		// resize
+		str.resize(str.size() + size * nmemb);
+
+		// copy
+		for (size_t i = start; i < str.size(); ++i)
+		{
+			str[i] = buf[i - start];
+		}
+
+		return size * nmemb;
+	}
+
+	// downloads a single file, no null terminator at the end
+	std::vector<char> DownloadManager::downloadSingle(std::string url)
+	{
+		lock.lock();
+
+		// the result
+		std::vector<char> str;
+
+		// TODO shared curl stuff
+		CURL * curl = curl_easy_init();
+		curl_easy_setopt(curl, CURLOPT_SHARE, share);
+
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
+
+		// TODO error check!
+		curl_easy_perform(curl);
+
+		curl_easy_cleanup(curl);
+
+		lock.unlock();
+
+		return str;
+	}
 }
