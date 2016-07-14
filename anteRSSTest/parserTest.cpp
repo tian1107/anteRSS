@@ -169,7 +169,7 @@ namespace anteRSSTest
 
 		TEST_METHOD(downloadTest)
 		{
-			std::string result = downloadTextFile("http://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
+			std::string result = downloadTextFile("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
 			Assert::AreEqual("testing", result.c_str(), L"download failed", LINE_INFO());
 		}
 

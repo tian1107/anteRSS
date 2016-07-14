@@ -102,7 +102,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)deps/$(Configuration)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sqlite3.lib;libcurl_a_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sqlite3.lib;libcurld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -139,7 +139,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)deps/$(Configuration)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sqlite3.lib;libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sqlite3.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
