@@ -136,16 +136,24 @@ namespace anteRSSTest
 
 		static void updateFeedTestCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data)
 		{
-			Assert::AreEqual(1, feedid, L"update callback incorrect feed", LINE_INFO());
-			Assert::IsTrue(success, L"unsuccessful update", LINE_INFO());
 
 			if ((int) data == 0)
 			{
+				Assert::AreEqual(1, feedid, L"update callback incorrect feed", LINE_INFO());
+				Assert::IsTrue(success, L"unsuccessful update", LINE_INFO());
 				Assert::AreEqual(3, (int) newItem.size(), L"wrong number of new items", LINE_INFO());
 			}
 			else if ((int) data == 1)
 			{
+				Assert::AreEqual(1, feedid, L"update callback incorrect feed", LINE_INFO());
+				Assert::IsTrue(success, L"unsuccessful update", LINE_INFO());
 				Assert::AreEqual(1, (int)newItem.size(), L"wrong number of new items", LINE_INFO());
+			}
+			else if ((int)data == 2)
+			{
+				Assert::AreEqual(1, feedid, L"update callback incorrect feed", LINE_INFO());
+				Assert::IsTrue(success, L"unsuccessful update", LINE_INFO());
+				Assert::AreEqual(4, (int)newItem.size(), L"wrong number of new items", LINE_INFO());
 			}
 			
 		}
@@ -166,6 +174,18 @@ namespace anteRSSTest
 			CopyFile(L"test/rss-2.0-sample.xml", L"test/test.xml", false);
 
 			manager->updateFeed(1, updateFeedTestCallback, (void *) 1);
+		}
+
+		TEST_METHOD(updateFeedTest2)
+		{
+			RSSFeed feed;
+			feed.id = 0;
+			feed.name = "‚ ‚½‚ç‚µ‚¢I";
+			feed.url = "http://www.rssboard.org/files/rss-2.0-namespace.xml";
+
+			manager->addFeed(feed);
+
+			manager->updateFeed(1, updateFeedTestCallback, (void *) 2);
 		}
 
 		TEST_METHOD(downloadTest)

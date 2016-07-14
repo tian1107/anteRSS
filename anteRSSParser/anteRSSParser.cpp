@@ -446,7 +446,8 @@ namespace anteRSSParser
 		else
 #endif
 		{
-			doc.Parse(downloadTextFile(feed.url).c_str());
+			std::vector<char> & file = manager.downloadSingle(feed.url);
+			doc.Parse(file.data(), file.size());
 		}
 		
 

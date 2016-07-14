@@ -9,6 +9,7 @@
 
 namespace anteRSSParser
 {
+
 	enum RSSFormat
 	{
 		INVALID	= -1,
@@ -70,9 +71,24 @@ namespace anteRSSParser
 	// gets called when a feed is updated, would be in a different thread
 	typedef void(*RSSManagerCallback)(int feedid, bool success, RSSFeedItemVector newItem, void * data);
 
+	typedef void(*DownloadManagerCallback)(std::string url, std::vector<char> content, void * data);
+
+	class DownloadManager
+	{
+	private:
+		CURLSH * share;
+		std::mutex lock;
+	public:
+		DownloadManager();
+		~DownloadManager();
+		std::vector<char> downloadSingle(std::string url);
+		void downloadMultiple(std::vector<std::string> urls, DownloadManagerCallback callback, void * data);
+	};
+
 	class RSSManager
 	{
 	private:
+		DownloadManager manager;
 		sqlite3* db;
 		sqlite3_stmt * addFeedStmt;
 		sqlite3_stmt * getFeedStmt;
@@ -93,20 +109,6 @@ namespace anteRSSParser
 		void markAsRead(std::string guid, bool read);
 		void markAsArchive(std::string guid, bool archive);
 		std::string getLastError();
-	};
-
-	typedef void(*DownloadManagerCallback)(std::string url, std::vector<char> content, void * data);
-
-	class DownloadManager
-	{
-	private:
-		CURLSH * share;
-		std::mutex lock;
-	public:
-		DownloadManager();
-		~DownloadManager();
-		std::vector<char> downloadSingle(std::string url);
-		void downloadMultiple(std::vector<std::string> urls, DownloadManagerCallback callback, void * data);
 	};
 
 	// Converts utf8 strings to wstring
