@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include <fstream>
 #include <windows.h>
 #include <curl/curl.h>
 #include "anteRSSParser\anteRSSParser.h"
@@ -176,9 +177,26 @@ namespace anteRSSTest
 		TEST_METHOD(downloadManagerTest)
 		{
 			DownloadManager dManager;
-			std::vector<char> result = dManager.downloadSingle("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
+			std::vector<char> & result = dManager.downloadSingle("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
 			Assert::IsTrue(result.size() > 0, L"download empty", LINE_INFO());
 			Assert::AreEqual(0, strncmp("testing", result.data(), result.size()), L"download failed", LINE_INFO());
+
+			std::vector<char> result2 = dManager.downloadSingle("https://www.google.com.ph/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
+
+			// png check, not conclusive
+			char header[] = { 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a };
+			char trailer[] = { 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82 };
+
+			for (size_t i = 0; i < ARRAYSIZE(header); ++i)
+			{
+				Assert::AreEqual(header[i], result2[i], L"file corrupted", LINE_INFO());
+			}
+
+			for (size_t i = 0; i < ARRAYSIZE(trailer); ++i)
+			{
+				Assert::AreEqual(trailer[i], result2[i + result2.size() - ARRAYSIZE(trailer)], L"file corrupted", LINE_INFO());
+			}
+
 		}
 
 	};
