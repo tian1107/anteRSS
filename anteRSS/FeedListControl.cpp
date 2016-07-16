@@ -5,6 +5,8 @@
 
 #include <sstream>
 
+using namespace anteRSSParser;
+
 namespace anteRSS
 {
 	void FeedListControl::createImageLists()
@@ -72,7 +74,7 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
-	int FeedListControl::insertRow(int imageIndex, int index, std::wstring text)
+	int FeedListControl::insertRow(int imageIndex, int index, std::wstring text, RSSFeed * feed)
 	{
 		// TODO dynamic allocation
 		const size_t length = 256;
@@ -81,12 +83,13 @@ namespace anteRSS
 		wchar_t buf[length];
 
 		// Initialize LVITEM members that are common to all items.
-		lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE;
+		lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE | LVIF_PARAM;
 		lvI.stateMask = 0;
 		lvI.iSubItem = 0;
 		lvI.state = 0;
 		lvI.iImage = imageIndex;
 		lvI.iItem = index;
+		lvI.lParam = (LPARAM) feed;
 
 		StringCchCopy(buf, length, text.c_str());
 		lvI.pszText = buf;
@@ -134,9 +137,17 @@ namespace anteRSS
 
 	void FeedListControl::notifyFeedListChanged()
 	{
-		insertRow(imageRSS, 0, L"All");
-		insertRow(imageRSS, 1, L"Unread");
-		insertRow(imageRSS, 2, L"feed1");
+		feedCache = manager->getAllFeeds();
+
+		insertRow(imageRSS, 0, L"All", 0);
+		insertRow(imageRSS, 1, L"Unread", 0);
+
+		int index = 2;
+		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
+		{
+			// TODO proper unread count
+			insertRow(imageRSS, index, convertToWide(it->name + " (0)"), &(*it));
+		}
 	}
 
 	void FeedListControl::notifyResize(LPARAM lParam)
@@ -166,7 +177,12 @@ namespace anteRSS
 			{
 				std::wstringstream str;
 
-				str << "new selection! " << pnmv->iItem << std::endl;
+				RSSFeed * feed = (RSSFeed *) (pnmv->lParam);
+
+				if (pnmv->iItem < 2)
+					str << "not an actual feed!" << std::endl;
+				else
+					str << "new selection! " << feed->id << std::endl;
 
 				OutputDebugString(str.str().c_str());
 			}
@@ -179,7 +195,11 @@ namespace anteRSS
 			if (pdi->item.iItem < 2)
 				return 1;
 			else
+			{
+				HWND editControl = ListView_GetEditControl(listControl);
+				Edit_SetText(editControl, convertToWide(((RSSFeed *) pdi->item.lParam)->name).c_str());
 				return 0;
+			}
 			break;
 		}
 		case LVN_ENDLABELEDIT:
@@ -187,10 +207,22 @@ namespace anteRSS
 			NMLVDISPINFO * pdi = (NMLVDISPINFO *)lParam;
 			if (pdi->item.pszText != NULL)
 			{
-				// TODO handle renaming
+				RSSFeed * feed = (RSSFeed *)pdi->item.lParam;
+
+				// copy new name to RSSFeed
+				feed->name = convertToUtf8(pdi->item.pszText);
+
+				// TODO proper unread count
+				std::wstringstream str;
+				str << pdi->item.pszText << " (1)";
+
+				editBuffer = str.str();
 
 				// you can change the text! (keep the unread count)
-				pdi->item.pszText = L"can't edit this!";
+				// this set of pointer hacks
+				pdi->item.pszText = &editBuffer[0];
+
+				manager->renameFeed(feed->id, feed->name);
 
 				return TRUE;
 			}
