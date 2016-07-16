@@ -4,11 +4,17 @@
 #include "resource.h"
 
 #include <sstream>
+#include <algorithm>
 
 using namespace anteRSSParser;
 
 namespace anteRSS
 {
+	int sortFeedList(const RSSFeed * l, const RSSFeed * r)
+	{
+		return l->name < r->name;
+	}
+
 	void FeedListControl::createImageLists()
 	{
 		HICON hiconItem;     // Icon for list-view items.
@@ -139,14 +145,25 @@ namespace anteRSS
 	{
 		feedCache = manager->getAllFeeds();
 
-		insertRow(imageRSS, 0, L"All", 0);
-		insertRow(imageRSS, 1, L"Unread", 0);
+		std::vector<RSSFeed *> ptrs;
+
+		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it)
+		{
+			ptrs.push_back(&(*it));
+		}
+
+		// sort
+		std::sort(ptrs.begin(), ptrs.end(), sortFeedList);
+
+		// TODO proper counts
+		insertRow(imageRSS, 0, L"All (0)", 0);
+		insertRow(imageRSS, 1, L"Unread (0)", 0);
 
 		int index = 2;
-		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
+		for (std::vector<RSSFeed *>::iterator it = ptrs.begin(); it != ptrs.end(); ++it, ++index)
 		{
 			// TODO proper unread count
-			insertRow(imageRSS, index, convertToWide(it->name + " (0)"), &(*it));
+			insertRow(imageRSS, index, convertToWide((*it)->name + " (0)"), *it);
 		}
 	}
 
