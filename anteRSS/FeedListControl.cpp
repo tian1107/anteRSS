@@ -3,6 +3,8 @@
 #include "FeedListControl.h"
 #include "resource.h"
 
+#include <sstream>
+
 namespace anteRSS
 {
 	void FeedListControl::createImageLists()
@@ -113,7 +115,7 @@ namespace anteRSS
 			WC_LISTVIEW,                // list view class
 			L"",                         // no default text
 			WS_VISIBLE | WS_CHILD | LVS_REPORT | WS_BORDER | LVS_NOCOLUMNHEADER |
-			LVS_EDITLABELS | WS_EX_CLIENTEDGE,
+			LVS_SINGLESEL | WS_EX_CLIENTEDGE,
 			0, 0,
 			(rcClient.right - rcClient.left) / 5, rcClient.bottom - rcClient.top,
 			parent,
@@ -134,6 +136,7 @@ namespace anteRSS
 	{
 		insertRow(imageRSS, 0, L"All");
 		insertRow(imageRSS, 1, L"Unread");
+		insertRow(imageRSS, 2, L"feed1");
 	}
 
 	void FeedListControl::notifyResize(LPARAM lParam)
@@ -143,6 +146,65 @@ namespace anteRSS
 
 		MoveWindow(listControl, 0, 0, width / 5, height, true);
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
+	}
+
+	int FeedListControl::notifyNotify(LPARAM lParam)
+	{
+		// the nmhdr
+		LPNMHDR source = (LPNMHDR)lParam;
+
+		// first, check if it is from this control
+		if (source->hwndFrom != listControl)
+			return 0;
+
+		switch (source->code)
+		{
+		case LVN_ITEMCHANGED:
+		{
+			LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
+			if (pnmv->uNewState & LVIS_SELECTED)
+			{
+				std::wstringstream str;
+
+				str << "new selection! " << pnmv->iItem << std::endl;
+
+				OutputDebugString(str.str().c_str());
+			}
+			break;
+		}
+		case LVN_BEGINLABELEDIT:
+		{
+			NMLVDISPINFO * pdi = (NMLVDISPINFO *)lParam;
+			// all and unread
+			if (pdi->item.iItem < 2)
+				return 1;
+			else
+				return 0;
+			break;
+		}
+		case LVN_ENDLABELEDIT:
+		{
+			NMLVDISPINFO * pdi = (NMLVDISPINFO *)lParam;
+			if (pdi->item.pszText != NULL)
+			{
+				// TODO handle renaming
+
+				// you can change the text! (keep the unread count)
+				pdi->item.pszText = L"can't edit this!";
+
+				return TRUE;
+			}
+			else
+			{
+				return 0;
+			}
+			break;
+		}
+		default:
+			break;
+		}
+
+		return 0;
 	}
 
 }

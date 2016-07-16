@@ -21,5 +21,6 @@ namespace anteRSS
 		void CreateControl(HWND parent);
 		void notifyFeedListChanged();
 		void notifyResize(LPARAM lParam);
+		int notifyNotify(LPARAM lParam);
 	};
 }

@@ -182,8 +182,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		rssTree->notifyResize(lParam);
 		break;
 	case WM_NOTIFY:
-		//HandleWM_NOTIFY(lParam);
+	{
+		return rssTree->notifyNotify(lParam);
 		break;
+	}
 	case WM_CREATE:
 		rssTree->CreateControl(hWnd);
 		break;
