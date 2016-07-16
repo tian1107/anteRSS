@@ -30,12 +30,18 @@
     <ClInclude Include="anteRSS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FeedListControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="anteRSS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FeedListControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -49,6 +55,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="anteRSS.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="test1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

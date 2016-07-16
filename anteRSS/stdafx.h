@@ -8,12 +8,18 @@
 
 #include "targetver.h"
 
+// memory leak detection
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
 #include <windows.h>
 #include <windowsx.h>
 #include <shellapi.h>
 #include <CommCtrl.h>
+#include <Uxtheme.h>
 
 #include <strsafe.h>
 
@@ -28,6 +34,7 @@
 
 //curl
 #include <curl\curl.h>
+#include <sqlite3.h>
 
 //others
 #include <string>

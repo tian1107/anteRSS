@@ -4,6 +4,10 @@
 #include "stdafx.h"
 #include "anteRSS.h"
 #include "anteRSSParser\anteRSSParser.h"
+#include "FeedListControl.h"
+
+using namespace anteRSSParser;
+using namespace anteRSS;
 
 #define MAX_LOADSTRING 100
 
@@ -12,6 +16,13 @@ HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 NOTIFYICONDATA niData = {0};					// the tray icon data
+
+// rss stuff
+RSSManager * manager = nullptr;
+
+// window stuff
+HWND hWndMain;
+FeedListControl * rssTree;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -27,7 +38,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: Place code here.
+	// memory leak check
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	// initialize curl
+	curl_global_init(CURL_GLOBAL_ALL);
+
+	// initialize rss
+	manager = new RSSManager("history.db");
+
+	// initialize controls
+	rssTree = new FeedListControl(hInstance, manager);
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -39,15 +60,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         return FALSE;
     }
-
-	// initialize curl
-	curl_global_init(CURL_GLOBAL_ALL);
-
-	anteRSSParser::RSSDocument doc;
-	doc.LoadFile("test.xml");
-	OutputDebugString(anteRSSParser::convertToWide(doc.getTitle()).c_str());
-	//const char * sTitle = doc.FirstChildElement("html")->FirstChildElement("h1")->GetText();
-	//OutputDebugString(anteRSSParser::convertToWide(sTitle).c_str());
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_ANTERSS));
 
@@ -63,14 +75,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
+	delete manager;
+	delete rssTree;
 
 	// destroy curl
 	curl_global_cleanup();
 
     return (int) msg.wParam;
 }
-
-
 
 //
 //  FUNCTION: MyRegisterClass()
@@ -112,17 +124,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   hWndMain = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
+   if (!hWndMain)
    {
       return FALSE;
    }
 
    // create shell icon
    niData.cbSize = sizeof(niData);
-   niData.hWnd = hWnd;
+   niData.hWnd = hWndMain;
    niData.uFlags = NIF_ICON | NIF_TIP | NIF_GUID | NIF_MESSAGE | NIF_SHOWTIP;
 
 #ifdef _DEBUG
@@ -147,7 +159,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    Shell_NotifyIcon(NIM_SETVERSION, &niData);
 
    //ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+   UpdateWindow(hWndMain);
 
    return TRUE;
 }
@@ -166,6 +178,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+	case WM_SIZE:
+		rssTree->notifyResize(lParam);
+		break;
+	case WM_NOTIFY:
+		//HandleWM_NOTIFY(lParam);
+		break;
+	case WM_CREATE:
+		rssTree->CreateControl(hWnd);
+		break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
