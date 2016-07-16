@@ -91,6 +91,7 @@ namespace anteRSSParser
 		DownloadManager manager;
 		sqlite3* db;
 		sqlite3_stmt * addFeedStmt;
+		sqlite3_stmt * renameFeedStmt;
 		sqlite3_stmt * getFeedStmt;
 		sqlite3_stmt * getFeedFromUrlStmt;
 		sqlite3_stmt * getAllFeedsStmt;
@@ -100,6 +101,7 @@ namespace anteRSSParser
 		RSSManager(std::string dbFile);
 		~RSSManager();
 		void addFeed(RSSFeed feed);
+		void renameFeed(int feedId, std::string name);
 		RSSFeed getFeed(int feedId);
 		RSSFeed getFeedFromUrl(std::string url);
 		RSSFeedVector getAllFeeds();
@@ -113,6 +115,7 @@ namespace anteRSSParser
 
 	// Converts utf8 strings to wstring
 	std::wstring convertToWide(const std::string& str);
+	std::string convertToUtf8(const std::wstring& wstr);
 
 	// formatted current time
 	std::string getCurrentTime();

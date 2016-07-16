@@ -247,6 +247,12 @@ namespace anteRSSParser
 		return myconv.from_bytes(str);
 	}
 
+	std::string convertToUtf8(const std::wstring & wstr)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(wstr);
+	}
+
 	std::string getCurrentTime()
 	{
 		std::time_t tt = std::time(NULL);
@@ -324,6 +330,8 @@ namespace anteRSSParser
 
 		std::string feedStr = "insert into FeedInfo (name, url) values (?1, ?2);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
+		feedStr = "update FeedInfo set name=?1 where id=?2";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &renameFeedStmt, NULL);
 		feedStr = "select id, name, url from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedStmt, NULL);
 		feedStr = "select id, name, url from FeedInfo where url=?1;";
@@ -339,6 +347,7 @@ namespace anteRSSParser
 	RSSManager::~RSSManager()
 	{
 		sqlite3_finalize(addFeedStmt);
+		sqlite3_finalize(renameFeedStmt);
 		sqlite3_finalize(getFeedStmt);
 		sqlite3_finalize(getFeedFromUrlStmt);
 		sqlite3_finalize(getAllFeedsStmt);
@@ -354,6 +363,15 @@ namespace anteRSSParser
 		sqlite3_bind_text(addFeedStmt, 2, feed.url.c_str(), -1, SQLITE_STATIC);
 		int rc = sqlite3_step(addFeedStmt);
 		sqlite3_reset(addFeedStmt);
+	}
+
+	void RSSManager::renameFeed(int feedId, std::string name)
+	{
+		sqlite3_clear_bindings(renameFeedStmt);
+		sqlite3_bind_text(renameFeedStmt, 1, name.c_str(), -1, SQLITE_STATIC);
+		sqlite3_bind_int(renameFeedStmt, 2, feedId);
+		int rc = sqlite3_step(renameFeedStmt);
+		sqlite3_reset(renameFeedStmt);
 	}
 
 	RSSFeed RSSManager::getFeed(int feedId)

@@ -66,6 +66,38 @@ namespace anteRSSTest
 			Assert::AreNotEqual(resultFeed.id, resultFeed2.id, L"no new id", LINE_INFO());
 		}
 
+		TEST_METHOD(renameFeedTest)
+		{
+			RSSFeed feed;
+			feed.id = 0;
+			feed.name = "testtitle 日本語できるかな？　";
+			feed.url = "testurl";
+
+			RSSFeed feed2;
+			feed2.id = 0;
+			feed2.name = "あたらしい！";
+			feed2.url = "testurl2";
+
+			std::string newname = "ahahaha";
+
+			manager->addFeed(feed);
+			manager->addFeed(feed2);
+			manager->renameFeed(1, newname);
+
+			RSSFeed resultFeed = manager->getFeed(1);
+
+			Assert::AreEqual(newname, resultFeed.name, L"name not changed", LINE_INFO());
+			Assert::AreEqual(feed.url, resultFeed.url, L"url not preserved", LINE_INFO());
+			Assert::AreNotEqual(feed.id, resultFeed.id, L"no new id", LINE_INFO());
+
+			RSSFeed resultFeed2 = manager->getFeed(2);
+
+			Assert::AreEqual(feed2.name, resultFeed2.name, L"name not preserved", LINE_INFO());
+			Assert::AreEqual(feed2.url, resultFeed2.url, L"url not preserved", LINE_INFO());
+			Assert::AreNotEqual(feed2.id, resultFeed2.id, L"no new id", LINE_INFO());
+			Assert::AreNotEqual(resultFeed.id, resultFeed2.id, L"no new id", LINE_INFO());
+		}
+
 		TEST_METHOD(removeFeedTest)
 		{
 			RSSFeed feed;
