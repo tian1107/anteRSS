@@ -65,6 +65,7 @@ namespace anteRSSParser
 		int id;
 		std::string name;
 		std::string url;
+		int unread;
 	};
 	typedef std::vector<RSSFeed> RSSFeedVector;
 

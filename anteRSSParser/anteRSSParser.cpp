@@ -336,7 +336,7 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedStmt, NULL);
 		feedStr = "select id, name, url from FeedInfo where url=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedFromUrlStmt, NULL);
-		feedStr = "select id, name, url from FeedInfo order by name collate nocase;";
+		feedStr = "select feed.id, feed.name, feed.url, count(case when item.status = 0 then 1 else null end) as \"unread\" from FeedInfo feed left join FeedItems item on feed.id = item.feedid group by feed.id order by name collate nocase;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getAllFeedsStmt, NULL);
 		feedStr = "delete from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedStmt, NULL);
@@ -423,6 +423,7 @@ namespace anteRSSParser
 			feed.id = sqlite3_column_int(getAllFeedsStmt, 0);
 			feed.name = (const char *) sqlite3_column_text(getAllFeedsStmt, 1);
 			feed.url = (const char *) sqlite3_column_text(getAllFeedsStmt, 2);
+			feed.unread = sqlite3_column_int(getAllFeedsStmt, 3);
 			result.push_back(feed);
 			rc = sqlite3_step(getAllFeedsStmt);
 		}
