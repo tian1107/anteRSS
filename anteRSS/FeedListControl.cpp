@@ -143,14 +143,15 @@ namespace anteRSS
 		ListView_DeleteAllItems(listControl);
 
 		// TODO proper counts
-		insertRow(imageRSS, 0, L"All (0)", 0);
+		insertRow(imageRSS, 0, L"All", 0);
 		insertRow(imageRSS, 1, L"Unread (0)", 0);
 
 		int index = 2;
 		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
 		{
-			// TODO proper unread count
-			insertRow(imageRSS, index, convertToWide(it->name + " (0)"), &(*it));
+			std::stringstream str;
+			str << it->name << " (" << it->unread << ")";
+			insertRow(imageRSS, index, convertToWide(str.str()), &(*it));
 		}
 	}
 
