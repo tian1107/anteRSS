@@ -10,11 +10,6 @@ using namespace anteRSSParser;
 
 namespace anteRSS
 {
-	int sortFeedList(const RSSFeed * l, const RSSFeed * r)
-	{
-		return l->name < r->name;
-	}
-
 	void FeedListControl::createImageLists()
 	{
 		HICON hiconItem;     // Icon for list-view items.
@@ -145,25 +140,17 @@ namespace anteRSS
 	{
 		feedCache = manager->getAllFeeds();
 
-		std::vector<RSSFeed *> ptrs;
-
-		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it)
-		{
-			ptrs.push_back(&(*it));
-		}
-
-		// sort
-		std::sort(ptrs.begin(), ptrs.end(), sortFeedList);
+		ListView_DeleteAllItems(listControl);
 
 		// TODO proper counts
 		insertRow(imageRSS, 0, L"All (0)", 0);
 		insertRow(imageRSS, 1, L"Unread (0)", 0);
 
 		int index = 2;
-		for (std::vector<RSSFeed *>::iterator it = ptrs.begin(); it != ptrs.end(); ++it, ++index)
+		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
 		{
 			// TODO proper unread count
-			insertRow(imageRSS, index, convertToWide((*it)->name + " (0)"), *it);
+			insertRow(imageRSS, index, convertToWide(it->name + " (0)"), &(*it));
 		}
 	}
 
@@ -226,22 +213,12 @@ namespace anteRSS
 			{
 				RSSFeed * feed = (RSSFeed *)pdi->item.lParam;
 
-				// copy new name to RSSFeed
-				feed->name = convertToUtf8(pdi->item.pszText);
+				manager->renameFeed(feed->id, convertToUtf8(pdi->item.pszText));
 
-				// TODO proper unread count
-				std::wstringstream str;
-				str << pdi->item.pszText << " (1)";
+				notifyFeedListChanged();
 
-				editBuffer = str.str();
-
-				// you can change the text! (keep the unread count)
-				// this set of pointer hacks
-				pdi->item.pszText = &editBuffer[0];
-
-				manager->renameFeed(feed->id, feed->name);
-
-				return TRUE;
+				// "did not accept" so that it would not overwrite changes by notifyFeedListChanged();
+				return 0;
 			}
 			else
 			{
