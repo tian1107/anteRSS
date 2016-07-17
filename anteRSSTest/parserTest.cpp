@@ -206,6 +206,8 @@ namespace anteRSSTest
 			// TODO check contents
 		}
 
+		//TODO getItemsofStatusTest
+
 		TEST_METHOD(updateFeedTest)
 		{
 			RSSFeed feed;
