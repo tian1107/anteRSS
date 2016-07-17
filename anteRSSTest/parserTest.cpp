@@ -190,6 +190,22 @@ namespace anteRSSTest
 			
 		}
 
+		TEST_METHOD(getItemsOfFeedTest)
+		{
+			RSSFeed feed;
+			feed.id = 0;
+			feed.name = "testtitle “ú–{Œê‚Å‚«‚é‚©‚ÈH@";
+			feed.url = "\x7ftest/rss-2.0-sample.xml";
+
+			manager->addFeed(feed);
+			manager->updateFeed(1, nullptr, 0);
+
+			RSSFeedItemVector result = manager->getItemsOfFeed(1);
+
+			Assert::AreEqual(4, (int) result.size(), L"did not get them all", LINE_INFO());
+			// TODO check contents
+		}
+
 		TEST_METHOD(updateFeedTest)
 		{
 			RSSFeed feed;

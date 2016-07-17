@@ -96,6 +96,7 @@ namespace anteRSSParser
 		sqlite3_stmt * getFeedStmt;
 		sqlite3_stmt * getFeedFromUrlStmt;
 		sqlite3_stmt * getAllFeedsStmt;
+		sqlite3_stmt * getItemsofFeedStmt;
 		sqlite3_stmt * removeFeedStmt;
 		sqlite3_stmt * updateFeedStmt;
 	public:
@@ -106,6 +107,7 @@ namespace anteRSSParser
 		RSSFeed getFeed(int feedId);
 		RSSFeed getFeedFromUrl(std::string url);
 		RSSFeedVector getAllFeeds();
+		RSSFeedItemVector getItemsOfFeed(int feedId);
 		void removeFeed(int feedId);
 		void updateFeed(int feedId, RSSManagerCallback callback, void * data);
 		void updateAll(RSSManagerCallback callback, void * data);

@@ -337,6 +337,8 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedFromUrlStmt, NULL);
 		feedStr = "select feed.id, feed.name, feed.url, count(case when item.status = 0 then 1 else null end) as \"unread\" from FeedInfo feed left join FeedItems item on feed.id = item.feedid group by feed.id order by name collate nocase;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getAllFeedsStmt, NULL);
+		feedStr = "select guid, title, description, feedid, status, date from FeedItems where feedid=?1 order by date desc;";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getItemsofFeedStmt, NULL);
 		feedStr = "delete from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedStmt, NULL);
 		feedStr = "insert into FeedItems (guid, title, description, feedid, date, actualdate) values (?1, ?2, ?3, ?4, ?5, ?6);";
@@ -350,6 +352,7 @@ namespace anteRSSParser
 		sqlite3_finalize(getFeedStmt);
 		sqlite3_finalize(getFeedFromUrlStmt);
 		sqlite3_finalize(getAllFeedsStmt);
+		sqlite3_finalize(getItemsofFeedStmt);
 		sqlite3_finalize(removeFeedStmt);
 		sqlite3_finalize(updateFeedStmt);
 		sqlite3_close(db);
@@ -430,6 +433,36 @@ namespace anteRSSParser
 		}
 
 		sqlite3_reset(getAllFeedsStmt);
+
+		return result;
+	}
+
+	RSSFeedItemVector RSSManager::getItemsOfFeed(int feedId)
+	{
+		RSSFeedItemVector result;
+
+		sqlite3_clear_bindings(getItemsofFeedStmt);
+		sqlite3_bind_int(getItemsofFeedStmt, 1, feedId);
+		int rc = sqlite3_step(getItemsofFeedStmt);
+
+		while (rc == SQLITE_ROW)
+		{
+			RSSFeedItem item;
+
+			// guid, title, description, feedid, status, date
+
+			item.guid = (const char *)sqlite3_column_text(getItemsofFeedStmt, 0);
+			item.title = (const char *)sqlite3_column_text(getItemsofFeedStmt, 1);
+			item.description = (const char *)sqlite3_column_text(getItemsofFeedStmt, 2);
+			item.feedid = sqlite3_column_int(getItemsofFeedStmt, 3);
+			item.status = sqlite3_column_int(getItemsofFeedStmt, 4);
+			item.date = (const char *)sqlite3_column_text(getItemsofFeedStmt, 5);
+			
+			result.push_back(item);
+			rc = sqlite3_step(getItemsofFeedStmt);
+		}
+
+		sqlite3_reset(getItemsofFeedStmt);
 
 		return result;
 	}
