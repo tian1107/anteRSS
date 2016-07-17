@@ -144,15 +144,20 @@ namespace anteRSS
 
 		// TODO proper counts
 		insertRow(imageRSS, 0, L"All", 0);
-		insertRow(imageRSS, 1, L"Unread (0)", 0);
 
+		int totalUnread = 0;
 		int index = 2;
 		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
 		{
 			std::stringstream str;
 			str << it->name << " (" << it->unread << ")";
 			insertRow(imageRSS, index, convertToWide(str.str()), &(*it));
+			totalUnread += it->unread;
 		}
+
+		std::wstringstream str;
+		str << "Unread (" << totalUnread << ")";
+		insertRow(imageRSS, 1, str.str(), 0);
 	}
 
 	void FeedListControl::notifyResize(LPARAM lParam)
