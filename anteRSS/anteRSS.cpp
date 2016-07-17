@@ -5,6 +5,7 @@
 #include "anteRSS.h"
 #include "anteRSSParser\anteRSSParser.h"
 #include "FeedListControl.h"
+#include "ItemListControl.h"
 
 using namespace anteRSSParser;
 using namespace anteRSS;
@@ -23,6 +24,7 @@ RSSManager * manager = nullptr;
 // window stuff
 HWND hWndMain;
 FeedListControl * rssTree;
+ItemListControl * rssItem;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -49,6 +51,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// initialize controls
 	rssTree = new FeedListControl(hInstance, manager);
+	rssItem = new ItemListControl(hInstance, manager);
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -77,6 +80,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	delete manager;
 	delete rssTree;
+	delete rssItem;
 
 	// destroy curl
 	curl_global_cleanup();
@@ -180,6 +184,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_SIZE:
 		rssTree->notifyResize(lParam);
+		rssItem->notifyResize(lParam);
 		break;
 	case WM_NOTIFY:
 	{
@@ -188,6 +193,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CREATE:
 		rssTree->CreateControl(hWnd);
+		rssItem->CreateControl(hWnd);
 		break;
 	case WM_COMMAND:
 	{
