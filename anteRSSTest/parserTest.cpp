@@ -236,6 +236,20 @@ namespace anteRSSTest
 			manager->updateFeed(1, updateFeedTestCallback, (void *) 2);
 		}
 
+		// TODO markItemTest
+		TEST_METHOD(markItemTest)
+		{
+			RSSFeed feed;
+			feed.id = 0;
+			feed.name = "testtitle “ú–{Œê‚Å‚«‚é‚©‚ÈH@";
+			feed.url = "\x7ftest/rss-2.0-sample.xml";
+
+			manager->addFeed(feed);
+			manager->updateFeed(1, nullptr, 0);
+
+			RSSFeedItemVector result = manager->getItemsOfFeed(1);
+		}
+
 		TEST_METHOD(downloadTest)
 		{
 			std::string result = downloadTextFile("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");

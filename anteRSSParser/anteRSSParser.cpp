@@ -329,7 +329,7 @@ namespace anteRSSParser
 
 		std::string feedStr = "insert into FeedInfo (name, url) values (?1, ?2);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
-		feedStr = "update FeedInfo set name=?1 where id=?2";
+		feedStr = "update FeedInfo set name=?1 where id=?2;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &renameFeedStmt, NULL);
 		feedStr = "select feed.id, feed.name, feed.url, count(case when item.status = 0 then 1 else null end) as \"unread\" from FeedInfo feed left join FeedItems item on feed.id = item.feedid where feed.id = ?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedStmt, NULL);
@@ -343,6 +343,8 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedStmt, NULL);
 		feedStr = "insert into FeedItems (guid, title, description, feedid, date, actualdate) values (?1, ?2, ?3, ?4, ?5, ?6);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &updateFeedStmt, NULL);
+		feedStr = "update FeedItems set status=?1 where guid=?2;";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markItemStmt, NULL);
 	}
 
 	RSSManager::~RSSManager()
@@ -355,6 +357,7 @@ namespace anteRSSParser
 		sqlite3_finalize(getItemsofFeedStmt);
 		sqlite3_finalize(removeFeedStmt);
 		sqlite3_finalize(updateFeedStmt);
+		sqlite3_finalize(markItemStmt);
 		sqlite3_close(db);
 	}
 
@@ -538,6 +541,15 @@ namespace anteRSSParser
 		{
 			callback(feedId, true, result, data);
 		}
+	}
+
+	void RSSManager::markStatus(std::string guid, int status)
+	{
+		sqlite3_clear_bindings(markItemStmt);
+		sqlite3_bind_int(markItemStmt, 1, status);
+		sqlite3_bind_text(markItemStmt, 2, guid.c_str(), -1, SQLITE_STATIC);
+		int rc = sqlite3_step(markItemStmt);
+		sqlite3_reset(markItemStmt);
 	}
 
 	DownloadManager::DownloadManager()
