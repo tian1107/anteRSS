@@ -27,27 +27,19 @@ namespace anteRSS
 			ILC_MASK, 1, 1);
 
 		// Add an icon to each image list.  
-		hiconItem = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ANTERSS));
+		hiconItem = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ITEMREAD));
 
-		imageRSS = ImageList_AddIcon(hLarge, hiconItem);
+		imageRead = ImageList_AddIcon(hLarge, hiconItem);
 		ImageList_AddIcon(hSmall, hiconItem);
 
 		DestroyIcon(hiconItem);
 
-		// When you are dealing with multiple icons, you can use the previous four lines of 
-		// code inside a loop. The following code shows such a loop. The 
-		// icons are defined in the application's header file as resources, which 
-		// are numbered consecutively starting with IDS_FIRSTICON. The number of 
-		// icons is defined in the header file as C_ICONS.
-		/*
-		for(index = 0; index < C_ICONS; index++)
-		{
-		hIconItem = LoadIcon (g_hinst, MAKEINTRESOURCE(IDS_FIRSTICON + index));
-		ImageList_AddIcon(hSmall, hIconItem);
-		ImageList_AddIcon(hLarge, hIconItem);
-		Destroy(hIconItem);
-		}
-		*/
+		hiconItem = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ITEMUNREAD));
+
+		imageUnread = ImageList_AddIcon(hLarge, hiconItem);
+		ImageList_AddIcon(hSmall, hiconItem);
+
+		DestroyIcon(hiconItem);
 
 		// Assign the image lists to the list-view control. 
 		ListView_SetImageList(listControl, hLarge, LVSIL_NORMAL);
@@ -76,7 +68,7 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
-	int ItemListControl::insertRow(int imageIndex, int index, RSSFeedItem * item)
+	int ItemListControl::insertRow(int index, RSSFeedItem * item)
 	{
 		// TODO dynamic allocation
 		const size_t length = 256;
@@ -89,7 +81,20 @@ namespace anteRSS
 		lvI.stateMask = 0;
 		lvI.iSubItem = 0;
 		lvI.state = 0;
-		lvI.iImage = imageIndex;
+		switch (item->status)
+		{
+		case 0:
+			lvI.iImage = imageUnread;
+			break;
+		case 1:
+			lvI.iImage = imageRead;
+			break;
+		case 2:
+			lvI.iImage = imageArchived;
+			break;
+		default:
+			lvI.iImage = imageUnread;
+		}
 		lvI.iItem = index;
 		lvI.lParam = (LPARAM)item;
 
@@ -97,6 +102,16 @@ namespace anteRSS
 		lvI.pszText = buf;
 
 		return ListView_InsertItem(listControl, &lvI);
+	}
+
+	void ItemListControl::changeIcon(int index, int imageIndex)
+	{
+		LVITEM lvI;
+		lvI.mask = LVIF_IMAGE;
+		lvI.iImage = imageIndex;
+		lvI.iItem = index;
+
+		ListView_SetItem(listControl, &lvI);
 	}
 
 	ItemListControl::ItemListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager)
@@ -163,7 +178,7 @@ namespace anteRSS
 		for (RSSFeedItemVector::iterator it = itemCache.begin(); it != itemCache.end(); ++it, ++index)
 		{
 			std::stringstream str;
-			insertRow(imageRSS, index, &(*it));
+			insertRow(index, &(*it));
 		}
 	}
 
@@ -194,12 +209,12 @@ namespace anteRSS
 			{
 				RSSFeedItem * item = (RSSFeedItem *)(pnmv->lParam);
 
-				// TODO change icon
 				if (item->status == 0)
 				{
 					item->status = 1;
 					manager->markStatus(item->guid, 1);
 					PostMessage(GetParent(listControl), MSG_LIST_NOTIFY, 0, 0);
+					changeIcon(pnmv->iItem, imageRead);
 				}
 			}
 			break;

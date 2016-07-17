@@ -177,6 +177,10 @@
   <ItemGroup>
     <Image Include="anteRSS.ico" />
     <Image Include="bitmap1.bmp" />
+    <Image Include="icon1.ico" />
+    <Image Include="icon2.ico" />
+    <Image Include="itemread.ico" />
+    <Image Include="itemunread.ico" />
     <Image Include="small.ico" />
     <Image Include="test1.bmp" />
   </ItemGroup>

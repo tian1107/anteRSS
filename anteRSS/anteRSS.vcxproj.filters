@@ -69,5 +69,17 @@
     <Image Include="test1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="itemread.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="itemunread.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

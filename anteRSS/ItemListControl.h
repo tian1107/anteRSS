@@ -16,12 +16,15 @@ namespace anteRSS
 		std::wstring editBuffer;
 
 		// indices
-		int imageRSS;
+		int imageRead;
+		int imageUnread;
+		int imageArchived;
 
 		// functions
 		void createImageLists();
 		void createColumns();
-		int insertRow(int imageIndex, int index, anteRSSParser::RSSFeedItem * feed);
+		int insertRow(int index, anteRSSParser::RSSFeedItem * feed);
+		void changeIcon(int index, int imageIndex);
 	public:
 		ItemListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
