@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "anteRSS.h"
 #include "ItemListControl.h"
 #include "resource.h"
 
@@ -75,7 +76,7 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
-	int ItemListControl::insertRow(int imageIndex, int index, std::wstring text, RSSFeed * feed)
+	int ItemListControl::insertRow(int imageIndex, int index, RSSFeedItem * item)
 	{
 		// TODO dynamic allocation
 		const size_t length = 256;
@@ -90,9 +91,9 @@ namespace anteRSS
 		lvI.state = 0;
 		lvI.iImage = imageIndex;
 		lvI.iItem = index;
-		lvI.lParam = (LPARAM)feed;
+		lvI.lParam = (LPARAM)item;
 
-		StringCchCopy(buf, length, text.c_str());
+		StringCchCopy(buf, length, convertToWide(item->title).c_str());
 		lvI.pszText = buf;
 
 		return ListView_InsertItem(listControl, &lvI);
@@ -133,31 +134,37 @@ namespace anteRSS
 		createImageLists();
 		createColumns();
 
-		notifyItemListChanged();
+		notifyItemListChanged(5);
 	}
 
-	void ItemListControl::notifyItemListChanged()
+	void ItemListControl::notifyItemListChanged(int feedId)
 	{
-		feedCache = manager->getAllFeeds();
+		// means all of it
+		if (feedId == 0)
+		{
+			// TODO do something
+		}
+		// means all the unread
+		else if (feedId == -1)
+		{
+			itemCache = manager->getItemsOfStatus(0);
+		}
+		// means all of the archived
+		else if (feedId == -2)
+		{
+			itemCache = manager->getItemsOfStatus(2);
+		}
+		else
+			itemCache = manager->getItemsOfFeed(feedId);
 
 		ListView_DeleteAllItems(listControl);
 
-		// TODO proper counts
-		insertRow(imageRSS, 0, L"All", 0);
-
-		int totalUnread = 0;
-		int index = 2;
-		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
+		int index = 0;
+		for (RSSFeedItemVector::iterator it = itemCache.begin(); it != itemCache.end(); ++it, ++index)
 		{
 			std::stringstream str;
-			str << it->name << " (" << it->unread << ")";
-			insertRow(imageRSS, index, convertToWide(str.str()), &(*it));
-			totalUnread += it->unread;
+			insertRow(imageRSS, index, &(*it));
 		}
-
-		std::wstringstream str;
-		str << "Unread (" << totalUnread << ")";
-		insertRow(imageRSS, 1, str.str(), 0);
 	}
 
 	void ItemListControl::notifyResize(LPARAM lParam)
@@ -185,53 +192,22 @@ namespace anteRSS
 			LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
 			if (pnmv->uNewState & LVIS_SELECTED)
 			{
-				std::wstringstream str;
+				RSSFeedItem * item = (RSSFeedItem *)(pnmv->lParam);
 
-				RSSFeed * feed = (RSSFeed *)(pnmv->lParam);
-
-				if (pnmv->iItem < 2)
-					str << "not an actual feed!" << std::endl;
-				else
-					str << "new selection! " << feed->id << std::endl;
-
-				OutputDebugString(str.str().c_str());
+				// TODO change icon
+				if (item->status == 0)
+				{
+					item->status = 1;
+					manager->markStatus(item->guid, 1);
+					PostMessage(GetParent(listControl), MSG_LIST_NOTIFY, 0, 0);
+				}
 			}
 			break;
 		}
+		// disable editing
 		case LVN_BEGINLABELEDIT:
-		{
-			NMLVDISPINFO * pdi = (NMLVDISPINFO *)lParam;
-			// all and unread
-			if (pdi->item.iItem < 2)
-				return 1;
-			else
-			{
-				HWND editControl = ListView_GetEditControl(listControl);
-				Edit_SetText(editControl, convertToWide(((RSSFeed *)pdi->item.lParam)->name).c_str());
-				return 0;
-			}
+			return 1;
 			break;
-		}
-		case LVN_ENDLABELEDIT:
-		{
-			NMLVDISPINFO * pdi = (NMLVDISPINFO *)lParam;
-			if (pdi->item.pszText != NULL)
-			{
-				RSSFeed * feed = (RSSFeed *)pdi->item.lParam;
-
-				manager->renameFeed(feed->id, convertToUtf8(pdi->item.pszText));
-
-				notifyItemListChanged();
-
-				// "did not accept" so that it would not overwrite changes by notifyItemListChanged();
-				return 0;
-			}
-			else
-			{
-				return 0;
-			}
-			break;
-		}
 		default:
 			break;
 		}

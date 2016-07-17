@@ -12,7 +12,7 @@ namespace anteRSS
 
 		// rss stuff
 		anteRSSParser::RSSManager * manager;
-		anteRSSParser::RSSFeedVector feedCache;
+		anteRSSParser::RSSFeedItemVector itemCache;
 		std::wstring editBuffer;
 
 		// indices
@@ -21,11 +21,11 @@ namespace anteRSS
 		// functions
 		void createImageLists();
 		void createColumns();
-		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed);
+		int insertRow(int imageIndex, int index, anteRSSParser::RSSFeedItem * feed);
 	public:
 		ItemListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
-		void notifyItemListChanged();
+		void notifyItemListChanged(int feedId);
 		void notifyResize(LPARAM lParam);
 		int notifyNotify(LPARAM lParam);
 	};

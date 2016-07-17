@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "anteRSS.h"
 #include "FeedListControl.h"
 #include "resource.h"
 
@@ -186,16 +187,12 @@ namespace anteRSS
 			LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
 			if (pnmv->uNewState & LVIS_SELECTED)
 			{
-				std::wstringstream str;
-
 				RSSFeed * feed = (RSSFeed *) (pnmv->lParam);
 
 				if (pnmv->iItem < 3)
-					str << "not an actual feed!" << std::endl;
+					PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, -pnmv->iItem);
 				else
-					str << "new selection! " << feed->id << std::endl;
-
-				OutputDebugString(str.str().c_str());
+					PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, feed->id);
 			}
 			break;
 		}
