@@ -144,9 +144,10 @@ namespace anteRSS
 
 		// TODO proper counts
 		insertRow(imageRSS, 0, L"All", 0);
+		insertRow(imageRSS, 2, L"Archived", 0);
 
 		int totalUnread = 0;
-		int index = 2;
+		int index = 3;
 		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
 		{
 			std::stringstream str;
@@ -189,7 +190,7 @@ namespace anteRSS
 
 				RSSFeed * feed = (RSSFeed *) (pnmv->lParam);
 
-				if (pnmv->iItem < 2)
+				if (pnmv->iItem < 3)
 					str << "not an actual feed!" << std::endl;
 				else
 					str << "new selection! " << feed->id << std::endl;
