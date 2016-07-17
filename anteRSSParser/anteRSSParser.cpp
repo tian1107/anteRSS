@@ -294,7 +294,6 @@ namespace anteRSSParser
 		// the result
 		std::stringstream str;
 
-		// TODO shared curl stuff
 		CURL * curl = curl_easy_init();
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadTextFile_cb);
@@ -545,7 +544,6 @@ namespace anteRSSParser
 		// the result
 		std::vector<char> str;
 
-		// TODO shared curl stuff
 		CURL * curl = curl_easy_init();
 		curl_easy_setopt(curl, CURLOPT_SHARE, share);
 
