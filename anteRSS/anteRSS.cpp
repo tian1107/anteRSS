@@ -23,6 +23,7 @@ RSSManager * manager = nullptr;
 
 // window stuff
 HWND hWndMain;
+HWND hWndToolbar;	// TODO make a class out of this
 FeedListControl * rssTree;
 ItemListControl * rssItem;
 
@@ -189,8 +190,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		rssTree->notifyFeedListChanged();
 		break;
 	case WM_SIZE:
-		rssTree->notifyResize(lParam);
-		rssItem->notifyResize(lParam);
+		RECT windowRect, toolbarRect;
+		GetClientRect(hWndMain, &windowRect);
+		GetWindowRect(hWndToolbar, &toolbarRect);
+
+		RECT treeRect;
+		treeRect.top = windowRect.top + toolbarRect.bottom - toolbarRect.top;
+		treeRect.bottom = windowRect.bottom;
+		treeRect.left = windowRect.left;
+		treeRect.right = (windowRect.right - windowRect.left) / 5;
+
+		RECT itemRect;
+		itemRect.top = windowRect.top + toolbarRect.bottom - toolbarRect.top;
+		itemRect.bottom = (itemRect.top + windowRect.bottom) / 2;	// what?! average?
+		itemRect.left = (windowRect.right - windowRect.left) / 5;
+		itemRect.right = windowRect.right;
+
+		rssTree->notifyResize(treeRect);
+		rssItem->notifyResize(itemRect);
 		break;
 	case WM_NOTIFY:
 	{
@@ -198,9 +215,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	case WM_CREATE:
+	{
+		hWndToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
+			WS_CHILD | TBSTYLE_WRAPABLE, 0, 0, 0, 0,
+			hWnd, NULL, hInst, NULL);
+
+		SendMessage(hWndToolbar, TB_AUTOSIZE, 0, 0);
+		ShowWindow(hWndToolbar, TRUE);
+
 		rssTree->CreateControl(hWnd);
 		rssItem->CreateControl(hWnd);
 		break;
+	}
 	case WM_COMMAND:
 	{
 		int wmId = LOWORD(wParam);

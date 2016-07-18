@@ -29,7 +29,7 @@ namespace anteRSS
 		ItemListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
 		void notifyItemListChanged(int feedId);
-		void notifyResize(LPARAM lParam);
+		void notifyResize(RECT rect);
 		int notifyNotify(LPARAM lParam);
 	};
 }

@@ -162,12 +162,9 @@ namespace anteRSS
 		insertRow(imageRSS, 1, str.str(), 0);
 	}
 
-	void FeedListControl::notifyResize(LPARAM lParam)
+	void FeedListControl::notifyResize(RECT rect)
 	{
-		int width = LOWORD(lParam);
-		int height = HIWORD(lParam);
-
-		MoveWindow(listControl, 0, 0, width / 5, height, true);
+		MoveWindow(listControl, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 

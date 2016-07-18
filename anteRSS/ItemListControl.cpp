@@ -182,12 +182,9 @@ namespace anteRSS
 		}
 	}
 
-	void ItemListControl::notifyResize(LPARAM lParam)
+	void ItemListControl::notifyResize(RECT rect)
 	{
-		int width = LOWORD(lParam);
-		int height = HIWORD(lParam);
-
-		MoveWindow(listControl, width / 5, 0, width - width / 5, height / 2, true);
+		MoveWindow(listControl, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
