@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="anteRSS.h" />
     <ClInclude Include="FeedListControl.h" />
+    <ClInclude Include="FeedToolbar.h" />
     <ClInclude Include="ItemListControl.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="anteRSS.cpp" />
     <ClCompile Include="FeedListControl.cpp" />
+    <ClCompile Include="FeedToolbar.cpp" />
     <ClCompile Include="ItemListControl.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -176,13 +178,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="anteRSS.ico" />
-    <Image Include="bitmap1.bmp" />
-    <Image Include="icon1.ico" />
-    <Image Include="icon2.ico" />
     <Image Include="itemread.ico" />
     <Image Include="itemunread.ico" />
     <Image Include="small.ico" />
-    <Image Include="test1.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\anteRSSParser\anteRSSParser.vcxproj">

@@ -6,6 +6,7 @@
 #include "anteRSSParser\anteRSSParser.h"
 #include "FeedListControl.h"
 #include "ItemListControl.h"
+#include "FeedToolbar.h"
 
 using namespace anteRSSParser;
 using namespace anteRSS;
@@ -23,9 +24,9 @@ RSSManager * manager = nullptr;
 
 // window stuff
 HWND hWndMain;
-HWND hWndToolbar;	// TODO make a class out of this
 FeedListControl * rssTree;
 ItemListControl * rssItem;
+FeedToolbar * toolbar;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -53,6 +54,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// initialize controls
 	rssTree = new FeedListControl(hInstance, manager);
 	rssItem = new ItemListControl(hInstance, manager);
+	toolbar = new FeedToolbar(hInstance, manager);
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -190,9 +192,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		rssTree->notifyFeedListChanged();
 		break;
 	case WM_SIZE:
+		toolbar->notifyResize();
+
 		RECT windowRect, toolbarRect;
 		GetClientRect(hWndMain, &windowRect);
-		GetWindowRect(hWndToolbar, &toolbarRect);
+		toolbarRect = toolbar->getDimensions();
 
 		RECT treeRect;
 		treeRect.top = windowRect.top + toolbarRect.bottom - toolbarRect.top;
@@ -216,13 +220,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CREATE:
 	{
-		hWndToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
-			WS_CHILD | TBSTYLE_WRAPABLE, 0, 0, 0, 0,
-			hWnd, NULL, hInst, NULL);
-
-		SendMessage(hWndToolbar, TB_AUTOSIZE, 0, 0);
-		ShowWindow(hWndToolbar, TRUE);
-
+		toolbar->CreateControl(hWnd);
 		rssTree->CreateControl(hWnd);
 		rssItem->CreateControl(hWnd);
 		break;

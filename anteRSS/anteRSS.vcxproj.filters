@@ -36,6 +36,9 @@
     <ClInclude Include="ItemListControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FeedToolbar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -50,6 +53,9 @@
     <ClCompile Include="ItemListControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FeedToolbar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="anteRSS.rc">
@@ -61,18 +67,6 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="anteRSS.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="bitmap1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="test1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="icon1.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="icon2.ico">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="itemread.ico">
