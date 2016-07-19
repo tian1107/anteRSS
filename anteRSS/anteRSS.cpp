@@ -82,8 +82,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	delete manager;
-	delete rssTree;
+	delete toolbar;
 	delete rssItem;
+	delete rssTree;
 
 	// destroy curl
 	curl_global_cleanup();
