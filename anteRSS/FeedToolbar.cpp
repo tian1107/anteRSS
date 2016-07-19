@@ -93,7 +93,7 @@ namespace anteRSS
 			{
 			case BTN_ANTERSS_UPD:
 			{
-				RSSFeed * feed = this->feed->getSelected();
+				RSSFeed * feed = this->feed->getSelectedFeed();
 				if (feed)
 				{
 					// no callback, I don't need the new ones
@@ -101,6 +101,9 @@ namespace anteRSS
 
 					this->feed->notifyFeedListChanged();
 					this->item->notifyItemListChanged(feed->id);
+
+					// assuming that the feed list is always sorted
+
 				}
 				break;
 			}

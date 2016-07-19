@@ -234,7 +234,7 @@ namespace anteRSS
 		return 0;
 	}
 
-	anteRSSParser::RSSFeed * FeedListControl::getSelected()
+	anteRSSParser::RSSFeed * FeedListControl::getSelectedFeed()
 	{
 		// Get the first selected item
 		int iPos = ListView_GetNextItem(listControl, -1, LVNI_SELECTED);
