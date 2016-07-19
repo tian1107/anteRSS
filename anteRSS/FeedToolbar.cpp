@@ -10,18 +10,12 @@ using namespace anteRSSParser;
 namespace anteRSS
 {
 	// threading!
-	void FeedToolbar::updateSingleThread()
+	void FeedToolbar::updateSingleThread(RSSFeed feed, int select)
 	{
-		if (!updateMutex.try_lock())
-			return;
-		RSSFeed * feed = this->feed->getSelectedFeed();
-		int select = this->feed->getSelectedIndex();
-		if (feed)
-		{
-			// no callback, I don't need the new ones
-			manager->updateFeed(feed->id, 0, 0);
-			PostMessage(GetParent(toolbarControl), MSG_UPD_NOTIFY, feed->id, select);
-		}
+		updateMutex.lock();
+		// no callback, I don't need the new ones
+		manager->updateFeed(feed.id, 0, 0);
+		PostMessage(GetParent(toolbarControl), MSG_UPD_NOTIFY, feed.id, select);
 
 		updateMutex.unlock();
 	}
@@ -110,8 +104,15 @@ namespace anteRSS
 			{
 			case BTN_ANTERSS_UPD:
 			{
-				std::thread thread(&FeedToolbar::updateSingleThread, this);
-				thread.detach();
+				RSSFeed * feed = this->feed->getSelectedFeed();
+				int select = this->feed->getSelectedIndex();
+				this->feed->changeIcon(select, this->feed->imageUpdating);
+
+				if (feed)
+				{
+					std::thread thread(&FeedToolbar::updateSingleThread, this, *feed, select);
+					thread.detach();
+				}
 				break;
 			}
 			default:
@@ -130,11 +131,12 @@ namespace anteRSS
 	{
 		if (message == MSG_UPD_NOTIFY)
 		{
-			this->feed->notifyFeedListChanged();
+			this->feed->notifyFeedListChanged(true);
 			this->item->notifyItemListChanged(wParam);
 
 			// assuming that the feed list is always sorted
 			this->feed->setSelected(lParam);
+			this->feed->changeIcon(lParam, this->feed->imageRSS);
 		}
 	}
 

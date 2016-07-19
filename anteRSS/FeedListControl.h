@@ -5,6 +5,7 @@ namespace anteRSS
 {
 	class FeedListControl
 	{
+		friend class FeedToolbar;
 	private:
 		// window stuff
 		HINSTANCE hInst;
@@ -17,15 +18,18 @@ namespace anteRSS
 
 		// indices
 		int imageRSS;
+		int imageUpdating;
+		int imageError;
 
 		// functions
 		void createImageLists();
 		void createColumns();
-		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed);
+		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed, bool inplace);
+		void changeIcon(int index, int imageIndex);
 	public:
 		FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
-		void notifyFeedListChanged();
+		void notifyFeedListChanged(bool inplace);
 		void notifyResize(RECT rect);
 		int notifyNotify(LPARAM lParam);
 		anteRSSParser::RSSFeed * getSelectedFeed();

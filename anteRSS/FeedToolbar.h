@@ -28,7 +28,7 @@ namespace anteRSS
 		anteRSSParser::RSSManager * manager;
 		FeedListControl * feed;
 		ItemListControl * item;
-		void updateSingleThread();
+		void updateSingleThread(anteRSSParser::RSSFeed feed, int select);
 	public:
 		FeedToolbar(HINSTANCE hInst, anteRSSParser::RSSManager * manager, FeedListControl * feed, ItemListControl * item);
 		void CreateControl(HWND parent);

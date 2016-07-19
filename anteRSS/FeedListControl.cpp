@@ -34,6 +34,13 @@ namespace anteRSS
 
 		DestroyIcon(hiconItem);
 
+		hiconItem = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ITEMUNREAD));
+
+		imageUpdating = ImageList_AddIcon(hLarge, hiconItem);
+		ImageList_AddIcon(hSmall, hiconItem);
+
+		DestroyIcon(hiconItem);
+
 		// When you are dealing with multiple icons, you can use the previous four lines of 
 		// code inside a loop. The following code shows such a loop. The 
 		// icons are defined in the application's header file as resources, which 
@@ -76,7 +83,7 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
-	int FeedListControl::insertRow(int imageIndex, int index, std::wstring text, RSSFeed * feed)
+	int FeedListControl::insertRow(int imageIndex, int index, std::wstring text, RSSFeed * feed, bool inplace)
 	{
 		// TODO dynamic allocation
 		const size_t length = 256;
@@ -85,7 +92,10 @@ namespace anteRSS
 		wchar_t buf[length];
 
 		// Initialize LVITEM members that are common to all items.
-		lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE | LVIF_PARAM;
+		if (inplace)
+			lvI.mask = LVIF_TEXT | LVIF_PARAM;
+		else
+			lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE | LVIF_PARAM;
 		lvI.stateMask = 0;
 		lvI.iSubItem = 0;
 		lvI.state = 0;
@@ -96,7 +106,20 @@ namespace anteRSS
 		StringCchCopy(buf, length, text.c_str());
 		lvI.pszText = buf;
 
-		return ListView_InsertItem(listControl, &lvI);
+		if (inplace)
+			return ListView_SetItem(listControl, &lvI);
+		else
+			return ListView_InsertItem(listControl, &lvI);
+	}
+
+	void FeedListControl::changeIcon(int index, int imageIndex)
+	{
+		LVITEM lvI;
+		lvI.mask = LVIF_IMAGE;
+		lvI.iImage = imageIndex;
+		lvI.iItem = index;
+
+		ListView_SetItem(listControl, &lvI);
 	}
 
 	FeedListControl::FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager)
@@ -134,18 +157,19 @@ namespace anteRSS
 		createImageLists();
 		createColumns();
 
-		notifyFeedListChanged();
+		notifyFeedListChanged(false);
 	}
 
-	void FeedListControl::notifyFeedListChanged()
+	void FeedListControl::notifyFeedListChanged(bool inplace)
 	{
 		feedCache = manager->getAllFeeds();
 
-		ListView_DeleteAllItems(listControl);
+		if (!inplace)
+			ListView_DeleteAllItems(listControl);
 
 		// TODO proper counts
-		insertRow(imageRSS, 0, L"All", 0);
-		insertRow(imageRSS, 2, L"Archived", 0);
+		insertRow(imageRSS, 0, L"All", 0, inplace);
+		insertRow(imageRSS, 2, L"Archived", 0, inplace);
 
 		int totalUnread = 0;
 		int index = 3;
@@ -153,13 +177,13 @@ namespace anteRSS
 		{
 			std::stringstream str;
 			str << it->name << " (" << it->unread << ")";
-			insertRow(imageRSS, index, convertToWide(str.str()), &(*it));
+			insertRow(imageRSS, index, convertToWide(str.str()), &(*it), inplace);
 			totalUnread += it->unread;
 		}
 
 		std::wstringstream str;
 		str << "Unread (" << totalUnread << ")";
-		insertRow(imageRSS, 1, str.str(), 0);
+		insertRow(imageRSS, 1, str.str(), 0, inplace);
 	}
 
 	void FeedListControl::notifyResize(RECT rect)
@@ -216,7 +240,7 @@ namespace anteRSS
 
 				manager->renameFeed(feed->id, convertToUtf8(pdi->item.pszText));
 
-				notifyFeedListChanged();
+				notifyFeedListChanged(false);
 
 				// "did not accept" so that it would not overwrite changes by notifyFeedListChanged();
 				return 0;

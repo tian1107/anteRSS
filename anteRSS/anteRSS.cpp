@@ -193,7 +193,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		rssItem->notifyItemListChanged((int) lParam);
 		break;
 	case MSG_LIST_NOTIFY:
-		rssTree->notifyFeedListChanged();
+		rssTree->notifyFeedListChanged(true);
 		break;
 	case WM_SIZE:
 		toolbar->notifyResize();
