@@ -8,6 +8,13 @@ namespace anteRSS
 	private:
 		HINSTANCE hInst;
 		HWND toolbarControl;
+		HIMAGELIST imageList;
+
+		// indices
+		int imageNew;
+		int imageUpdate;
+		int imageUpdateAll;
+		int imageRemove;
 
 		anteRSSParser::RSSManager * manager;
 	public:
