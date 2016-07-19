@@ -2,12 +2,29 @@
 #include "resource.h"
 #include <sstream>
 
+#include "anteRSS.h"
 #include "FeedToolbar.h"
 
 using namespace anteRSSParser;
 
 namespace anteRSS
 {
+	// threading!
+	void FeedToolbar::updateSingleThread()
+	{
+		if (!updateMutex.try_lock())
+			return;
+		RSSFeed * feed = this->feed->getSelectedFeed();
+		int select = this->feed->getSelectedIndex();
+		if (feed)
+		{
+			// no callback, I don't need the new ones
+			manager->updateFeed(feed->id, 0, 0);
+			PostMessage(GetParent(toolbarControl), MSG_UPD_NOTIFY, feed->id, select);
+		}
+
+		updateMutex.unlock();
+	}
 
 	FeedToolbar::FeedToolbar(HINSTANCE hInst, anteRSSParser::RSSManager * manager, FeedListControl * feed, ItemListControl * item)
 	{
@@ -93,19 +110,8 @@ namespace anteRSS
 			{
 			case BTN_ANTERSS_UPD:
 			{
-				RSSFeed * feed = this->feed->getSelectedFeed();
-				int select = this->feed->getSelectedIndex();
-				if (feed)
-				{
-					// no callback, I don't need the new ones
-					manager->updateFeed(feed->id, 0, 0);
-
-					this->feed->notifyFeedListChanged();
-					this->item->notifyItemListChanged(feed->id);
-
-					// assuming that the feed list is always sorted
-					this->feed->setSelected(select);
-				}
+				std::thread thread(&FeedToolbar::updateSingleThread, this);
+				thread.detach();
 				break;
 			}
 			default:
@@ -118,6 +124,18 @@ namespace anteRSS
 		}
 
 		return 0;
+	}
+
+	void FeedToolbar::updateNotify(UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		if (message == MSG_UPD_NOTIFY)
+		{
+			this->feed->notifyFeedListChanged();
+			this->item->notifyItemListChanged(wParam);
+
+			// assuming that the feed list is always sorted
+			this->feed->setSelected(lParam);
+		}
 	}
 
 	RECT FeedToolbar::getDimensions()
