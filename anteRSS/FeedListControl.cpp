@@ -238,7 +238,7 @@ namespace anteRSS
 	{
 		// Get the first selected item
 		int iPos = getSelectedIndex();
-		if (iPos != -1) {
+		if (iPos > 2) {
 			LVITEM item;
 			item.iItem = iPos;
 			item.iSubItem = 0;
@@ -255,6 +255,11 @@ namespace anteRSS
 	int FeedListControl::getSelectedIndex()
 	{
 		return ListView_GetNextItem(listControl, -1, LVNI_SELECTED);
+	}
+
+	void FeedListControl::setSelected(int index)
+	{
+		ListView_SetItemState(listControl, index, LVIS_FOCUSED | LVIS_SELECTED, 0x000F);                     
 	}
 
 }

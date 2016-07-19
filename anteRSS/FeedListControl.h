@@ -30,5 +30,6 @@ namespace anteRSS
 		int notifyNotify(LPARAM lParam);
 		anteRSSParser::RSSFeed * getSelectedFeed();
 		int getSelectedIndex();
+		void setSelected(int index);
 	};
 }
