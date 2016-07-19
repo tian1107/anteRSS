@@ -215,7 +215,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_NOTIFY:
 	{
-		return rssTree->notifyNotify(lParam) + rssItem->notifyNotify(lParam);
+		return rssTree->notifyNotify(lParam) + rssItem->notifyNotify(lParam) + toolbar->notifyNotify(lParam);
 		break;
 	}
 	case WM_CREATE:

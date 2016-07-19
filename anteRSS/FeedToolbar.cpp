@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "resource.h"
+#include <sstream>
 
 #include "FeedToolbar.h"
 
@@ -50,10 +51,10 @@ namespace anteRSS
 
 		TBBUTTON tbButtons[numButtons] =
 		{
-			{ MAKELONG(imageNew,  ImageListID),      0, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"New" },
-			{ MAKELONG(imageUpdate, ImageListID),    1, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Update" },
-			{ MAKELONG(imageUpdateAll, ImageListID), 2, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Update All" },
-			{ MAKELONG(imageRemove, ImageListID),    3, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Remove" }
+			{ MAKELONG(imageNew,  ImageListID),      BTN_ANTERSS_NEW, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"New" },
+			{ MAKELONG(imageUpdate, ImageListID),    BTN_ANTERSS_UPD, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Update" },
+			{ MAKELONG(imageUpdateAll, ImageListID), BTN_ANTERSS_ALL, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Update All" },
+			{ MAKELONG(imageRemove, ImageListID),    BTN_ANTERSS_REM, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Remove" }
 		};
 
 		// Add buttons.
@@ -67,6 +68,34 @@ namespace anteRSS
 	void FeedToolbar::notifyResize()
 	{
 		SendMessage(toolbarControl, TB_AUTOSIZE, 0, 0);
+	}
+
+	int FeedToolbar::notifyNotify(LPARAM lParam)
+	{
+		// the nmhdr
+		LPNMHDR source = (LPNMHDR)lParam;
+
+		// first, check if it is from this control
+		if (source->hwndFrom != toolbarControl)
+			return 0;
+
+		switch (source->code)
+		{
+		case NM_CLICK:
+		{
+			LPNMMOUSE lpnm = (LPNMMOUSE)lParam;
+			std::wstringstream str;
+
+			str << L"toolbar select: " << lpnm->dwItemSpec << std::endl;
+
+			OutputDebugString(str.str().c_str());
+			break;
+		}
+		default:
+			break;
+		}
+
+		return 0;
 	}
 
 	RECT FeedToolbar::getDimensions()
