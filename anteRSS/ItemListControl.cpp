@@ -149,7 +149,7 @@ namespace anteRSS
 		createImageLists();
 		createColumns();
 
-		notifyItemListChanged(5);
+		notifyItemListChanged(-1);
 	}
 
 	void ItemListControl::notifyItemListChanged(int feedId)
