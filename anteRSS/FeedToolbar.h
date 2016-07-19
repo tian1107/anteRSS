@@ -1,5 +1,7 @@
 #pragma once
 #include "anteRSSParser\anteRSSParser.h"
+#include "FeedListControl.h"
+#include "ItemListControl.h"
 
 #define BTN_ANTERSS_NEW 0
 #define BTN_ANTERSS_UPD 1
@@ -22,8 +24,10 @@ namespace anteRSS
 		int imageRemove;
 
 		anteRSSParser::RSSManager * manager;
+		FeedListControl * feed;
+		ItemListControl * item;
 	public:
-		FeedToolbar(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
+		FeedToolbar(HINSTANCE hInst, anteRSSParser::RSSManager * manager, FeedListControl * feed, ItemListControl * item);
 		void CreateControl(HWND parent);
 		void notifyResize();
 		int notifyNotify(LPARAM lParam);

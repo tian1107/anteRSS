@@ -28,5 +28,6 @@ namespace anteRSS
 		void notifyFeedListChanged();
 		void notifyResize(RECT rect);
 		int notifyNotify(LPARAM lParam);
+		anteRSSParser::RSSFeed * getSelected();
 	};
 }

@@ -120,7 +120,7 @@ namespace anteRSS
 			WC_LISTVIEW,                // list view class
 			L"",                         // no default text
 			WS_VISIBLE | WS_CHILD | LVS_REPORT | WS_BORDER | LVS_NOCOLUMNHEADER |
-			LVS_SINGLESEL | WS_EX_CLIENTEDGE,
+			LVS_SINGLESEL | WS_EX_CLIENTEDGE | LVS_SHOWSELALWAYS,
 			0, 0,
 			(rcClient.right - rcClient.left) / 5, rcClient.bottom - rcClient.top,
 			parent,
@@ -232,6 +232,24 @@ namespace anteRSS
 		}
 
 		return 0;
+	}
+
+	anteRSSParser::RSSFeed * FeedListControl::getSelected()
+	{
+		// Get the first selected item
+		int iPos = ListView_GetNextItem(listControl, -1, LVNI_SELECTED);
+		if (iPos != -1) {
+			LVITEM item;
+			item.iItem = iPos;
+			item.iSubItem = 0;
+			item.mask = LVIF_PARAM;
+
+			ListView_GetItem(listControl, &item);
+
+			return (RSSFeed *)item.lParam;
+		}
+
+		return nullptr;
 	}
 
 }

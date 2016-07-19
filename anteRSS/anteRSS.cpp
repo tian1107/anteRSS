@@ -54,7 +54,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// initialize controls
 	rssTree = new FeedListControl(hInstance, manager);
 	rssItem = new ItemListControl(hInstance, manager);
-	toolbar = new FeedToolbar(hInstance, manager);
+	toolbar = new FeedToolbar(hInstance, manager, rssTree, rssItem);
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

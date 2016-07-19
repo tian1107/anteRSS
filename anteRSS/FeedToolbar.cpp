@@ -4,13 +4,17 @@
 
 #include "FeedToolbar.h"
 
+using namespace anteRSSParser;
+
 namespace anteRSS
 {
 
-	FeedToolbar::FeedToolbar(HINSTANCE hInst, anteRSSParser::RSSManager * manager)
+	FeedToolbar::FeedToolbar(HINSTANCE hInst, anteRSSParser::RSSManager * manager, FeedListControl * feed, ItemListControl * item)
 	{
 		this->hInst = hInst;
 		this->manager = manager;
+		this->feed = feed;
+		this->item = item;
 	}
 
 	void FeedToolbar::CreateControl(HWND parent)
@@ -84,11 +88,25 @@ namespace anteRSS
 		case NM_CLICK:
 		{
 			LPNMMOUSE lpnm = (LPNMMOUSE)lParam;
-			std::wstringstream str;
 
-			str << L"toolbar select: " << lpnm->dwItemSpec << std::endl;
+			switch (lpnm->dwItemSpec)
+			{
+			case BTN_ANTERSS_UPD:
+			{
+				RSSFeed * feed = this->feed->getSelected();
+				if (feed)
+				{
+					// no callback, I don't need the new ones
+					manager->updateFeed(feed->id, 0, 0);
 
-			OutputDebugString(str.str().c_str());
+					this->feed->notifyFeedListChanged();
+					this->item->notifyItemListChanged(feed->id);
+				}
+				break;
+			}
+			default:
+				break;
+			}
 			break;
 		}
 		default:
