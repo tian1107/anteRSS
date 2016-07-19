@@ -29,5 +29,6 @@ namespace anteRSS
 		void notifyResize(RECT rect);
 		int notifyNotify(LPARAM lParam);
 		anteRSSParser::RSSFeed * getSelectedFeed();
+		int getSelectedIndex();
 	};
 }
