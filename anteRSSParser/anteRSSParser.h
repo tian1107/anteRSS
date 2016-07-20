@@ -105,6 +105,7 @@ namespace anteRSSParser
 		RSSManager(std::string dbFile);
 		~RSSManager();
 		void addFeed(RSSFeed feed);
+		void addFeed(std::string url);
 		void renameFeed(int feedId, std::string name);
 		RSSFeed getFeed(int feedId);
 		RSSFeed getFeedFromUrl(std::string url);

@@ -373,6 +373,22 @@ namespace anteRSSParser
 		sqlite3_reset(addFeedStmt);
 	}
 
+	void RSSManager::addFeed(std::string url)
+	{
+		// TODO error check
+
+		RSSFeed feed;
+		feed.url = url;
+		
+		RSSDocument doc;
+		std::vector<char> & file = manager.downloadSingle(feed.url);
+		doc.Parse(file.data(), file.size());
+
+		feed.name = doc.getTitle();
+
+		addFeed(feed);
+	}
+
 	void RSSManager::renameFeed(int feedId, std::string name)
 	{
 		sqlite3_clear_bindings(renameFeedStmt);
