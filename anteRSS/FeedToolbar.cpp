@@ -131,7 +131,7 @@ namespace anteRSS
 	{
 		if (message == MSG_UPD_NOTIFY)
 		{
-			this->feed->notifyFeedListChanged(true);
+			this->feed->notifyFeedListChanged();
 			this->item->notifyItemListChanged(wParam);
 
 			// assuming that the feed list is always sorted

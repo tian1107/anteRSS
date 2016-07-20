@@ -83,7 +83,7 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
-	int FeedListControl::insertRow(int imageIndex, int index, std::wstring text, RSSFeed * feed, bool inplace)
+	int FeedListControl::insertRow(int imageIndex, int index, std::wstring text, RSSFeed * feed)
 	{
 		// TODO dynamic allocation
 		const size_t length = 256;
@@ -92,10 +92,7 @@ namespace anteRSS
 		wchar_t buf[length];
 
 		// Initialize LVITEM members that are common to all items.
-		if (inplace)
-			lvI.mask = LVIF_TEXT | LVIF_PARAM;
-		else
-			lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE | LVIF_PARAM;
+		lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE | LVIF_PARAM;
 		lvI.stateMask = 0;
 		lvI.iSubItem = 0;
 		lvI.state = 0;
@@ -106,10 +103,7 @@ namespace anteRSS
 		StringCchCopy(buf, length, text.c_str());
 		lvI.pszText = buf;
 
-		if (inplace)
-			return ListView_SetItem(listControl, &lvI);
-		else
-			return ListView_InsertItem(listControl, &lvI);
+		return ListView_InsertItem(listControl, &lvI);
 	}
 
 	void FeedListControl::changeIcon(int index, int imageIndex)
@@ -157,19 +151,18 @@ namespace anteRSS
 		createImageLists();
 		createColumns();
 
-		notifyFeedListChanged(false);
+		notifyFeedListChanged();
 	}
 
-	void FeedListControl::notifyFeedListChanged(bool inplace)
+	void FeedListControl::notifyFeedListChanged()
 	{
 		feedCache = manager->getAllFeeds();
 
-		if (!inplace)
-			ListView_DeleteAllItems(listControl);
+		ListView_DeleteAllItems(listControl);
 
 		// TODO proper counts
-		insertRow(imageRSS, 0, L"All", 0, inplace);
-		insertRow(imageRSS, 2, L"Archived", 0, inplace);
+		insertRow(imageRSS, 0, L"All", 0);
+		insertRow(imageRSS, 2, L"Archived", 0);
 
 		int totalUnread = 0;
 		int index = 3;
@@ -177,13 +170,13 @@ namespace anteRSS
 		{
 			std::stringstream str;
 			str << it->name << " (" << it->unread << ")";
-			insertRow(imageRSS, index, convertToWide(str.str()), &(*it), inplace);
+			insertRow(imageRSS, index, convertToWide(str.str()), &(*it));
 			totalUnread += it->unread;
 		}
 
 		std::wstringstream str;
 		str << "Unread (" << totalUnread << ")";
-		insertRow(imageRSS, 1, str.str(), 0, inplace);
+		insertRow(imageRSS, 1, str.str(), 0);
 	}
 
 	void FeedListControl::notifyResize(RECT rect)
@@ -240,7 +233,7 @@ namespace anteRSS
 
 				manager->renameFeed(feed->id, convertToUtf8(pdi->item.pszText));
 
-				notifyFeedListChanged(false);
+				notifyFeedListChanged();
 
 				// "did not accept" so that it would not overwrite changes by notifyFeedListChanged();
 				return 0;

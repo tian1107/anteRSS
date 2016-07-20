@@ -1,5 +1,6 @@
 #pragma once
 #include "anteRSSParser\anteRSSParser.h"
+#include <unordered_set>
 
 namespace anteRSS
 {
@@ -21,15 +22,18 @@ namespace anteRSS
 		int imageUpdating;
 		int imageError;
 
+		// markers
+		std::unordered_set<int> idLoading;
+
 		// functions
 		void createImageLists();
 		void createColumns();
-		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed, bool inplace);
+		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed);
 		void changeIcon(int index, int imageIndex);
 	public:
 		FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
-		void notifyFeedListChanged(bool inplace);
+		void notifyFeedListChanged();
 		void notifyResize(RECT rect);
 		int notifyNotify(LPARAM lParam);
 		anteRSSParser::RSSFeed * getSelectedFeed();
