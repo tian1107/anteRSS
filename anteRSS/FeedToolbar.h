@@ -33,4 +33,7 @@ namespace anteRSS
 		int notifyNotify(LPARAM lParam);
 		RECT getDimensions();
 	};
+
+	// handler for the new feed dialog
+	INT_PTR CALLBACK NewFeedDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 }

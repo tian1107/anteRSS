@@ -92,6 +92,19 @@ namespace anteRSS
 
 			switch (lpnm->dwItemSpec)
 			{
+			case BTN_ANTERSS_NEW:
+			{
+				wchar_t * url = (wchar_t *) DialogBox(hInst, MAKEINTRESOURCE(IDD_NEWFEED), GetParent(toolbarControl), NewFeedDlgProc);
+				if (url)
+				{
+					std::string sUrl = convertToUtf8(url);
+					manager->addFeed(sUrl);
+					feed->notifyFeedListChanged();
+					// TODO update new feed
+					delete [] url;
+				}
+				break;
+			}
 			case BTN_ANTERSS_UPD:
 			{
 				feed->updateSelected();
@@ -114,6 +127,56 @@ namespace anteRSS
 		RECT result;
 		GetWindowRect(toolbarControl, &result);
 		return result;
+	}
+
+	INT_PTR CALLBACK NewFeedDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+	{
+		switch (Message)
+		{
+		case WM_INITDIALOG:
+		{
+			HWND text = GetDlgItem(hwnd, IDC_NEWFEEDURL);
+
+			// get clipboard
+			if (OpenClipboard(NULL))
+			{
+				HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
+				if (hClipboardData)
+				{
+					wchar_t * pchData = (wchar_t *)GlobalLock(hClipboardData);
+					if (pchData)
+					{
+						Edit_SetText(text, pchData);
+						GlobalUnlock(hClipboardData);
+					}
+				}
+				CloseClipboard();
+			}
+
+			return FALSE;
+			break;
+		}
+		case WM_COMMAND:
+			switch (LOWORD(wParam))
+			{
+			case IDOK:
+			{
+				HWND text = GetDlgItem(hwnd, IDC_NEWFEEDURL);
+				int length = Edit_GetTextLength(text) + 1;
+				wchar_t * url = new wchar_t[length];
+				Edit_GetText(text, url, length);
+				EndDialog(hwnd, INT_PTR(url));
+				break;
+			}
+			case IDCANCEL:
+				EndDialog(hwnd, 0);
+				break;
+			}
+			break;
+		default:
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 }
