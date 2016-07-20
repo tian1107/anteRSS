@@ -104,7 +104,9 @@ namespace anteRSS
 		StringCchCopy(buf, length, text.c_str());
 		lvI.pszText = buf;
 
-		return ListView_InsertItem(listControl, &lvI);
+		int result = ListView_InsertItem(listControl, &lvI);
+		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
+		return result;
 	}
 
 	void FeedListControl::changeIcon(int index, int imageIndex)
