@@ -1,6 +1,7 @@
 #pragma once
 #include "anteRSSParser\anteRSSParser.h"
 #include <unordered_set>
+#include <mutex>
 
 namespace anteRSS
 {
@@ -16,6 +17,7 @@ namespace anteRSS
 		anteRSSParser::RSSManager * manager;
 		anteRSSParser::RSSFeedVector feedCache;
 		std::wstring editBuffer;
+		std::mutex updateMutex;
 
 		// indices
 		int imageRSS;
@@ -30,6 +32,7 @@ namespace anteRSS
 		void createColumns();
 		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed);
 		void changeIcon(int index, int imageIndex);
+		void updateSingleThread(anteRSSParser::RSSFeed feed, int select);
 	public:
 		FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
@@ -39,5 +42,7 @@ namespace anteRSS
 		anteRSSParser::RSSFeed * getSelectedFeed();
 		int getSelectedIndex();
 		void setSelected(int index);
+		void updateNotify(UINT message, WPARAM wParam, LPARAM lParam);
+		void updateSelected();
 	};
 }

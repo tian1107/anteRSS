@@ -11,6 +11,7 @@ using namespace anteRSSParser;
 
 namespace anteRSS
 {
+
 	void FeedListControl::createImageLists()
 	{
 		HICON hiconItem;     // Icon for list-view items.
@@ -116,6 +117,16 @@ namespace anteRSS
 		ListView_SetItem(listControl, &lvI);
 	}
 
+	void FeedListControl::updateSingleThread(RSSFeed feed, int select)
+	{
+		updateMutex.lock();
+		// no callback, I don't need the new ones
+		manager->updateFeed(feed.id, 0, 0);
+		PostMessage(GetParent(listControl), MSG_UPD_NOTIFY, feed.id, select);
+
+		updateMutex.unlock();
+	}
+
 	FeedListControl::FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager)
 	{
 		this->hInst = hInst;
@@ -168,9 +179,13 @@ namespace anteRSS
 		int index = 3;
 		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
 		{
+			int imageId = imageRSS;
+			if (idLoading.find(it->id) != idLoading.end())
+				imageId = imageUpdating;
+
 			std::stringstream str;
 			str << it->name << " (" << it->unread << ")";
-			insertRow(imageRSS, index, convertToWide(str.str()), &(*it));
+			insertRow(imageId, index, convertToWide(str.str()), &(*it));
 			totalUnread += it->unread;
 		}
 
@@ -277,6 +292,41 @@ namespace anteRSS
 	void FeedListControl::setSelected(int index)
 	{
 		ListView_SetItemState(listControl, index, LVIS_FOCUSED | LVIS_SELECTED, 0x000F);                     
+	}
+
+	void FeedListControl::updateNotify(UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		if (message == MSG_UPD_NOTIFY)
+		{
+			int listIndex = lParam;
+			int feedId = wParam;
+
+			notifyFeedListChanged();
+
+			// assuming that the feed list is always sorted
+			// this also changes the itemlist, as this sends a change in selection message
+			setSelected(listIndex);
+			changeIcon(listIndex, imageRSS);
+			idLoading.erase(feedId);
+		}
+	}
+
+	void FeedListControl::updateSelected()
+	{
+		RSSFeed * feed = getSelectedFeed();
+		int select = getSelectedIndex();
+
+		if (feed && idLoading.find(feed->id) == idLoading.end())
+		{
+			std::wstringstream str;
+			str << "To update: " << feed->id << std::endl;
+			OutputDebugString(str.str().c_str());
+
+			changeIcon(select, imageUpdating);
+			idLoading.insert(feed->id);
+			std::thread thread(&FeedListControl::updateSingleThread, this, *feed, select);
+			thread.detach();
+		}
 	}
 
 }
