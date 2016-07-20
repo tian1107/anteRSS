@@ -156,6 +156,7 @@
     <ClInclude Include="anteRSS.h" />
     <ClInclude Include="FeedListControl.h" />
     <ClInclude Include="FeedToolbar.h" />
+    <ClInclude Include="ItemDescControl.h" />
     <ClInclude Include="ItemListControl.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="anteRSS.cpp" />
     <ClCompile Include="FeedListControl.cpp" />
     <ClCompile Include="FeedToolbar.cpp" />
+    <ClCompile Include="ItemDescControl.cpp" />
     <ClCompile Include="ItemListControl.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

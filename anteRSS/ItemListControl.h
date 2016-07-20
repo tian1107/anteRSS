@@ -1,5 +1,6 @@
 #pragma once
 #include "anteRSSParser\anteRSSParser.h"
+#include "ItemDescControl.h"
 
 namespace anteRSS
 {
@@ -9,6 +10,7 @@ namespace anteRSS
 		// window stuff
 		HINSTANCE hInst;
 		HWND listControl;
+		ItemDescControl * descControl;
 
 		// rss stuff
 		anteRSSParser::RSSManager * manager;
@@ -26,7 +28,7 @@ namespace anteRSS
 		int insertRow(int index, anteRSSParser::RSSFeedItem * feed);
 		void changeIcon(int index, int imageIndex);
 	public:
-		ItemListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
+		ItemListControl(HINSTANCE hInst, ItemDescControl * descControl, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
 		void notifyItemListChanged(int feedId);
 		void notifyResize(RECT rect);

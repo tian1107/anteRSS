@@ -7,6 +7,7 @@
 #include "FeedListControl.h"
 #include "ItemListControl.h"
 #include "FeedToolbar.h"
+#include "ItemDescControl.h"
 
 using namespace anteRSSParser;
 using namespace anteRSS;
@@ -27,6 +28,7 @@ HWND hWndMain;
 FeedListControl * rssTree;
 ItemListControl * rssItem;
 FeedToolbar * toolbar;
+ItemDescControl * rssDesc;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -53,7 +55,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// initialize controls
 	rssTree = new FeedListControl(hInstance, manager);
-	rssItem = new ItemListControl(hInstance, manager);
+	rssDesc = new ItemDescControl(hInstance);
+	rssItem = new ItemListControl(hInstance, rssDesc, manager);
 	toolbar = new FeedToolbar(hInstance, manager, rssTree, rssItem);
 
 	// Initialize global strings
@@ -81,10 +84,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 
-	delete manager;
 	delete toolbar;
 	delete rssItem;
+	delete rssDesc;
 	delete rssTree;
+	delete manager;
 
 	// destroy curl
 	curl_global_cleanup();
@@ -214,8 +218,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		itemRect.left = (windowRect.right - windowRect.left) / 5;
 		itemRect.right = windowRect.right;
 
+		RECT descRect;
+		descRect.top = (itemRect.top + windowRect.bottom) / 2;
+		descRect.bottom = windowRect.bottom;
+		descRect.left = (windowRect.right - windowRect.left) / 5;
+		descRect.right = windowRect.right;
+
 		rssTree->notifyResize(treeRect);
 		rssItem->notifyResize(itemRect);
+		rssDesc->notifyResize(descRect);
 		break;
 	case WM_NOTIFY:
 	{
@@ -226,6 +237,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		toolbar->CreateControl(hWnd);
 		rssTree->CreateControl(hWnd);
+		rssDesc->CreateControl(hWnd);
 		rssItem->CreateControl(hWnd);
 		break;
 	}

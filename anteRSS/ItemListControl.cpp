@@ -116,10 +116,11 @@ namespace anteRSS
 		ListView_SetItem(listControl, &lvI);
 	}
 
-	ItemListControl::ItemListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager)
+	ItemListControl::ItemListControl(HINSTANCE hInst, ItemDescControl * descControl, anteRSSParser::RSSManager * manager)
 	{
 		this->hInst = hInst;
 		this->manager = manager;
+		this->descControl = descControl;
 	}
 
 	void ItemListControl::CreateControl(HWND parent)
@@ -215,6 +216,8 @@ namespace anteRSS
 					PostMessage(GetParent(listControl), MSG_LIST_NOTIFY, 0, 0);
 					changeIcon(pnmv->iItem, imageRead);
 				}
+
+				descControl->setText(convertToWide(item->description));
 			}
 			break;
 		}
