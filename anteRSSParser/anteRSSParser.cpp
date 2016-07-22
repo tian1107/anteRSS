@@ -311,6 +311,8 @@ namespace anteRSSParser
 	{
 		RSSFeedItemVector result;
 
+		simpleSQL(db, "begin transaction;");
+
 		RSSItem item = doc->getFirstItem();
 		while (!item.isInvalid())
 		{
@@ -340,6 +342,8 @@ namespace anteRSSParser
 
 			item = item.getNext();
 		}
+
+		simpleSQL(db, "commit;");
 
 		return result;
 	}
