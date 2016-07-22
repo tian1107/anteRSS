@@ -7,6 +7,9 @@
 #define BTN_ANTERSS_UPD 1
 #define BTN_ANTERSS_ALL 2
 #define BTN_ANTERSS_REM 3
+#define BTN_ANTERSS_RDA 4
+
+#define BTN_ANTERSS_LAST 5
 
 namespace anteRSS
 {
@@ -22,6 +25,7 @@ namespace anteRSS
 		int imageUpdate;
 		int imageUpdateAll;
 		int imageRemove;
+		int imageAllRead;
 
 		anteRSSParser::RSSManager * manager;
 		FeedListControl * feed;

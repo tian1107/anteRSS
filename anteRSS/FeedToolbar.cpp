@@ -22,7 +22,7 @@ namespace anteRSS
 	{
 		// Declare and initialize local constants.
 		const int ImageListID = 0;
-		const int numButtons = 4;
+		const int numButtons = BTN_ANTERSS_LAST;
 		const int bitmapSize = 16;
 		HICON hiconItem;
 
@@ -59,7 +59,8 @@ namespace anteRSS
 			{ MAKELONG(imageNew,  ImageListID),      BTN_ANTERSS_NEW, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"New" },
 			{ MAKELONG(imageUpdate, ImageListID),    BTN_ANTERSS_UPD, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Update" },
 			{ MAKELONG(imageUpdateAll, ImageListID), BTN_ANTERSS_ALL, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Update All" },
-			{ MAKELONG(imageRemove, ImageListID),    BTN_ANTERSS_REM, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Remove" }
+			{ MAKELONG(imageRemove, ImageListID),    BTN_ANTERSS_REM, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Remove" },
+			{ MAKELONG(imageAllRead, ImageListID),   BTN_ANTERSS_RDA, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Mark All As Read" }
 		};
 
 		// Add buttons.
@@ -113,6 +114,12 @@ namespace anteRSS
 			case BTN_ANTERSS_ALL:
 			{
 				feed->updateAll(false);
+				break;
+			}
+			case BTN_ANTERSS_RDA:
+			{
+				manager->markAllAsRead();
+				feed->notifyFeedListChanged();
 				break;
 			}
 			default:
