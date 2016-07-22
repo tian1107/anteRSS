@@ -84,6 +84,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 
+	// kill the timer
+	KillTimer(hWndMain, IDT_UPDATE_TIMER);
+
 	delete toolbar;
 	delete rssItem;
 	delete rssDesc;
