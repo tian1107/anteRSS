@@ -110,6 +110,11 @@ namespace anteRSS
 				feed->updateSelected();
 				break;
 			}
+			case BTN_ANTERSS_ALL:
+			{
+				feed->updateAll();
+				break;
+			}
 			default:
 				break;
 			}

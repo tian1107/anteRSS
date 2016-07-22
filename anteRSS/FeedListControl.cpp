@@ -331,4 +331,19 @@ namespace anteRSS
 		}
 	}
 
+	void FeedListControl::updateAll()
+	{
+		// remember the selected
+		int select = getSelectedIndex();
+
+		// find all of them
+		int count = ListView_GetItemCount(listControl);
+		for (int i = 3; i < count; i++)
+		{
+			// TODO there is a better way
+			setSelected(i);
+			updateSelected();
+		}
+	}
+
 }

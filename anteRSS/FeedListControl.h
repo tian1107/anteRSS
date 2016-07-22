@@ -33,6 +33,7 @@ namespace anteRSS
 		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed);
 		void changeIcon(int index, int imageIndex);
 		void updateSingleThread(anteRSSParser::RSSFeed feed, int select);
+		void updateAllThread();
 	public:
 		FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
@@ -44,5 +45,6 @@ namespace anteRSS
 		void setSelected(int index);
 		void updateNotify(UINT message, WPARAM wParam, LPARAM lParam);
 		void updateSelected();
+		void updateAll();
 	};
 }
