@@ -419,7 +419,17 @@ namespace anteRSS
 		// completely arbitrary
 		if (newFeeds.size() > 3)
 		{
-			str << newFeeds.size() << " new items received.";
+			str << newFeeds.size() << " new items received, from ";
+			std::unordered_set<int> sources;
+			for (RSSFeedItemVector::iterator it = newFeeds.begin(); it != newFeeds.end(); ++it)
+			{
+				if (sources.find(it->feedid) == sources.end())
+				{
+					sources.insert(it->feedid);
+					RSSFeed feed = manager->getFeed(it->feedid);
+					str << convertToWide(feed.name) << "; ";
+				}
+			}
 		}
 		else
 		{
