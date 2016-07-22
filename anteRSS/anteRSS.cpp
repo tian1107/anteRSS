@@ -305,6 +305,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SYSCOMMAND:
 		switch (wParam)
 		{
+		case SC_CLOSE:
 		case SC_MINIMIZE:
 			SetParent(hWnd, HWND_MESSAGE);
 			break;
@@ -335,7 +336,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case NIN_SELECT:
 			if (IsWindowVisible(hWnd))
 			{
-
+				SetForegroundWindow(hWnd);
 			}
 			else
 			{
