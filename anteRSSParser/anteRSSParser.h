@@ -54,7 +54,7 @@ namespace anteRSSParser
 		std::string guid;
 		std::string title;
 		std::string description;
-		std::string feedid;
+		int feedid;
 		std::string date;
 		int status;
 	};
