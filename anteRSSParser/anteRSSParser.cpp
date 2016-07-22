@@ -600,6 +600,12 @@ namespace anteRSSParser
 		{
 			updateFeed(it->id, callback, data);
 		}
+
+		// mark the end
+		if (callback)
+		{
+			callback(0, true, RSSFeedItemVector(), data);
+		}
 	}
 
 	void RSSManager::markStatus(std::string guid, int status)
