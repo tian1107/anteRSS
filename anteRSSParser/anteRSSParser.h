@@ -101,6 +101,7 @@ namespace anteRSSParser
 		sqlite3_stmt * removeFeedStmt;
 		sqlite3_stmt * updateFeedStmt;
 		sqlite3_stmt * markItemStmt;
+		sqlite3_stmt * markAllReadStmt;
 	public:
 		RSSManager(std::string dbFile);
 		~RSSManager();
@@ -116,6 +117,7 @@ namespace anteRSSParser
 		void updateFeed(int feedId, RSSManagerCallback callback, void * data);
 		void updateAll(RSSManagerCallback callback, void * data);
 		void markStatus(std::string guid, int status);
+		void markAllAsRead();
 		std::string getLastError();
 	};
 

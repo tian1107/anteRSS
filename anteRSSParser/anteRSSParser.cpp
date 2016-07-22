@@ -347,6 +347,8 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &updateFeedStmt, NULL);
 		feedStr = "update FeedItems set status=?1 where guid=?2;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markItemStmt, NULL);
+		feedStr = "update FeedItems set status=1 where status=0;";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markAllReadStmt, NULL);
 	}
 
 	RSSManager::~RSSManager()
@@ -615,6 +617,12 @@ namespace anteRSSParser
 		sqlite3_bind_text(markItemStmt, 2, guid.c_str(), -1, SQLITE_STATIC);
 		int rc = sqlite3_step(markItemStmt);
 		sqlite3_reset(markItemStmt);
+	}
+
+	void RSSManager::markAllAsRead()
+	{
+		sqlite3_step(markAllReadStmt);
+		sqlite3_reset(markAllReadStmt);
 	}
 
 	DownloadManager::DownloadManager()
