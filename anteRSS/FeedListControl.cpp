@@ -151,6 +151,7 @@ namespace anteRSS
 			control->changeIcon(control->getIndexFromId(feedid), control->imageRSS);
 			if (newItem.size() > 0)
 				control->notifyFeedListChanged();
+			control->idLoading.erase(feedid);
 		}
 
 	}
@@ -401,6 +402,12 @@ namespace anteRSS
 		for (int i = 3; i < count; i++)
 		{
 			changeIcon(i, imageUpdating);
+		}
+
+		RSSFeedVector all = manager->getAllFeeds();
+		for (RSSFeedVector::iterator it = all.begin(); it != all.end(); ++it)
+		{
+			idLoading.insert(it->id);
 		}
 
 		std::thread thread(&FeedListControl::updateAllThread, this, newNotify);
