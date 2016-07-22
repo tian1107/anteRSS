@@ -88,6 +88,7 @@ namespace anteRSSParser
 
 	class RSSManager
 	{
+		friend void updateAllCallbackSingle(std::string url, std::vector<char> content, void * data);
 	private:
 		DownloadManager manager;
 		sqlite3* db;

@@ -144,6 +144,7 @@ namespace anteRSS
 				PostMessage(GetParent(control->listControl), MSG_SHOW_NOTIFY, 0, 0);
 			}
 			control->idLoading.erase(0);
+			control->notifyFeedListChanged();
 		}
 		else
 		{

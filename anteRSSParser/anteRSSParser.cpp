@@ -609,14 +609,37 @@ namespace anteRSSParser
 		}
 	}
 
+	void updateAllCallbackSingle(std::string url, std::vector<char> content, void * data)
+	{
+		void ** buf = (void **) data;
+		RSSManager * control = (RSSManager *) buf[0];
+		RSSManagerCallback callback = (RSSManagerCallback) buf[1];
+		void * cData = buf[2];
+
+		RSSFeed feed = control->getFeedFromUrl(url);
+		RSSDocument doc;
+		doc.Parse(content.data(), content.size());
+
+		RSSFeedItemVector result = control->updateFeedFromDoc(&doc, feed.id);
+		if (callback)
+			callback(feed.id, true, result, cData);
+
+	}
+
 	void RSSManager::updateAll(RSSManagerCallback callback, void * data)
 	{
-		// TODO use libcurl multi instead
 		RSSFeedVector feeds = getAllFeeds();
+
+		std::vector<std::string> urls;
 		for (RSSFeedVector::iterator it = feeds.begin(); it != feeds.end(); ++it)
 		{
-			updateFeed(it->id, callback, data);
+			// take note that there will be no debug stuff
+			urls.push_back(it->url);
 		}
+
+		void * buf[3] = { this, callback, data };
+
+		manager.downloadMultiple(urls, updateAllCallbackSingle, buf);
 
 		// mark the end
 		if (callback)
@@ -696,4 +719,77 @@ namespace anteRSSParser
 
 		return str;
 	}
+
+	void DownloadManager::downloadMultiple(std::vector<std::string> urls, DownloadManagerCallback callback, void * data)
+	{
+		lock.lock();
+		int repeats = 0;
+
+		CURLM * multi = curl_multi_init();
+
+		std::vector<CURL *> handles;
+		std::vector<std::vector<char> *> files;
+		for (std::vector<std::string>::iterator it = urls.begin(); it != urls.end(); ++it)
+		{
+			CURL * curl = curl_easy_init();
+			curl_easy_setopt(curl, CURLOPT_SHARE, share);
+			
+			curl_easy_setopt(curl, CURLOPT_URL, it->c_str());
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
+
+			std::vector<char> * file = new std::vector<char>;
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+			files.push_back(file);
+
+			handles.push_back(curl);
+			curl_multi_add_handle(multi, curl);
+		}
+
+		int filesLeft = 0;
+		curl_multi_perform(multi, &filesLeft);
+		do
+		{
+			CURLMcode mc;
+			int numfds;
+			mc = curl_multi_wait(multi, NULL, 0, 1000, &numfds);
+
+			if (mc != CURLM_OK) 
+			{
+				fprintf(stderr, "curl_multi_wait() failed, code %d.\n", mc);
+				break;
+			}
+
+			if (!numfds) 
+			{
+				repeats++; /* count number of repeated zero numfds */
+				if (repeats > 1) 
+				{
+					Sleep(100); /* sleep 100 milliseconds */
+				}
+			}
+			else
+				repeats = 0;
+
+			curl_multi_perform(multi, &filesLeft);
+		} while (filesLeft);
+
+		// all files downloaded
+		for (int i = 0; i < handles.size(); ++i)
+		{
+			CURL * curl = handles[i];
+			std::vector<char> * file = files[i];
+
+			curl_multi_remove_handle(multi, curl);
+			curl_easy_cleanup(curl);
+
+			callback(urls[i], *file, data);
+
+			delete file;
+		}
+
+		curl_multi_cleanup(multi);
+
+		lock.unlock();
+	}
+
 }
