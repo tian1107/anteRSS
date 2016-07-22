@@ -102,6 +102,8 @@ namespace anteRSSParser
 		sqlite3_stmt * updateFeedStmt;
 		sqlite3_stmt * markItemStmt;
 		sqlite3_stmt * markAllReadStmt;
+
+		RSSFeedItemVector updateFeedFromDoc(RSSDocument * doc, int feedId);
 	public:
 		RSSManager(std::string dbFile);
 		~RSSManager();

@@ -307,6 +307,43 @@ namespace anteRSSParser
 		return str.str();
 	}
 
+	RSSFeedItemVector RSSManager::updateFeedFromDoc(RSSDocument * doc, int feedId)
+	{
+		RSSFeedItemVector result;
+
+		RSSItem item = doc->getFirstItem();
+		while (!item.isInvalid())
+		{
+			sqlite3_clear_bindings(updateFeedStmt);
+			sqlite3_bind_text(updateFeedStmt, 1, item.getUniqueId().c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(updateFeedStmt, 2, item.getTitle().c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(updateFeedStmt, 3, item.getDescription().c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_int(updateFeedStmt, 4, feedId);
+			sqlite3_bind_text(updateFeedStmt, 5, item.getDate().c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(updateFeedStmt, 6, item.getActualDate().c_str(), -1, SQLITE_TRANSIENT);
+			int rc = sqlite3_step(updateFeedStmt);
+
+			// new thing!
+			if (rc == SQLITE_DONE)
+			{
+				RSSFeedItem feedItem;
+				feedItem.date = item.getDate();
+				feedItem.description = item.getDescription();
+				feedItem.feedid = feedId;
+				feedItem.guid = item.getUniqueId();
+				feedItem.status = 0;
+				feedItem.title = item.getTitle();
+				result.push_back(feedItem);
+			}
+
+			sqlite3_reset(updateFeedStmt);
+
+			item = item.getNext();
+		}
+
+		return result;
+	}
+
 	RSSManager::RSSManager(std::string dbFile)
 	{
 		int rc = sqlite3_open(dbFile.c_str(), &db);
@@ -389,6 +426,9 @@ namespace anteRSSParser
 		feed.name = doc.getTitle();
 
 		addFeed(feed);
+
+		// might as well update the thing
+
 	}
 
 	void RSSManager::renameFeed(int feedId, std::string name)
@@ -557,36 +597,7 @@ namespace anteRSSParser
 			doc.Parse(file.data(), file.size());
 		}
 		
-
-		RSSItem item = doc.getFirstItem();
-		while (!item.isInvalid())
-		{
-			sqlite3_clear_bindings(updateFeedStmt);
-			sqlite3_bind_text(updateFeedStmt, 1, item.getUniqueId().c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(updateFeedStmt, 2, item.getTitle().c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(updateFeedStmt, 3, item.getDescription().c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_int(updateFeedStmt, 4, feedId);
-			sqlite3_bind_text(updateFeedStmt, 5, item.getDate().c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(updateFeedStmt, 6, item.getActualDate().c_str(), -1, SQLITE_TRANSIENT);
-			int rc = sqlite3_step(updateFeedStmt);
-		
-			// new thing!
-			if (rc == SQLITE_DONE)
-			{
-				RSSFeedItem feedItem;
-				feedItem.date = item.getDate();
-				feedItem.description = item.getDescription();
-				feedItem.feedid = feedId;
-				feedItem.guid = item.getUniqueId();
-				feedItem.status = 0;
-				feedItem.title = item.getTitle();
-				result.push_back(feedItem);
-			}
-
-			sqlite3_reset(updateFeedStmt);
-
-			item = item.getNext();
-		}
+		result = updateFeedFromDoc(&doc, feedId);
 
 		if (callback)
 		{
