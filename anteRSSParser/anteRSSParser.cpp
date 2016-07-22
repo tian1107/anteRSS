@@ -429,6 +429,10 @@ namespace anteRSSParser
 
 		// might as well update the thing
 
+		// get new id
+		feed = getFeedFromUrl(feed.url);
+
+		updateFeedFromDoc(&doc, feed.id);
 	}
 
 	void RSSManager::renameFeed(int feedId, std::string name)
