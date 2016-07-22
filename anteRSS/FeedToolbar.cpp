@@ -28,7 +28,7 @@ namespace anteRSS
 
 		const DWORD buttonStyles = BTNS_AUTOSIZE;
 
-		toolbarControl = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
+		toolbarControl = CreateWindowEx(WS_EX_TRANSPARENT, TOOLBARCLASSNAME, NULL,
 			WS_CHILD | TBSTYLE_WRAPABLE | TBSTYLE_LIST, 0, 0, 0, 0,
 			parent, NULL, hInst, NULL);
 

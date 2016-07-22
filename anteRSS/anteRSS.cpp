@@ -141,8 +141,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance; // Store instance handle in our global variable
 
-	hWndMain = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, nullptr, hInstance, nullptr);
+	hWndMain = CreateWindowExW(WS_EX_COMPOSITED, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, nullptr, hInstance, nullptr);
 
 	if (!hWndMain)
 	{
@@ -195,6 +195,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
+	case WM_ERASEBKGND:
+		break;
 	case MSG_SHOW_NOTIFY:
 		ShowNotification(rssTree->getNotificationTitle(), rssTree->getNotificationContent());
 		break;
@@ -348,14 +350,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
-	case WM_PAINT:
+	/*case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code that uses hdc here...
 		EndPaint(hWnd, &ps);
 	}
-	break;
+	break;*/
 	case WM_DESTROY:
 		DestroyIcon(niData.hIcon);
 		Shell_NotifyIcon(NIM_DELETE, &niData);
