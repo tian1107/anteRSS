@@ -36,6 +36,8 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+void ShowNotification(std::wstring title, std::wstring message);
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
@@ -254,28 +256,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case IDT_UPDATE_TIMER:
 		{
-			niData.uFlags |= NIF_INFO;
-			niData.dwInfoFlags = NIIF_INFO;
-
-			HRESULT hr = StringCchCopy(niData.szInfo,
-				ARRAYSIZE(niData.szInfo),
-				TEXT("Your message text goes here."));
-
-			if (FAILED(hr))
-			{
-				// TODO: Write an error handler in case the call to StringCchCopy fails.
-			}
-
-			HRESULT hr2 = StringCchCopy(niData.szInfoTitle,
-				ARRAYSIZE(niData.szInfoTitle),
-				TEXT("anteRSS"));
-
-			if (FAILED(hr2))
-			{
-				// TODO: Write an error handler in case the call to StringCchCopy fails.
-			}
-
-			Shell_NotifyIcon(NIM_MODIFY, &niData);
+			ShowNotification(L"anteRSS3", L"testing!");
 			break;
 		}
 		default:
@@ -396,4 +377,30 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return (INT_PTR)FALSE;
+}
+
+void ShowNotification(std::wstring title, std::wstring message)
+{
+	niData.uFlags |= NIF_INFO;
+	niData.dwInfoFlags = NIIF_INFO;
+
+	HRESULT hr = StringCchCopy(niData.szInfo,
+		ARRAYSIZE(niData.szInfo),
+		message.c_str());
+
+	if (FAILED(hr))
+	{
+		// TODO: Write an error handler in case the call to StringCchCopy fails.
+	}
+
+	HRESULT hr2 = StringCchCopy(niData.szInfoTitle,
+		ARRAYSIZE(niData.szInfoTitle),
+		title.c_str());
+
+	if (FAILED(hr2))
+	{
+		// TODO: Write an error handler in case the call to StringCchCopy fails.
+	}
+
+	Shell_NotifyIcon(NIM_MODIFY, &niData);
 }
