@@ -149,6 +149,8 @@ namespace anteRSS
 		{
 			control->newFeeds.insert(control->newFeeds.end(), newItem.begin(), newItem.end());
 			control->changeIcon(control->getIndexFromId(feedid), control->imageRSS);
+			if (newItem.size() > 0)
+				control->notifyFeedListChanged();
 		}
 
 	}
@@ -412,7 +414,23 @@ namespace anteRSS
 
 	std::wstring FeedListControl::getNotificationContent()
 	{
-		return L"Noting new";
+		std::wstringstream str;
+
+		// completely arbitrary
+		if (newFeeds.size() > 3)
+		{
+			str << newFeeds.size() << " new items received.";
+		}
+		else
+		{
+			str << "New item(s):";
+			for (RSSFeedItemVector::iterator it = newFeeds.begin(); it != newFeeds.end(); ++it)
+			{
+				str << std::endl << convertToWide(it->title);
+			}
+		}
+
+		return str.str();
 	}
 
 }
