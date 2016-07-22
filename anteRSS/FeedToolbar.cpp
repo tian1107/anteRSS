@@ -112,7 +112,7 @@ namespace anteRSS
 			}
 			case BTN_ANTERSS_ALL:
 			{
-				feed->updateAll();
+				feed->updateAll(false);
 				break;
 			}
 			default:

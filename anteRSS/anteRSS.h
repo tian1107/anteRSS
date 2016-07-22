@@ -8,3 +8,4 @@
 #define MSG_LIST_NOTIFY (WM_APP + 2)
 #define MSG_ITEM_NOTIFY (WM_APP + 3)
 #define MSG_UPD_NOTIFY  (WM_APP + 4)
+#define MSG_SHOW_NOTIFY (WM_APP + 5)

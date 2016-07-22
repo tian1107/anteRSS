@@ -195,6 +195,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
+	case MSG_SHOW_NOTIFY:
+		ShowNotification(rssTree->getNotificationTitle(), rssTree->getNotificationContent());
+		break;
 	case MSG_UPD_NOTIFY:
 		rssTree->updateNotify(message, wParam, lParam);
 		break;
@@ -256,7 +259,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case IDT_UPDATE_TIMER:
 		{
-			ShowNotification(L"anteRSS3", L"testing!");
+			rssTree->updateAll(true);
 			break;
 		}
 		default:

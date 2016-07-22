@@ -129,10 +129,50 @@ namespace anteRSS
 		updateMutex.unlock();
 	}
 
+	void updateAllCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data)
+	{
+		void ** buf = (void **)data;
+
+		FeedListControl * control = (FeedListControl *) buf[0];
+		bool notify = *(bool *)buf[1];
+
+		// the last one
+		if (feedid == 0)
+		{
+			if (notify && !control->newFeeds.empty())
+			{
+				PostMessage(GetParent(control->listControl), MSG_SHOW_NOTIFY, 0, 0);
+			}
+			control->idLoading.erase(0);
+		}
+		else
+		{
+			control->newFeeds.insert(control->newFeeds.end(), newItem.begin(), newItem.end());
+			control->changeIcon(control->getIndexFromId(feedid), control->imageRSS);
+		}
+
+	}
+
+	void FeedListControl::updateAllThread(bool newNotify)
+	{
+		updateMutex.lock();
+		// pointer hacks!
+		void * data[2] = { this, &newNotify };
+		manager->updateAll(updateAllCallback, data);
+		updateMutex.unlock();
+	}
+
 	FeedListControl::FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager)
 	{
 		this->hInst = hInst;
 		this->manager = manager;
+	}
+
+	FeedListControl::~FeedListControl()
+	{
+		// essentially, wait for all threads to end
+		updateMutex.lock();
+		updateMutex.unlock();
 	}
 
 	void FeedListControl::CreateControl(HWND parent)
@@ -291,6 +331,18 @@ namespace anteRSS
 		return ListView_GetNextItem(listControl, -1, LVNI_SELECTED);
 	}
 
+	int FeedListControl::getIndexFromId(int id)
+	{
+		int i = 0;
+		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++i)
+		{
+			if (it->id == id)
+				return i + 3;
+		}
+
+		return 0;
+	}
+
 	void FeedListControl::setSelected(int index)
 	{
 		ListView_SetItemState(listControl, index, LVIS_FOCUSED | LVIS_SELECTED, 0x000F);                     
@@ -318,7 +370,7 @@ namespace anteRSS
 		RSSFeed * feed = getSelectedFeed();
 		int select = getSelectedIndex();
 
-		if (feed && idLoading.find(feed->id) == idLoading.end())
+		if (feed && idLoading.find(feed->id) == idLoading.end() && idLoading.find(0) == idLoading.end())
 		{
 			std::wstringstream str;
 			str << "To update: " << feed->id << std::endl;
@@ -331,19 +383,36 @@ namespace anteRSS
 		}
 	}
 
-	void FeedListControl::updateAll()
+	void FeedListControl::updateAll(bool newNotify)
 	{
-		// remember the selected
-		int select = getSelectedIndex();
+		// it is already happening
+		if (idLoading.find(0) != idLoading.end())
+			return;
+
+		// empty previous newFeeds
+		newFeeds.clear();
+
+		idLoading.insert(0);
 
 		// find all of them
 		int count = ListView_GetItemCount(listControl);
 		for (int i = 3; i < count; i++)
 		{
-			// TODO there is a better way
-			setSelected(i);
-			updateSelected();
+			changeIcon(i, imageUpdating);
 		}
+
+		std::thread thread(&FeedListControl::updateAllThread, this, newNotify);
+		thread.detach();
+	}
+
+	std::wstring FeedListControl::getNotificationTitle()
+	{
+		return L"anteRSS";
+	}
+
+	std::wstring FeedListControl::getNotificationContent()
+	{
+		return L"Noting new";
 	}
 
 }

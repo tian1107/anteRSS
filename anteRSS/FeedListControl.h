@@ -7,7 +7,7 @@ namespace anteRSS
 {
 	class FeedListControl
 	{
-		friend class FeedToolbar;
+		friend void updateAllCallback(int feedid, bool success, anteRSSParser::RSSFeedItemVector newItem, void * data);
 	private:
 		// window stuff
 		HINSTANCE hInst;
@@ -16,6 +16,7 @@ namespace anteRSS
 		// rss stuff
 		anteRSSParser::RSSManager * manager;
 		anteRSSParser::RSSFeedVector feedCache;
+		anteRSSParser::RSSFeedItemVector newFeeds;
 		std::wstring editBuffer;
 		std::mutex updateMutex;
 
@@ -33,18 +34,22 @@ namespace anteRSS
 		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed);
 		void changeIcon(int index, int imageIndex);
 		void updateSingleThread(anteRSSParser::RSSFeed feed, int select);
-		void updateAllThread();
+		void updateAllThread(bool newNotify);
 	public:
 		FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
+		~FeedListControl();
 		void CreateControl(HWND parent);
 		void notifyFeedListChanged();
 		void notifyResize(RECT rect);
 		int notifyNotify(LPARAM lParam);
 		anteRSSParser::RSSFeed * getSelectedFeed();
 		int getSelectedIndex();
+		int getIndexFromId(int id);
 		void setSelected(int index);
 		void updateNotify(UINT message, WPARAM wParam, LPARAM lParam);
 		void updateSelected();
-		void updateAll();
+		void updateAll(bool newNotify);
+		std::wstring getNotificationTitle();
+		std::wstring getNotificationContent();
 	};
 }
