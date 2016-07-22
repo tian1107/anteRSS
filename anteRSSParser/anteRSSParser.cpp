@@ -592,6 +592,16 @@ namespace anteRSSParser
 		}
 	}
 
+	void RSSManager::updateAll(RSSManagerCallback callback, void * data)
+	{
+		// TODO use libcurl multi instead
+		RSSFeedVector feeds = getAllFeeds();
+		for (RSSFeedVector::iterator it = feeds.begin(); it != feeds.end(); ++it)
+		{
+			updateFeed(it->id, callback, data);
+		}
+	}
+
 	void RSSManager::markStatus(std::string guid, int status)
 	{
 		sqlite3_clear_bindings(markItemStmt);
