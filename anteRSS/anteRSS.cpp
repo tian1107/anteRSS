@@ -235,19 +235,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CREATE:
 	{
+		// timers
+		SetTimer(hWnd, IDT_UPDATE_TIMER, 10000, (TIMERPROC)NULL);
+
+		// controls
 		toolbar->CreateControl(hWnd);
 		rssTree->CreateControl(hWnd);
 		rssDesc->CreateControl(hWnd);
 		rssItem->CreateControl(hWnd);
 		break;
 	}
-	case WM_COMMAND:
+	case WM_TIMER:
 	{
-		int wmId = LOWORD(wParam);
-		// Parse the menu selections:
-		switch (wmId)
+		switch (wParam)
 		{
-		case IDM_ABOUT:
+		case IDT_UPDATE_TIMER:
 		{
 			niData.uFlags |= NIF_INFO;
 			niData.dwInfoFlags = NIIF_INFO;
@@ -271,7 +273,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 
 			Shell_NotifyIcon(NIM_MODIFY, &niData);
-
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
+	case WM_COMMAND:
+	{
+		int wmId = LOWORD(wParam);
+		// Parse the menu selections:
+		switch (wmId)
+		{
+		case IDM_ABOUT:
+		{
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
 		}
