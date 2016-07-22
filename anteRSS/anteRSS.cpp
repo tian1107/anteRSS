@@ -251,6 +251,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		rssTree->CreateControl(hWnd);
 		rssDesc->CreateControl(hWnd);
 		rssItem->CreateControl(hWnd);
+
+		// initial update
+		rssTree->updateAll(true);
+
 		break;
 	}
 	case WM_TIMER:
