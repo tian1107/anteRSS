@@ -244,7 +244,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 	{
 		// timers
-		SetTimer(hWnd, IDT_UPDATE_TIMER, 10000, (TIMERPROC)NULL);
+		SetTimer(hWnd, IDT_UPDATE_TIMER, 600000, (TIMERPROC)NULL);
 
 		// controls
 		toolbar->CreateControl(hWnd);
