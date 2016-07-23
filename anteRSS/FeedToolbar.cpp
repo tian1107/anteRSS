@@ -119,6 +119,7 @@ namespace anteRSS
 			case BTN_ANTERSS_REM:
 			{
 				feed->removeSelected();
+				item->notifyItemListChanged(-1);
 				break;
 			}
 			case BTN_ANTERSS_RDA:
