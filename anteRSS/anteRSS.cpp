@@ -152,19 +152,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// create shell icon
 	niData.cbSize = sizeof(niData);
 	niData.hWnd = hWndMain;
-	niData.uFlags = NIF_ICON | NIF_TIP | NIF_GUID | NIF_MESSAGE | NIF_SHOWTIP;
-
-#ifdef _DEBUG
-	// {ECD20B38-A984-47EB-8F48-54517C7ABCEB}
-	static const GUID iconGuid =
-	{ 0xecd20b38, 0xa984, 0x47eb,{ 0x8f, 0x48, 0x54, 0x51, 0x7c, 0x7a, 0xbc, 0xeb } };
-#else
-	// {2A6D05DC-0E5D-4FC6-AA5C-9C0B583F0CBF}
-	static const GUID iconGuid =
-	{ 0x2a6d05dc, 0xe5d, 0x4fc6,{ 0xaa, 0x5c, 0x9c, 0xb, 0x58, 0x3f, 0xc, 0xbf } };
-#endif
-
-	niData.guidItem = iconGuid;
+	niData.uID = 13832;
+	niData.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_SHOWTIP;
 	niData.uCallbackMessage = MSG_TRAY_ICON;
 	niData.uVersion = NOTIFYICON_VERSION_4;
 
