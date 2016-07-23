@@ -125,6 +125,7 @@ namespace anteRSS
 			{
 				manager->markAllAsRead();
 				feed->notifyFeedListChanged();
+				item->notifyItemListChanged(-1);
 				break;
 			}
 			default:
