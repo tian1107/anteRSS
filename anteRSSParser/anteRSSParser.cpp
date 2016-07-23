@@ -384,6 +384,8 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getItemsofStatusStmt, NULL);
 		feedStr = "delete from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedStmt, NULL);
+		feedStr = "delete from FeedItems where feedid=?1;";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedItemStmt, NULL);
 		feedStr = "insert into FeedItems (guid, title, description, feedid, date, actualdate) values (?1, ?2, ?3, ?4, ?5, ?6);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &updateFeedStmt, NULL);
 		feedStr = "update FeedItems set status=?1 where guid=?2;";
@@ -402,6 +404,7 @@ namespace anteRSSParser
 		sqlite3_finalize(getItemsofFeedStmt);
 		sqlite3_finalize(getItemsofStatusStmt);
 		sqlite3_finalize(removeFeedStmt);
+		sqlite3_finalize(removeFeedItemStmt);
 		sqlite3_finalize(updateFeedStmt);
 		sqlite3_finalize(markItemStmt);
 		sqlite3_close(db);
@@ -575,6 +578,11 @@ namespace anteRSSParser
 		sqlite3_bind_int(removeFeedStmt, 1, feedId);
 		int rc = sqlite3_step(removeFeedStmt);
 		sqlite3_reset(removeFeedStmt);
+
+		sqlite3_clear_bindings(removeFeedItemStmt);
+		sqlite3_bind_int(removeFeedItemStmt, 1, feedId);
+		rc = sqlite3_step(removeFeedItemStmt);
+		sqlite3_reset(removeFeedItemStmt);
 	}
 
 	void RSSManager::updateFeed(int feedId, RSSManagerCallback callback, void * data)
