@@ -170,6 +170,7 @@ namespace anteRSS
 	{
 		this->hInst = hInst;
 		this->manager = manager;
+		this->prevUnread = false;
 	}
 
 	FeedListControl::~FeedListControl()
@@ -238,6 +239,13 @@ namespace anteRSS
 		std::wstringstream str;
 		str << "Unread (" << totalUnread << ")";
 		insertRow(imageRSS, 1, str.str(), 0);
+
+		// no unread
+		if ((totalUnread > 0) != prevUnread)
+		{
+			PostMessage(GetParent(listControl), MSG_UNREAD, 0, totalUnread);
+			prevUnread = (totalUnread > 0);
+		}
 	}
 
 	void FeedListControl::notifyResize(RECT rect)

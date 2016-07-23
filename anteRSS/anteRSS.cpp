@@ -30,6 +30,10 @@ ItemListControl * rssItem;
 FeedToolbar * toolbar;
 ItemDescControl * rssDesc;
 
+// Icons
+HICON rssIcon;
+HICON unreadIcon;
+
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -37,6 +41,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 void ShowNotification(std::wstring title, std::wstring message);
+void ChangeNotificationIcon(bool unread);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -159,7 +164,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	StringCchCopy(niData.szTip, ARRAYSIZE(niData.szTip), TEXT("anteRSS"));
 
-	LoadIconMetric(hInst, MAKEINTRESOURCE(IDI_SMALL), LIM_SMALL, &(niData.hIcon));
+	LoadIconMetric(hInst, MAKEINTRESOURCE(IDI_SMALL), LIM_SMALL, &rssIcon);
+	LoadIconMetric(hInst, MAKEINTRESOURCE(IDI_ITEMUNREAD), LIM_SMALL, &unreadIcon);
+
+	niData.hIcon = rssIcon;
 
 	Shell_NotifyIcon(NIM_ADD, &niData) ? S_OK : E_FAIL;
 	Shell_NotifyIcon(NIM_SETVERSION, &niData);
@@ -184,6 +192,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
+	case MSG_UNREAD:
+		ChangeNotificationIcon(lParam);
+		break;
 	case WM_ERASEBKGND:
 		break;
 	case MSG_SHOW_NOTIFY:
@@ -348,7 +359,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;*/
 	case WM_DESTROY:
-		DestroyIcon(niData.hIcon);
+		DestroyIcon(rssIcon);
+		DestroyIcon(unreadIcon);
 		Shell_NotifyIcon(NIM_DELETE, &niData);
 		PostQuitMessage(0);
 		break;
@@ -399,6 +411,22 @@ void ShowNotification(std::wstring title, std::wstring message)
 	if (FAILED(hr2))
 	{
 		// TODO: Write an error handler in case the call to StringCchCopy fails.
+	}
+
+	Shell_NotifyIcon(NIM_MODIFY, &niData);
+}
+
+void ChangeNotificationIcon(bool unread)
+{
+	niData.uFlags &= ~NIF_INFO;
+
+	if (unread)
+	{
+		niData.hIcon = unreadIcon;
+	}
+	else
+	{
+		niData.hIcon = rssIcon;
 	}
 
 	Shell_NotifyIcon(NIM_MODIFY, &niData);

@@ -27,6 +27,7 @@ namespace anteRSS
 
 		// markers
 		std::unordered_set<int> idLoading;
+		bool prevUnread;
 
 		// functions
 		void createImageLists();
