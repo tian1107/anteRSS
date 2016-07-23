@@ -116,6 +116,11 @@ namespace anteRSS
 				feed->updateAll(false);
 				break;
 			}
+			case BTN_ANTERSS_REM:
+			{
+				feed->removeSelected();
+				break;
+			}
 			case BTN_ANTERSS_RDA:
 			{
 				manager->markAllAsRead();

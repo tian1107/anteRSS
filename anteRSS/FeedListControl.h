@@ -48,6 +48,7 @@ namespace anteRSS
 		void setSelected(int index);
 		void updateNotify(UINT message, WPARAM wParam, LPARAM lParam);
 		void updateSelected();
+		void removeSelected();
 		void updateAll(bool newNotify);
 		std::wstring getNotificationTitle();
 		std::wstring getNotificationContent();
