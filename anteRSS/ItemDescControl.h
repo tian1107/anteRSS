@@ -11,6 +11,7 @@ namespace anteRSS
 	public:
 		ItemDescControl(HINSTANCE hInst);
 		void CreateControl(HWND parent);
+		int notifyNotify(LPARAM lParam);
 		void notifyResize(RECT rect);
 		void setText(std::wstring text);
 	};
