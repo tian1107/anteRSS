@@ -7,6 +7,8 @@
 
 #include "tinyxml2\tinyxml2.h"
 
+#include "DownloadManager.h"
+
 namespace anteRSSParser
 {
 
@@ -72,20 +74,6 @@ namespace anteRSSParser
 	// gets called when a feed is updated, would be in a different thread
 	typedef void(*RSSManagerCallback)(int feedid, bool success, RSSFeedItemVector newItem, void * data);
 
-	typedef void(*DownloadManagerCallback)(std::string url, std::vector<char> content, void * data);
-
-	class DownloadManager
-	{
-	private:
-		CURLSH * share;
-		std::mutex lock;
-	public:
-		DownloadManager();
-		~DownloadManager();
-		std::vector<char> downloadSingle(std::string url);
-		void downloadMultiple(std::vector<std::string> urls, DownloadManagerCallback callback, void * data);
-	};
-
 	class RSSManager
 	{
 		friend void updateAllCallbackSingle(std::string url, std::vector<char> content, void * data);
@@ -134,7 +122,4 @@ namespace anteRSSParser
 
 	// a query where nothing is returned, and nothing is inputted
 	void simpleSQL(sqlite3 * db, std::string query);
-
-	// just download a thing
-	std::string downloadTextFile(std::string url);
 }
