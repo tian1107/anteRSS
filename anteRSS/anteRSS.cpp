@@ -193,7 +193,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case MSG_UNREAD:
-		ChangeNotificationIcon(lParam);
+		ChangeNotificationIcon(lParam != 0);
 		break;
 	case WM_ERASEBKGND:
 		break;
