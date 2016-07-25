@@ -2,8 +2,38 @@
 
 #include "DownloadManager.h"
 
+#include <sstream>
+
 namespace anteRSSParser
 {
+	size_t downloadTextFile_cb(void *buffer, size_t size, size_t nmemb, void * data)
+	{
+		std::stringstream & str = *((std::stringstream *) data);
+		char * buf = (char *)buffer;
+
+		str.write(buf, size * nmemb);
+
+		return size * nmemb;
+	}
+
+	std::string downloadTextFile(std::string url)
+	{
+		// the result
+		std::stringstream str;
+
+		CURL * curl = curl_easy_init();
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadTextFile_cb);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
+
+		// TODO error check!
+		curl_easy_perform(curl);
+
+		curl_easy_cleanup(curl);
+		return str.str();
+	}
+
 	DownloadManager::DownloadManager()
 	{
 		share = curl_share_init();
