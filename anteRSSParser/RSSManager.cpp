@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
-#include "anteRSSParser.h"
+#include "RSSManager.h"
+#include "Util.h"
 
 #include <ctime>
 #include <sstream>
