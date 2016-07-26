@@ -18,6 +18,7 @@ namespace anteRSSParser
 		int feedid;
 		std::string date;
 		int status;
+		std::string link;
 	};
 	typedef std::vector<RSSFeedItem> RSSFeedItemVector;
 

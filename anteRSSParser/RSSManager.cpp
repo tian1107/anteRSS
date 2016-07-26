@@ -81,9 +81,9 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedFromUrlStmt, NULL);
 		feedStr = "select feed.id, feed.name, feed.url, count(case when item.status = 0 then 1 else null end) as \"unread\" from FeedInfo feed left join FeedItems item on feed.id = item.feedid group by feed.id order by name collate nocase;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getAllFeedsStmt, NULL);
-		feedStr = "select guid, title, description, feedid, status, date from FeedItems where feedid=?1 order by date desc;";
+		feedStr = "select guid, title, description, feedid, status, date, link from FeedItems where feedid=?1 order by date desc;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getItemsofFeedStmt, NULL);
-		feedStr = "select guid, title, description, feedid, status, date from FeedItems where status=?1 order by date desc;";
+		feedStr = "select guid, title, description, feedid, status, date, link from FeedItems where status=?1 order by date desc;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getItemsofStatusStmt, NULL);
 		feedStr = "delete from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedStmt, NULL);
@@ -235,6 +235,7 @@ namespace anteRSSParser
 			item.feedid = sqlite3_column_int(getItemsofFeedStmt, 3);
 			item.status = sqlite3_column_int(getItemsofFeedStmt, 4);
 			item.date = (const char *)sqlite3_column_text(getItemsofFeedStmt, 5);
+			item.link = (const char *)sqlite3_column_text(getItemsofFeedStmt, 6);
 			
 			result.push_back(item);
 			rc = sqlite3_step(getItemsofFeedStmt);
@@ -265,6 +266,7 @@ namespace anteRSSParser
 			item.feedid = sqlite3_column_int(getItemsofStatusStmt, 3);
 			item.status = sqlite3_column_int(getItemsofStatusStmt, 4);
 			item.date = (const char *)sqlite3_column_text(getItemsofStatusStmt, 5);
+			item.link = (const char *)sqlite3_column_text(getItemsofStatusStmt, 6);
 
 			result.push_back(item);
 			rc = sqlite3_step(getItemsofStatusStmt);
