@@ -47,6 +47,31 @@ namespace anteRSSParser
 		curl_share_cleanup(share);
 	}
 
+	std::string DownloadManager::getContentType(std::string url)
+	{
+		lock.lock();
+
+		CURL * curl = curl_easy_init();
+		curl_easy_setopt(curl, CURLOPT_SHARE, share);
+		curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
+
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+		// TODO error check!
+		curl_easy_perform(curl);
+
+		char * str;
+		curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &str);
+
+		std::string result(str);
+
+		curl_easy_cleanup(curl);
+
+		lock.unlock();
+
+		return result;
+	}
+
 	size_t downloadSingle_cb(void *buffer, size_t size, size_t nmemb, void * data)
 	{
 		std::vector<char> & str = *((std::vector<char> *) data);
