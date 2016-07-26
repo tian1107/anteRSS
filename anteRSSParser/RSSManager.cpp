@@ -215,6 +215,23 @@ namespace anteRSSParser
 		return result;
 	}
 
+	RSSFeedItem getFeedItemFromStatement(sqlite3_stmt * stmt)
+	{
+		RSSFeedItem item;
+
+		// guid, title, description, feedid, status, date
+
+		item.guid = (const char *)sqlite3_column_text(stmt, 0);
+		item.title = (const char *)sqlite3_column_text(stmt, 1);
+		item.description = (const char *)sqlite3_column_text(stmt, 2);
+		item.feedid = sqlite3_column_int(stmt, 3);
+		item.status = sqlite3_column_int(stmt, 4);
+		item.date = (const char *)sqlite3_column_text(stmt, 5);
+		item.link = (const char *)sqlite3_column_text(stmt, 6);
+
+		return item;
+	}
+
 	RSSFeedItemVector RSSManager::getItemsOfFeed(int feedId)
 	{
 		RSSFeedItemVector result;
@@ -225,19 +242,7 @@ namespace anteRSSParser
 
 		while (rc == SQLITE_ROW)
 		{
-			RSSFeedItem item;
-
-			// guid, title, description, feedid, status, date
-
-			item.guid = (const char *)sqlite3_column_text(getItemsofFeedStmt, 0);
-			item.title = (const char *)sqlite3_column_text(getItemsofFeedStmt, 1);
-			item.description = (const char *)sqlite3_column_text(getItemsofFeedStmt, 2);
-			item.feedid = sqlite3_column_int(getItemsofFeedStmt, 3);
-			item.status = sqlite3_column_int(getItemsofFeedStmt, 4);
-			item.date = (const char *)sqlite3_column_text(getItemsofFeedStmt, 5);
-			item.link = (const char *)sqlite3_column_text(getItemsofFeedStmt, 6);
-			
-			result.push_back(item);
+			result.push_back(getFeedItemFromStatement(getItemsofFeedStmt));
 			rc = sqlite3_step(getItemsofFeedStmt);
 		}
 
@@ -256,19 +261,7 @@ namespace anteRSSParser
 
 		while (rc == SQLITE_ROW)
 		{
-			RSSFeedItem item;
-
-			// guid, title, description, feedid, status, date
-
-			item.guid = (const char *)sqlite3_column_text(getItemsofStatusStmt, 0);
-			item.title = (const char *)sqlite3_column_text(getItemsofStatusStmt, 1);
-			item.description = (const char *)sqlite3_column_text(getItemsofStatusStmt, 2);
-			item.feedid = sqlite3_column_int(getItemsofStatusStmt, 3);
-			item.status = sqlite3_column_int(getItemsofStatusStmt, 4);
-			item.date = (const char *)sqlite3_column_text(getItemsofStatusStmt, 5);
-			item.link = (const char *)sqlite3_column_text(getItemsofStatusStmt, 6);
-
-			result.push_back(item);
+			result.push_back(getFeedItemFromStatement(getItemsofStatusStmt));
 			rc = sqlite3_step(getItemsofStatusStmt);
 		}
 
