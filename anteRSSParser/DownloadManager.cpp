@@ -194,7 +194,15 @@ namespace anteRSSParser
 		// get name if not exists
 		if (name.length() < 1)
 		{
-			name = "temp.txt";
+			size_t start = url.find_last_of("/\\") + 1;
+			if (start != url.npos)
+			{
+				name = url.substr(start);
+			}
+			else
+			{
+				name = "temp.txt";
+			}
 		}
 
 		std::ofstream out(path + "/" + name, std::ios::out | std::ios::binary);
