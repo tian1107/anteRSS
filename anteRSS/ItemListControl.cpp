@@ -191,6 +191,27 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
+	void openThread(DownloadManager * dManager, std::string url)
+	{
+		std::string html = "text/html";
+
+		std::string cType = dManager->getContentType(url);
+
+		// if a webpage
+		if (cType.compare(0, html.length(), html) == 0)
+		{
+			ShellExecute(NULL, L"open", convertToWide(url).c_str(), NULL, NULL, SW_SHOW);
+		}
+		else
+		{
+			std::string name = dManager->downloadToFolder(url, ".");
+			
+			// TODO check if executable
+			ShellExecute(NULL, L"open", convertToWide(".\\" + name).c_str(), NULL, NULL, SW_SHOW);
+		}
+
+	}
+
 	int ItemListControl::notifyNotify(LPARAM lParam)
 	{
 		// the nmhdr
@@ -202,6 +223,28 @@ namespace anteRSS
 
 		switch (source->code)
 		{
+		// when an item is double clicked
+		case NM_DBLCLK:
+		{
+			LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE)lParam;
+			if (lpnmitem->iItem >= 0)
+			{
+				LVITEM item;
+				item.iItem = lpnmitem->iItem;
+				item.iSubItem = 0;
+				item.mask = LVIF_PARAM;
+
+				ListView_GetItem(listControl, &item);
+
+				RSSFeedItem * feedItem = (RSSFeedItem *) item.lParam;
+
+				std::thread thread(openThread, &dManager, feedItem->link);
+				thread.detach();
+			}
+
+			break;
+		}
+		// when selection changes
 		case LVN_ITEMCHANGED:
 		{
 			LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;

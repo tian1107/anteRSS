@@ -16,6 +16,7 @@ namespace anteRSS
 		anteRSSParser::RSSManager * manager;
 		anteRSSParser::RSSFeedItemVector itemCache;
 		std::wstring editBuffer;
+		anteRSSParser::DownloadManager dManager;
 
 		// indices
 		int imageRead;
