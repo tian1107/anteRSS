@@ -4,6 +4,8 @@
 #include "ItemListControl.h"
 #include "resource.h"
 
+#include <ShlObj.h>
+
 #include <sstream>
 #include <algorithm>
 
@@ -204,10 +206,17 @@ namespace anteRSS
 		}
 		else
 		{
-			std::string name = dManager->downloadToFolder(url, ".");
+			// get downloads folder
+			LPWSTR downloads;
+			SHGetKnownFolderPath(FOLDERID_Downloads, 0, NULL, &downloads);
+
+			std::string name = dManager->downloadToFolder(url, convertToUtf8(downloads));
+
+			std::wstringstream location;
+			location << downloads << L"\\" << convertToWide(name);
 			
 			// TODO check if executable
-			ShellExecute(NULL, L"open", convertToWide(".\\" + name).c_str(), NULL, NULL, SW_SHOW);
+			ShellExecute(NULL, L"open", location.str().c_str(), NULL, NULL, SW_SHOW);
 		}
 
 	}
