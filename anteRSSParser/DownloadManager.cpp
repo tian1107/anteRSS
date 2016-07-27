@@ -1,8 +1,11 @@
 #include "stdafx.h"
 
 #include "DownloadManager.h"
+#include "Util.h"
 
 #include <sstream>
+#include <fstream>
+#include <algorithm>
 
 namespace anteRSSParser
 {
@@ -116,6 +119,95 @@ namespace anteRSSParser
 		return str;
 	}
 
+	size_t downloadFileHeader_cb(void *buffer, size_t size, size_t nmemb, void * data)
+	{
+		char * buf = (char *)buffer;
+		std::string line(buf, size * nmemb);
+		std::string line2(buf, size * nmemb);
+		std::string & name = *(std::string *) data;
+
+		//convert to lowercase
+		std::transform(line2.begin(), line2.end(), line2.begin(), ::tolower);
+
+		std::string tag = "content-disposition:";
+		std::string subTag = "filename=";
+
+		// when line starts with tag
+		if (line2.compare(0, tag.length(), tag) == 0)
+		{
+			size_t pos = line.find(subTag, tag.length());
+			if (pos != line.npos)
+			{
+				size_t start = -1;
+				size_t end = -1;
+				for (size_t i = pos; i < line.length(); ++i)
+				{
+					char c = line[i];
+					if (c == '\"')
+					{
+						// starting
+						if (start == -1)
+						{
+							start = i + 1;
+						}
+						// ending
+						else
+						{
+							end = i;
+							break;
+						}
+					}
+				}
+
+				name = line.substr(start, end - start);
+			}
+		}
+
+		return size * nmemb;
+	}
+
+	std::string DownloadManager::downloadToFolder(std::string url, std::string path)
+	{
+		lock.lock();
+
+		// the result
+		std::vector<char> str;
+		std::string name = "";
+
+		CURL * curl = curl_easy_init();
+		curl_easy_setopt(curl, CURLOPT_SHARE, share);
+
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
+
+		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, downloadFileHeader_cb);
+		curl_easy_setopt(curl, CURLOPT_HEADERDATA, &name);
+
+		// TODO error check!
+		curl_easy_perform(curl);
+
+		// TODO unit test
+
+		// save to file
+		// get name if not exists
+		if (name.length() < 1)
+		{
+			name = "temp.txt";
+		}
+
+		std::ofstream out(path + "/" + name, std::ios::out | std::ios::binary);
+		std::copy(str.begin(), str.end(), std::ostreambuf_iterator<char>(out));
+		out.close();
+
+		curl_easy_cleanup(curl);
+
+		lock.unlock();
+
+		return name;
+	}
+
 	void DownloadManager::downloadMultiple(std::vector<std::string> urls, DownloadManagerCallback callback, void * data)
 	{
 		lock.lock();
@@ -187,4 +279,5 @@ namespace anteRSSParser
 
 		lock.unlock();
 	}
+
 }

@@ -19,6 +19,7 @@ namespace anteRSSParser
 		~DownloadManager();
 		std::string getContentType(std::string url);
 		std::vector<char> downloadSingle(std::string url);
+		std::string downloadToFolder(std::string url, std::string path);
 		void downloadMultiple(std::vector<std::string> urls, DownloadManagerCallback callback, void * data);
 	};
 
