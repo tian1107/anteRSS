@@ -208,15 +208,20 @@ namespace anteRSS
 		{
 			// get downloads folder
 			LPWSTR downloads;
-			SHGetKnownFolderPath(FOLDERID_Downloads, 0, NULL, &downloads);
+			SHGetKnownFolderPath(FOLDERID_Downloads, KF_FLAG_DEFAULT_PATH | KF_FLAG_NOT_PARENT_RELATIVE, NULL, &downloads);
 
 			std::string name = dManager->downloadToFolder(url, convertToUtf8(downloads));
 
 			std::wstringstream location;
 			location << downloads << L"\\" << convertToWide(name);
 			
-			// TODO check if executable
-			ShellExecute(NULL, L"open", location.str().c_str(), NULL, NULL, SW_SHOW);
+			// don't run if executable
+			// batch files would still run, though
+			DWORD binType;
+			if (!GetBinaryType(location.str().c_str(), &binType))
+			{
+				ShellExecute(NULL, L"open", location.str().c_str(), NULL, NULL, SW_SHOW);
+			}
 		}
 
 	}
