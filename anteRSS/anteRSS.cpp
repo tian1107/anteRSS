@@ -342,11 +342,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (IsWindowVisible(hWnd))
 			{
 				SetForegroundWindow(hWnd);
+				// go to unread
+				rssTree->setSelected(1);
 			}
 			else
 			{
 				SetParent(hWnd, nullptr);
 				ShowWindow(hWnd, SW_SHOW);
+				// go to unread
+				rssTree->setSelected(1);
 			}
 			break;
 		default:
