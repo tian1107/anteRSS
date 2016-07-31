@@ -195,7 +195,7 @@ namespace anteRSS
 			WC_LISTVIEW,                // list view class
 			L"",                         // no default text
 			WS_VISIBLE | WS_CHILD | LVS_REPORT | WS_BORDER | LVS_NOCOLUMNHEADER |
-			LVS_SINGLESEL | LVS_SHOWSELALWAYS,
+			LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_EDITLABELS,
 			0, 0,
 			(rcClient.right - rcClient.left) / 5, rcClient.bottom - rcClient.top,
 			parent,
