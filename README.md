@@ -1,14 +1,18 @@
 # anteRSS
 
 An RSS reader for Windows using winapi.
+
 Internal RSS parser and manager probably cross platform. Only the user interface uses Windows-only stuff.
 
-Dependencies:
+# Dependencies:
+
 libcurl
+
 sqlite3
+
 tinyxml2 (already included as I had made a very slight modification to https://github.com/leethomason/tinyxml2 's version)
 
-License:
+# License:
 anteRSS is released under the zlib license:
 
   This software is provided 'as-is', without any express or implied
