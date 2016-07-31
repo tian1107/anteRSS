@@ -219,7 +219,25 @@ namespace anteRSSParser
 
 		if (format == RSSFormat::RSS2)
 		{
-			return FirstChildElement("rss")->FirstChildElement("channel")->FirstChildElement("title")->GetText();
+			tinyxml2::XMLElement * rss = FirstChildElement("rss");
+			tinyxml2::XMLElement * channel = rss->FirstChildElement("channel");
+			if (channel)
+			{
+				tinyxml2::XMLElement * title = rss->FirstChildElement("title");
+				if (title && title->GetText())
+				{
+					return title->GetText();
+				}
+				else
+				{
+					return "Untitled";
+				}
+			}
+			else
+			{
+				return "Unchanneled";
+			}
+			
 		}
 		else
 		{
