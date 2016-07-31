@@ -4,6 +4,8 @@
 
 #define IDT_UPDATE_TIMER 1001	// completely arbitrary
 
+#define UPDATE_INTERVAL_SEC (10 * 60)
+
 #define MSG_TRAY_ICON   (WM_APP + 1)
 #define MSG_LIST_NOTIFY (WM_APP + 2)
 #define MSG_ITEM_NOTIFY (WM_APP + 3)
