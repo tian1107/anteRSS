@@ -27,6 +27,7 @@ namespace anteRSSParser
 		CURL * curl = curl_easy_init();
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadTextFile_cb);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
 
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
 
@@ -57,6 +58,7 @@ namespace anteRSSParser
 		CURL * curl = curl_easy_init();
 		curl_easy_setopt(curl, CURLOPT_SHARE, share);
 		curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
 
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
@@ -103,6 +105,7 @@ namespace anteRSSParser
 
 		CURL * curl = curl_easy_init();
 		curl_easy_setopt(curl, CURLOPT_SHARE, share);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
 
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
@@ -176,6 +179,7 @@ namespace anteRSSParser
 
 		CURL * curl = curl_easy_init();
 		curl_easy_setopt(curl, CURLOPT_SHARE, share);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
 
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
@@ -229,6 +233,7 @@ namespace anteRSSParser
 		{
 			CURL * curl = curl_easy_init();
 			curl_easy_setopt(curl, CURLOPT_SHARE, share);
+			curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
 
 			curl_easy_setopt(curl, CURLOPT_URL, it->c_str());
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
