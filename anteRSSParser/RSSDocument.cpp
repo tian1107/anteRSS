@@ -223,7 +223,7 @@ namespace anteRSSParser
 			tinyxml2::XMLElement * channel = rss->FirstChildElement("channel");
 			if (channel)
 			{
-				tinyxml2::XMLElement * title = rss->FirstChildElement("title");
+				tinyxml2::XMLElement * title = channel->FirstChildElement("title");
 				if (title && title->GetText())
 				{
 					return title->GetText();
