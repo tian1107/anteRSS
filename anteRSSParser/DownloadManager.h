@@ -14,6 +14,7 @@ namespace anteRSSParser
 	private:
 		CURLSH * share;
 		std::mutex lock;
+		CURL * getEasyHandle(std::string url);
 	public:
 		DownloadManager();
 		~DownloadManager();

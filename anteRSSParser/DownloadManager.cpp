@@ -38,6 +38,16 @@ namespace anteRSSParser
 		return str.str();
 	}
 
+	CURL * DownloadManager::getEasyHandle(std::string url)
+	{
+		CURL * curl = curl_easy_init();
+		curl_easy_setopt(curl, CURLOPT_SHARE, share);
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
+
+		return curl;
+	}
+
 	DownloadManager::DownloadManager()
 	{
 		share = curl_share_init();
@@ -55,12 +65,8 @@ namespace anteRSSParser
 	{
 		lock.lock();
 
-		CURL * curl = curl_easy_init();
-		curl_easy_setopt(curl, CURLOPT_SHARE, share);
+		CURL * curl = getEasyHandle(url);
 		curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
-
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
 		// TODO error check!
 		curl_easy_perform(curl);
@@ -103,13 +109,8 @@ namespace anteRSSParser
 		// the result
 		std::vector<char> str;
 
-		CURL * curl = curl_easy_init();
-		curl_easy_setopt(curl, CURLOPT_SHARE, share);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
-
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		CURL * curl = getEasyHandle(url);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
-
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
 
 		// TODO error check!
@@ -177,11 +178,7 @@ namespace anteRSSParser
 		std::vector<char> str;
 		std::string name = "";
 
-		CURL * curl = curl_easy_init();
-		curl_easy_setopt(curl, CURLOPT_SHARE, share);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
-
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		CURL * curl = getEasyHandle(url);
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
@@ -231,11 +228,8 @@ namespace anteRSSParser
 		std::vector<std::vector<char> *> files;
 		for (std::vector<std::string>::iterator it = urls.begin(); it != urls.end(); ++it)
 		{
-			CURL * curl = curl_easy_init();
-			curl_easy_setopt(curl, CURLOPT_SHARE, share);
-			curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
+			CURL * curl = getEasyHandle(*it);
 
-			curl_easy_setopt(curl, CURLOPT_URL, it->c_str());
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
 
 			std::vector<char> * file = new std::vector<char>;
