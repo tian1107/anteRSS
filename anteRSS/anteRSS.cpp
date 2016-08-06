@@ -146,7 +146,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance; // Store instance handle in our global variable
 
-	hWndMain = CreateWindowExW(WS_EX_COMPOSITED, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+	hWndMain = CreateWindowExW(0, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, nullptr, hInstance, nullptr);
 
 	if (!hWndMain)
@@ -173,7 +173,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	Shell_NotifyIcon(NIM_SETVERSION, &niData);
 
 	//ShowWindow(hWnd, nCmdShow);
-	UpdateWindow(hWndMain);
+	//UpdateWindow(hWndMain);
 
 	return TRUE;
 }
@@ -298,8 +298,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			else
 			{
-				SetParent(hWnd, nullptr);
 				ShowWindow(hWnd, SW_SHOW);
+				UpdateWindow(hWnd);
 			}
 			break;
 		default:
@@ -312,7 +312,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case SC_CLOSE:
 		case SC_MINIMIZE:
-			SetParent(hWnd, HWND_MESSAGE);
+			ShowWindow(hWnd, SW_HIDE);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
@@ -347,24 +347,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			else
 			{
-				SetParent(hWnd, nullptr);
 				ShowWindow(hWnd, SW_SHOW);
 				// go to unread
 				rssTree->setSelected(1);
+				UpdateWindow(hWnd);
 			}
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
-	/*case WM_PAINT:
-	{
-		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code that uses hdc here...
-		EndPaint(hWnd, &ps);
-	}
-	break;*/
 	case WM_DESTROY:
 		DestroyIcon(rssIcon);
 		DestroyIcon(unreadIcon);
