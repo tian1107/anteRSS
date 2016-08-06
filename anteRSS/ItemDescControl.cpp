@@ -12,7 +12,7 @@ namespace anteRSS
 
 	void ItemDescControl::CreateControl(HWND parent)
 	{
-		syslink = CreateWindowEx(WS_EX_TRANSPARENT, WC_LINK,
+		syslink = CreateWindowEx(0, WC_LINK,
 			L"For more information, <A HREF=\"http://www.microsoft.com\">click here</A> " \
 			L"or <A ID=\"idInfo\">here</A>.",
 			WS_VISIBLE | WS_CHILD | WS_TABSTOP,

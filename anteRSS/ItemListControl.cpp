@@ -136,7 +136,7 @@ namespace anteRSS
 		GetClientRect(parent, &rcClient);
 
 		// Create the list-view window in report view with label editing enabled.
-		listControl = CreateWindowEx(WS_EX_TRANSPARENT,
+		listControl = CreateWindowEx(LVS_EX_DOUBLEBUFFER,
 			WC_LISTVIEW,                // list view class
 			L"",                         // no default text
 			WS_VISIBLE | WS_CHILD | LVS_REPORT | WS_BORDER | LVS_NOCOLUMNHEADER |
