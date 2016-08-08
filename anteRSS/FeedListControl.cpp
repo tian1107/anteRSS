@@ -21,7 +21,7 @@ namespace anteRSS
 							 // Create the full-sized icon image lists. 
 		hLarge = ImageList_Create(GetSystemMetrics(SM_CXICON),
 			GetSystemMetrics(SM_CYICON),
-			ILC_MASK, 1, 1);
+			ILC_MASK, 3, 1);
 
 		hSmall = ImageList_Create(GetSystemMetrics(SM_CXSMICON),
 			GetSystemMetrics(SM_CYSMICON),
@@ -31,6 +31,13 @@ namespace anteRSS
 		hiconItem = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ANTERSS));
 
 		imageRSS = ImageList_AddIcon(hLarge, hiconItem);
+		ImageList_AddIcon(hSmall, hiconItem);
+
+		DestroyIcon(hiconItem);
+
+		hiconItem = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ITEMREAD));
+
+		imageError = ImageList_AddIcon(hLarge, hiconItem);
 		ImageList_AddIcon(hSmall, hiconItem);
 
 		DestroyIcon(hiconItem);
@@ -119,17 +126,34 @@ namespace anteRSS
 		ListView_SetItem(listControl, &lvI);
 	}
 
+	void updateSingleCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data, std::string message)
+	{
+		FeedListControl * control = (FeedListControl *)data;
+		int select = *((int *)(((void **)data)[1]));
+
+		if (!success)
+		{
+			PostMessage(GetParent(control->listControl), MSG_UPD_NOTIFY, feedid, -select);
+		}
+		else
+		{
+			PostMessage(GetParent(control->listControl), MSG_UPD_NOTIFY, feedid, select);
+		}
+	}
+
 	void FeedListControl::updateSingleThread(RSSFeed feed, int select)
 	{
 		updateMutex.lock();
-		// no callback, I don't need the new ones
-		manager->updateFeed(feed.id, 0, 0);
-		PostMessage(GetParent(listControl), MSG_UPD_NOTIFY, feed.id, select);
+
+		void * data[2] = {this, &select};
+
+		// now with callback, designated errors
+		manager->updateFeed(feed.id, updateSingleCallback, data);
 
 		updateMutex.unlock();
 	}
 
-	void updateAllCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data)
+	void updateAllCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data, std::string message)
 	{
 		void ** buf = (void **)data;
 
@@ -155,6 +179,10 @@ namespace anteRSS
 			control->idLoading.erase(feedid);
 		}
 
+		if (!success)
+		{
+			MessageBox(GetParent(control->listControl), convertToWide(message).c_str(), L"Update All Error", MB_OK | MB_ICONERROR);
+		}
 	}
 
 	void FeedListControl::updateAllThread(bool newNotify)
@@ -371,9 +399,19 @@ namespace anteRSS
 
 			// assuming that the feed list is always sorted
 			// this also changes the itemlist, as this sends a change in selection message
-			setSelected(listIndex);
-			changeIcon(listIndex, imageRSS);
-			idLoading.erase(feedId);
+			if (listIndex > 0)
+			{
+				setSelected(listIndex);
+				changeIcon(listIndex, imageRSS);
+				idLoading.erase(feedId);
+			}
+			else
+			{
+				// TODO this seems to not make the correct image
+				setSelected(-listIndex);
+				changeIcon(-listIndex, imageError);
+				idLoading.erase(feedId);
+			}
 		}
 	}
 

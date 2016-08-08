@@ -7,7 +7,8 @@ namespace anteRSS
 {
 	class FeedListControl
 	{
-		friend void updateAllCallback(int feedid, bool success, anteRSSParser::RSSFeedItemVector newItem, void * data);
+		friend void updateAllCallback(int feedid, bool success, anteRSSParser::RSSFeedItemVector newItem, void * data, std::string message);
+		friend void updateSingleCallback(int feedid, bool success, anteRSSParser::RSSFeedItemVector newItem, void * data, std::string message);
 	private:
 		// window stuff
 		HINSTANCE hInst;

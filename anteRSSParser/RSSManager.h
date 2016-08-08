@@ -32,7 +32,7 @@ namespace anteRSSParser
 	typedef std::vector<RSSFeed> RSSFeedVector;
 
 	// gets called when a feed is updated, would be in a different thread
-	typedef void(*RSSManagerCallback)(int feedid, bool success, RSSFeedItemVector newItem, void * data);
+	typedef void(*RSSManagerCallback)(int feedid, bool success, RSSFeedItemVector newItem, void * data, std::string errorMessage);
 
 	class RSSManager
 	{

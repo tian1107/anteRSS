@@ -129,20 +129,29 @@ namespace anteRSSParser
 		RSSFeed feed;
 		feed.url = url;
 		
+		bool success = false;
 		RSSDocument doc;
-		std::vector<char> & file = manager.downloadSingle(feed.url);
-		doc.Parse(file.data(), file.size());
+		std::vector<char> & file = manager.downloadSingle(feed.url, success);
 
-		feed.name = doc.getTitle();
+		if (success)
+		{
+			doc.Parse(file.data(), file.size());
 
-		addFeed(feed);
+			feed.name = doc.getTitle();
 
-		// might as well update the thing
+			addFeed(feed);
 
-		// get new id
-		feed = getFeedFromUrl(feed.url);
+			// might as well update the thing
 
-		updateFeedFromDoc(&doc, feed.id);
+			// get new id
+			feed = getFeedFromUrl(feed.url);
+
+			updateFeedFromDoc(&doc, feed.id);
+		}
+		else
+		{
+			// TODO do something else
+		}
 	}
 
 	void RSSManager::renameFeed(int feedId, std::string name)
@@ -293,7 +302,7 @@ namespace anteRSSParser
 		if (feed.url.empty())
 		{
 			if (callback)
-				callback(feedId, false, result, data);
+				callback(feedId, false, result, data, "Empty feed url");
 			return;
 		}
 
@@ -307,15 +316,28 @@ namespace anteRSSParser
 		else
 #endif
 		{
-			std::vector<char> & file = manager.downloadSingle(feed.url);
-			doc.Parse(file.data(), file.size());
+			bool success = false;
+			std::vector<char> & file = manager.downloadSingle(feed.url, success);
+
+			if (success)
+			{
+				doc.Parse(file.data(), file.size());
+			}
+			else
+			{
+				if (callback)
+				{
+					callback(feedId, false, result, data, manager.getLastError());
+				}
+				return;
+			}
 		}
 		
 		result = updateFeedFromDoc(&doc, feedId);
 
 		if (callback)
 		{
-			callback(feedId, true, result, data);
+			callback(feedId, true, result, data, "Success");
 		}
 	}
 
@@ -331,8 +353,10 @@ namespace anteRSSParser
 		doc.Parse(content.data(), content.size());
 
 		RSSFeedItemVector result = control->updateFeedFromDoc(&doc, feed.id);
+
+		// TODO possibly lying
 		if (callback)
-			callback(feed.id, true, result, cData);
+			callback(feed.id, true, result, cData, "Success?");
 
 	}
 
@@ -354,7 +378,7 @@ namespace anteRSSParser
 		// mark the end
 		if (callback)
 		{
-			callback(0, true, RSSFeedItemVector(), data);
+			callback(0, true, RSSFeedItemVector(), data, "End of transmission.");
 		}
 	}
 

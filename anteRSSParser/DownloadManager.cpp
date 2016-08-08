@@ -24,8 +24,9 @@ namespace anteRSSParser
 		CURL * curl = curl_easy_init();
 		curl_easy_setopt(curl, CURLOPT_SHARE, share);
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);	// follow redirects
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);			// 240 seconds before timeout
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);		// follow redirects
+		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);	// where to place error messages
 
 		return curl;
 	}
@@ -84,7 +85,7 @@ namespace anteRSSParser
 	}
 
 	// downloads a single file, no null terminator at the end
-	std::vector<char> DownloadManager::downloadSingle(std::string url)
+	std::vector<char> DownloadManager::downloadSingle(std::string url, bool &success)
 	{
 		lock.lock();
 
@@ -95,8 +96,9 @@ namespace anteRSSParser
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadSingle_cb);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
 
-		// TODO error check!
-		curl_easy_perform(curl);
+		CURLcode res = curl_easy_perform(curl);
+
+		success = (res == CURLE_OK);
 
 		curl_easy_cleanup(curl);
 
@@ -267,6 +269,11 @@ namespace anteRSSParser
 		curl_multi_cleanup(multi);
 
 		lock.unlock();
+	}
+
+	std::string DownloadManager::getLastError()
+	{
+		return errbuf;
 	}
 
 }

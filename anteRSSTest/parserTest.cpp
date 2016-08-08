@@ -166,8 +166,9 @@ namespace anteRSSTest
 			Assert::AreNotEqual(feed.id, resultFeed.id, L"no new id", LINE_INFO());
 		}
 
-		static void updateFeedTestCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data)
+		static void updateFeedTestCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data, std::string message)
 		{
+			Logger::WriteMessage(message.c_str());
 
 			if ((int) data == 0)
 			{
@@ -252,23 +253,18 @@ namespace anteRSSTest
 			RSSFeedItemVector result = manager->getItemsOfFeed(1);
 		}
 
-		TEST_METHOD(downloadTest)
-		{
-			DownloadManager * dManager = new DownloadManager();
-			std::vector<char> result = dManager->downloadSingle("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
-			result.push_back(0);	// insert null terminator at end
-			Assert::AreEqual("testing", result.data(), L"download failed", LINE_INFO());
-			delete dManager;
-		}
-
 		TEST_METHOD(downloadManagerTest)
 		{
 			DownloadManager dManager;
-			std::vector<char> & result = dManager.downloadSingle("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
-			Assert::IsTrue(result.size() > 0, L"download empty", LINE_INFO());
-			Assert::AreEqual(0, strncmp("testing", result.data(), result.size()), L"download failed", LINE_INFO());
+			bool success = false;
+			std::vector<char> & result = dManager.downloadSingle("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing", success);
+			result.push_back(0);	// insert null terminator at end
+			Assert::IsTrue(success, L"unsuccessful download", LINE_INFO());
+			Assert::AreEqual("testing", result.data(), L"download not complete", LINE_INFO());
 
-			std::vector<char> result2 = dManager.downloadSingle("https://www.google.com.ph/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
+			std::vector<char> result2 = dManager.downloadSingle("https://www.google.com.ph/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png", success);
+
+			Assert::IsTrue(success, L"unsuccessful download", LINE_INFO());
 
 			// png check, not conclusive
 			char header[] = { 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a };
