@@ -254,8 +254,11 @@ namespace anteRSSTest
 
 		TEST_METHOD(downloadTest)
 		{
-			std::string result = downloadTextFile("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
-			Assert::AreEqual("testing", result.c_str(), L"download failed", LINE_INFO());
+			DownloadManager * dManager = new DownloadManager();
+			std::vector<char> result = dManager->downloadSingle("https://urlecho.appspot.com/echo?status=200&Content-Type=text%2Fplain&body=testing");
+			result.push_back(0);	// insert null terminator at end
+			Assert::AreEqual("testing", result.data(), L"download failed", LINE_INFO());
+			delete dManager;
 		}
 
 		TEST_METHOD(downloadManagerTest)

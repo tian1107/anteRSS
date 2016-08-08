@@ -19,25 +19,6 @@ namespace anteRSSParser
 		return size * nmemb;
 	}
 
-	std::string downloadTextFile(std::string url)
-	{
-		// the result
-		std::stringstream str;
-
-		CURL * curl = curl_easy_init();
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, downloadTextFile_cb);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
-
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
-
-		// TODO error check!
-		curl_easy_perform(curl);
-
-		curl_easy_cleanup(curl);
-		return str.str();
-	}
-
 	CURL * DownloadManager::getEasyHandle(std::string url)
 	{
 		CURL * curl = curl_easy_init();
