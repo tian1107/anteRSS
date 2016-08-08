@@ -44,6 +44,7 @@ namespace anteRSSParser
 		curl_easy_setopt(curl, CURLOPT_SHARE, share);
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 240);	// 240 seconds before timeout
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);	// follow redirects
 
 		return curl;
 	}
