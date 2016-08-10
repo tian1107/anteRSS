@@ -436,8 +436,11 @@ namespace anteRSS
 	void FeedListControl::removeSelected()
 	{
 		RSSFeed * feed = getSelectedFeed();
-		manager->removeFeed(feed->id);
-		notifyFeedListChanged();
+		if (feed)
+		{
+			manager->removeFeed(feed->id);
+			notifyFeedListChanged();
+		}
 	}
 
 	void FeedListControl::updateAll(bool newNotify)
