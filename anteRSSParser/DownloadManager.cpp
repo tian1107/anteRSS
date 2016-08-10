@@ -250,9 +250,28 @@ namespace anteRSSParser
 				repeats = 0;
 
 			curl_multi_perform(multi, &filesLeft);
+
+			// messages!
+			CURLMsg * m = 0;
+			do
+			{
+				int msgq = 0;
+				m = curl_multi_info_read(multi, &msgq);
+				if (m && m->msg == CURLMSG_DONE)
+				{
+					// find index of curl
+					std::vector<CURL *>::iterator it = std::find(handles.begin(), handles.end(), m->easy_handle);
+					int index = std::distance(handles.begin(), it);
+
+					std::vector<char> * file = files[index];
+					callback(urls[index], *file, data);
+				}
+
+			} while (m);
+
 		} while (filesLeft);
 
-		// all files downloaded
+		// cleanup
 		for (int i = 0; i < handles.size(); ++i)
 		{
 			CURL * curl = handles[i];
@@ -260,8 +279,6 @@ namespace anteRSSParser
 
 			curl_multi_remove_handle(multi, curl);
 			curl_easy_cleanup(curl);
-
-			callback(urls[i], *file, data);
 
 			delete file;
 		}
