@@ -188,7 +188,6 @@ namespace anteRSS
 			{
 				control->feedStatus[feedid] = FeedStatus::FAILED;
 				control->notifyFeedListChanged();
-				MessageBox(GetParent(control->listControl), convertToWide(message).c_str(), L"Update All Error", MB_OK | MB_ICONERROR);
 			}
 		}
 	}
