@@ -6,6 +6,7 @@
 
 #include <sstream>
 #include <algorithm>
+#include <unordered_set>
 
 using namespace anteRSSParser;
 
@@ -128,8 +129,10 @@ namespace anteRSS
 
 	void updateSingleCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data, std::string message)
 	{
-		FeedListControl * control = (FeedListControl *)data;
-		int select = *((int *)(((void **)data)[1]));
+		void ** buf = (void **)data;
+
+		FeedListControl * control = (FeedListControl *)buf[0];
+		int select = *(int *)buf[1];
 
 		if (!success)
 		{
@@ -160,28 +163,33 @@ namespace anteRSS
 		FeedListControl * control = (FeedListControl *) buf[0];
 		bool notify = *(bool *)buf[1];
 
-		// the last one
+		// the last one, always successful
 		if (feedid == 0)
 		{
 			if (notify && !control->newFeeds.empty())
 			{
 				PostMessage(GetParent(control->listControl), MSG_SHOW_NOTIFY, 0, 0);
 			}
-			control->idLoading.erase(0);
+			control->feedStatus[0] = FeedStatus::NORMAL;
 			control->notifyFeedListChanged();
 		}
 		else
 		{
 			control->newFeeds.insert(control->newFeeds.end(), newItem.begin(), newItem.end());
-			control->changeIcon(control->getIndexFromId(feedid), control->imageRSS);
-			if (newItem.size() > 0)
-				control->notifyFeedListChanged();
-			control->idLoading.erase(feedid);
-		}
 
-		if (!success)
-		{
-			MessageBox(GetParent(control->listControl), convertToWide(message).c_str(), L"Update All Error", MB_OK | MB_ICONERROR);
+			if (success)
+			{
+				control->feedStatus[feedid] = FeedStatus::NORMAL;
+
+				if (newItem.size() > 0)
+					control->notifyFeedListChanged();
+			}
+			else
+			{
+				control->feedStatus[feedid] = FeedStatus::FAILED;
+				control->notifyFeedListChanged();
+				MessageBox(GetParent(control->listControl), convertToWide(message).c_str(), L"Update All Error", MB_OK | MB_ICONERROR);
+			}
 		}
 	}
 
@@ -255,8 +263,22 @@ namespace anteRSS
 		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
 		{
 			int imageId = imageRSS;
-			if (idLoading.find(it->id) != idLoading.end())
+
+			switch (feedStatus[it->id])
+			{
+			case NORMAL:
+				imageId = imageRSS;
+				break;
+			case UPDATING:
 				imageId = imageUpdating;
+				break;
+			case FAILED:
+				imageId = imageError;
+				break;
+			default:
+				imageId = imageError;
+				break;
+			}
 
 			std::stringstream str;
 			str << it->name << " (" << it->unread << ")";
@@ -395,23 +417,24 @@ namespace anteRSS
 			int listIndex = lParam;
 			int feedId = wParam;
 
-			notifyFeedListChanged();
-
 			// assuming that the feed list is always sorted
 			// this also changes the itemlist, as this sends a change in selection message
 			if (listIndex > 0)
 			{
 				setSelected(listIndex);
-				changeIcon(listIndex, imageRSS);
-				idLoading.erase(feedId);
+				//changeIcon(listIndex, imageRSS);
+				//idLoading.erase(feedId);
+				feedStatus[feedId] = FeedStatus::NORMAL;
 			}
 			else
 			{
 				// TODO this seems to not make the correct image
 				setSelected(-listIndex);
-				changeIcon(-listIndex, imageError);
-				idLoading.erase(feedId);
+				//changeIcon(-listIndex, imageError);
+				feedStatus[feedId] = FeedStatus::FAILED;
 			}
+
+			notifyFeedListChanged();
 		}
 	}
 
@@ -420,14 +443,14 @@ namespace anteRSS
 		RSSFeed * feed = getSelectedFeed();
 		int select = getSelectedIndex();
 
-		if (feed && idLoading.find(feed->id) == idLoading.end() && idLoading.find(0) == idLoading.end())
+		if (feed && feedStatus[feed->id] != FeedStatus::UPDATING && feedStatus[0] != FeedStatus::UPDATING)
 		{
 			std::wstringstream str;
 			str << "To update: " << feed->id << std::endl;
 			OutputDebugString(str.str().c_str());
 
 			changeIcon(select, imageUpdating);
-			idLoading.insert(feed->id);
+			feedStatus[feed->id] = FeedStatus::UPDATING;
 			std::thread thread(&FeedListControl::updateSingleThread, this, *feed, select);
 			thread.detach();
 		}
@@ -446,13 +469,13 @@ namespace anteRSS
 	void FeedListControl::updateAll(bool newNotify)
 	{
 		// it is already happening
-		if (idLoading.find(0) != idLoading.end())
+		if (feedStatus[0] == FeedStatus::UPDATING)
 			return;
 
 		// empty previous newFeeds
 		newFeeds.clear();
 
-		idLoading.insert(0);
+		feedStatus[0] = FeedStatus::UPDATING;
 
 		// find all of them
 		int count = ListView_GetItemCount(listControl);
@@ -464,7 +487,7 @@ namespace anteRSS
 		RSSFeedVector all = manager->getAllFeeds();
 		for (RSSFeedVector::iterator it = all.begin(); it != all.end(); ++it)
 		{
-			idLoading.insert(it->id);
+			feedStatus[it->id] = FeedStatus::UPDATING;
 		}
 
 		std::thread thread(&FeedListControl::updateAllThread, this, newNotify);

@@ -1,10 +1,17 @@
 #pragma once
 #include "anteRSSParser\anteRSSParser.h"
-#include <unordered_set>
+#include <unordered_map>
 #include <mutex>
 
 namespace anteRSS
 {
+	enum FeedStatus
+	{
+		NORMAL,
+		UPDATING,
+		FAILED
+	};
+
 	class FeedListControl
 	{
 		friend void updateAllCallback(int feedid, bool success, anteRSSParser::RSSFeedItemVector newItem, void * data, std::string message);
@@ -27,7 +34,7 @@ namespace anteRSS
 		int imageError;
 
 		// markers
-		std::unordered_set<int> idLoading;
+		std::unordered_map<int, FeedStatus> feedStatus;	// 0 ok 1 updating 2 error
 		bool prevUnread;
 
 		// functions
