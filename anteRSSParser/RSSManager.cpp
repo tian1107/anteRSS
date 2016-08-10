@@ -341,7 +341,7 @@ namespace anteRSSParser
 		}
 	}
 
-	void updateAllCallbackSingle(std::string url, std::vector<char> content, void * data)
+	void updateAllCallbackSingle(std::string url, std::vector<char> content, void * data, bool success)
 	{
 		void ** buf = (void **) data;
 		RSSManager * control = (RSSManager *) buf[0];
@@ -354,9 +354,8 @@ namespace anteRSSParser
 
 		RSSFeedItemVector result = control->updateFeedFromDoc(&doc, feed.id);
 
-		// TODO possibly lying
 		if (callback)
-			callback(feed.id, true, result, cData, "Success?");
+			callback(feed.id, success, result, cData, "Success?");
 
 	}
 

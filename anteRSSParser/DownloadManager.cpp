@@ -264,7 +264,9 @@ namespace anteRSSParser
 					int index = std::distance(handles.begin(), it);
 
 					std::vector<char> * file = files[index];
-					callback(urls[index], *file, data);
+
+					// TODO send error info
+					callback(urls[index], *file, data, (m->data.result == CURLE_OK));
 				}
 
 			} while (m);

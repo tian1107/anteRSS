@@ -7,7 +7,7 @@
 
 namespace anteRSSParser
 {
-	typedef void(*DownloadManagerCallback)(std::string url, std::vector<char> content, void * data);
+	typedef void(*DownloadManagerCallback)(std::string url, std::vector<char> content, void * data, bool success);
 
 	class DownloadManager
 	{
