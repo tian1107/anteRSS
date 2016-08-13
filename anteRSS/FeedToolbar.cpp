@@ -60,7 +60,8 @@ namespace anteRSS
 			{ MAKELONG(imageUpdate, ImageListID),    BTN_ANTERSS_UPD, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Update" },
 			{ MAKELONG(imageUpdateAll, ImageListID), BTN_ANTERSS_ALL, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Update All" },
 			{ MAKELONG(imageRemove, ImageListID),    BTN_ANTERSS_REM, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Remove" },
-			{ MAKELONG(imageAllRead, ImageListID),   BTN_ANTERSS_RDA, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Mark All As Read" }
+			{ MAKELONG(imageAllRead, ImageListID),   BTN_ANTERSS_RDA, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Mark All As Read" },
+			{ MAKELONG(imageArchive, ImageListID),   BTN_ANTERSS_ARC, TBSTATE_ENABLED, buttonStyles,{ 0 }, 0, (INT_PTR)L"Toggle Archived" }
 		};
 
 		// Add buttons.
@@ -127,6 +128,11 @@ namespace anteRSS
 				manager->markAllAsRead();
 				feed->notifyFeedListChanged();
 				item->notifyItemListChanged(-1);
+				break;
+			}
+			case BTN_ANTERSS_ARC:
+			{
+				item->archiveSelected();
 				break;
 			}
 			default:

@@ -34,5 +34,6 @@ namespace anteRSS
 		void notifyItemListChanged(int feedId);
 		void notifyResize(RECT rect);
 		int notifyNotify(LPARAM lParam);
+		void archiveSelected();
 	};
 }

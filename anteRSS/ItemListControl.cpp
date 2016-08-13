@@ -43,6 +43,13 @@ namespace anteRSS
 
 		DestroyIcon(hiconItem);
 
+		hiconItem = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ANTERSS));
+
+		imageArchived = ImageList_AddIcon(hLarge, hiconItem);
+		ImageList_AddIcon(hSmall, hiconItem);
+
+		DestroyIcon(hiconItem);
+
 		// Assign the image lists to the list-view control. 
 		ListView_SetImageList(listControl, hLarge, LVSIL_NORMAL);
 		ListView_SetImageList(listControl, hSmall, LVSIL_SMALL);
@@ -287,6 +294,39 @@ namespace anteRSS
 		}
 
 		return 0;
+	}
+
+	void ItemListControl::archiveSelected()
+	{
+		// find the selected one
+		int index = ListView_GetNextItem(listControl, -1, LVNI_SELECTED);
+
+		if (index > -1)
+		{
+			LVITEM item;
+			item.iItem = index;
+			item.iSubItem = 0;
+			item.mask = LVIF_PARAM;
+
+			ListView_GetItem(listControl, &item);
+
+			RSSFeedItem * feedItem = (RSSFeedItem *)(item.lParam);
+
+			// TODO that magic numbers below (2)
+			if (feedItem->status != 2)
+			{
+				manager->markStatus(feedItem->guid, 2);
+				feedItem->status = 2;
+				changeIcon(index, imageArchived);
+			}
+			else
+			{
+				manager->markStatus(feedItem->guid, 1);
+				feedItem->status = 1;
+				changeIcon(index, imageRead);
+			}
+		}
+
 	}
 
 }
