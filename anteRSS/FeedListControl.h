@@ -24,6 +24,7 @@ namespace anteRSS
 		// rss stuff
 		anteRSSParser::RSSManager * manager;
 		anteRSSParser::RSSFeedVector feedCache;
+		anteRSSParser::RSSFeed unreadPseudoFeed;
 		anteRSSParser::RSSFeedItemVector newFeeds;
 		std::wstring editBuffer;
 		std::mutex updateMutex;
@@ -40,8 +41,6 @@ namespace anteRSS
 		// functions
 		void createImageLists();
 		void createColumns();
-		int insertRow(int imageIndex, int index, std::wstring text, anteRSSParser::RSSFeed * feed);
-		void changeIcon(int index, int imageIndex);
 		void updateSingleThread(anteRSSParser::RSSFeed feed, int select);
 		void updateAllThread(bool newNotify);
 	public:

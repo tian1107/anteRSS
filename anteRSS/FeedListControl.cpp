@@ -92,41 +92,6 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
-	int FeedListControl::insertRow(int imageIndex, int index, std::wstring text, RSSFeed * feed)
-	{
-		// TODO dynamic allocation
-		const size_t length = 256;
-
-		LVITEM lvI;
-		wchar_t buf[length];
-
-		// Initialize LVITEM members that are common to all items.
-		lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE | LVIF_PARAM;
-		lvI.stateMask = 0;
-		lvI.iSubItem = 0;
-		lvI.state = 0;
-		lvI.iImage = imageIndex;
-		lvI.iItem = index;
-		lvI.lParam = (LPARAM) feed;
-
-		StringCchCopy(buf, length, text.c_str());
-		lvI.pszText = buf;
-
-		int result = ListView_InsertItem(listControl, &lvI);
-		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
-		return result;
-	}
-
-	void FeedListControl::changeIcon(int index, int imageIndex)
-	{
-		LVITEM lvI;
-		lvI.mask = LVIF_IMAGE;
-		lvI.iImage = imageIndex;
-		lvI.iItem = index;
-
-		ListView_SetItem(listControl, &lvI);
-	}
-
 	void updateSingleCallback(int feedid, bool success, RSSFeedItemVector newItem, void * data, std::string message)
 	{
 		void ** buf = (void **)data;
@@ -230,7 +195,7 @@ namespace anteRSS
 			WC_LISTVIEW,                // list view class
 			L"",                         // no default text
 			WS_VISIBLE | WS_CHILD | LVS_REPORT | WS_BORDER | LVS_NOCOLUMNHEADER |
-			LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_EDITLABELS,
+			LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_EDITLABELS | LVS_OWNERDATA,
 			0, 0,
 			(rcClient.right - rcClient.left) / 5, rcClient.bottom - rcClient.top,
 			parent,
@@ -250,51 +215,26 @@ namespace anteRSS
 	void FeedListControl::notifyFeedListChanged()
 	{
 		feedCache = manager->getAllFeeds();
+		unreadPseudoFeed.id = 0;
+		unreadPseudoFeed.name = "Unread";
 
-		ListView_DeleteAllItems(listControl);
-
-		// TODO proper counts
-		insertRow(imageRSS, 0, L"All", 0);
-		insertRow(imageRSS, 2, L"Archived", 0);
-
-		int totalUnread = 0;
+		unreadPseudoFeed.unread = 0;
 		int index = 3;
 		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
 		{
-			int imageId = imageRSS;
-
-			switch (feedStatus[it->id])
-			{
-			case NORMAL:
-				imageId = imageRSS;
-				break;
-			case UPDATING:
-				imageId = imageUpdating;
-				break;
-			case FAILED:
-				imageId = imageError;
-				break;
-			default:
-				imageId = imageError;
-				break;
-			}
-
-			std::stringstream str;
-			str << it->name << " (" << it->unread << ")";
-			insertRow(imageId, index, convertToWide(str.str()), &(*it));
-			totalUnread += it->unread;
+			unreadPseudoFeed.unread += it->unread;
+			ListView_Update(listControl, index);
 		}
-
-		std::wstringstream str;
-		str << "Unread (" << totalUnread << ")";
-		insertRow(imageRSS, 1, str.str(), 0);
 
 		// no unread
-		if ((totalUnread > 0) != prevUnread)
+		if ((unreadPseudoFeed.unread > 0) != prevUnread)
 		{
-			PostMessage(GetParent(listControl), MSG_UNREAD, 0, totalUnread);
-			prevUnread = (totalUnread > 0);
+			PostMessage(GetParent(listControl), MSG_UNREAD, 0, unreadPseudoFeed.unread);
+			prevUnread = (unreadPseudoFeed.unread > 0);
 		}
+
+		// notify change in content?
+		ListView_SetItemCountEx(listControl, 3 + feedCache.size(), LVSICF_NOSCROLL);
 	}
 
 	void FeedListControl::notifyResize(RECT rect)
@@ -314,17 +254,79 @@ namespace anteRSS
 
 		switch (source->code)
 		{
+		case LVN_GETDISPINFO:
+		{
+			NMLVDISPINFO* plvdi = (NMLVDISPINFO*) source;
+			int index = plvdi->item.iItem;
+			RSSFeed feed;
+
+			// an actual feed
+			if (index >= 3)
+			{
+				feed = feedCache.at(index - 3);
+			}
+			// archived
+			else if (index == 2)
+			{
+				feed.id = 0;
+				feed.name = "Archived";
+				feed.unread = 0;
+			}
+			// Unread
+			else if (index == 1)
+			{
+				feed = unreadPseudoFeed;
+			}
+			// All
+			else if (index == 0)
+			{
+				feed.id = 0;
+				feed.name = "All";
+				feed.unread = 0;
+			}
+
+			if (plvdi->item.mask & LVIF_IMAGE)
+			{
+				switch (feedStatus[feed.id])
+				{
+				case NORMAL:
+					plvdi->item.iImage = imageRSS;
+					break;
+				case FAILED:
+					plvdi->item.iImage = imageError;
+					break;
+				case UPDATING:
+					plvdi->item.iImage = imageUpdating;
+					break;
+				default:
+					plvdi->item.iImage = imageRSS;
+					break;
+				}
+			}
+
+			if (plvdi->item.mask & LVIF_TEXT)
+			{
+				std::wstringstream str;
+				str << convertToWide(feed.name) << L" (" << feed.unread << L")";
+				
+				// TODO dynamic allocation
+				StringCchCopy(plvdi->item.pszText, 256, str.str().c_str());
+			}
+
+			break;
+		}
 		case LVN_ITEMCHANGED:
 		{
 			LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
 			if (pnmv->uNewState & LVIS_SELECTED)
 			{
-				RSSFeed * feed = (RSSFeed *) (pnmv->lParam);
-
 				if (pnmv->iItem < 3)
 					PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, -pnmv->iItem);
 				else
-					PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, feed->id);
+				{
+					int id = feedCache.at(pnmv->iItem - 3).id;
+					PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, id);
+				}
 			}
 			break;
 		}
@@ -332,12 +334,13 @@ namespace anteRSS
 		{
 			NMLVDISPINFO * pdi = (NMLVDISPINFO *)lParam;
 			// all and unread
-			if (pdi->item.iItem < 2)
+			if (pdi->item.iItem < 3)
 				return 1;
 			else
 			{
 				HWND editControl = ListView_GetEditControl(listControl);
-				Edit_SetText(editControl, convertToWide(((RSSFeed *) pdi->item.lParam)->name).c_str());
+				std::string name = feedCache.at(pdi->item.iItem - 3).name;
+				Edit_SetText(editControl, convertToWide(name).c_str());
 				return 0;
 			}
 			break;
@@ -347,7 +350,7 @@ namespace anteRSS
 			NMLVDISPINFO * pdi = (NMLVDISPINFO *)lParam;
 			if (pdi->item.pszText != NULL)
 			{
-				RSSFeed * feed = (RSSFeed *)pdi->item.lParam;
+				RSSFeed * feed = &feedCache[pdi->item.iItem - 3];
 
 				manager->renameFeed(feed->id, convertToUtf8(pdi->item.pszText));
 
@@ -448,7 +451,6 @@ namespace anteRSS
 			str << "To update: " << feed->id << std::endl;
 			OutputDebugString(str.str().c_str());
 
-			changeIcon(select, imageUpdating);
 			feedStatus[feed->id] = FeedStatus::UPDATING;
 			std::thread thread(&FeedListControl::updateSingleThread, this, *feed, select);
 			thread.detach();
@@ -475,13 +477,6 @@ namespace anteRSS
 		newFeeds.clear();
 
 		feedStatus[0] = FeedStatus::UPDATING;
-
-		// find all of them
-		int count = ListView_GetItemCount(listControl);
-		for (int i = 3; i < count; i++)
-		{
-			changeIcon(i, imageUpdating);
-		}
 
 		RSSFeedVector all = manager->getAllFeeds();
 		for (RSSFeedVector::iterator it = all.begin(); it != all.end(); ++it)
