@@ -60,7 +60,13 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * desc;
 			if (desc = asXML->FirstChildElement("description"))
-				return desc->GetText();
+			{
+				tinyxml2::XMLDocument descdoc;
+				descdoc.Parse(desc->GetText());
+				tinyxml2::XMLPrinter printer;
+				descdoc.Print(&printer);
+				return printer.CStr();
+			}
 			else
 				return "no description";
 		}
