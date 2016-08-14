@@ -8,6 +8,7 @@
 #include "ItemListControl.h"
 #include "FeedToolbar.h"
 #include "ItemDescControl.h"
+#include "webform.h"
 
 using namespace anteRSSParser;
 using namespace anteRSS;
@@ -53,6 +54,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// memory leak check
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	OleInitialize(0);
 
 	// initialize curl
 	curl_global_init(CURL_GLOBAL_ALL);
@@ -102,6 +105,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// destroy curl
 	curl_global_cleanup();
+
+	OleUninitialize();
 
 	return (int)msg.wParam;
 }

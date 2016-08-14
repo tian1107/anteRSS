@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ItemDescControl.h"
+#include "webform.h"
 
 namespace anteRSS
 {
@@ -12,12 +13,12 @@ namespace anteRSS
 
 	void ItemDescControl::CreateControl(HWND parent)
 	{
-		syslink = CreateWindowEx(0, WC_LINK,
-			L"For more information, <A HREF=\"http://www.microsoft.com\">click here</A> " \
-			L"or <A ID=\"idInfo\">here</A>.",
-			WS_VISIBLE | WS_CHILD | WS_TABSTOP,
-			0, 0, 0, 0,
-			parent, NULL, hInst, NULL);
+		syslink = CreateWindowEx(0, WEBFORM_CLASS, _T(""),
+			WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | WS_VSCROLL,
+			0, 0, 100, 100, parent, (HMENU)103, hInst, 0);
+		WebformReady(syslink);
+		WebformSet(syslink, L"nothing yet");
+		WebformGo(syslink, 0);
 	}
 
 	int ItemDescControl::notifyNotify(LPARAM lParam)
@@ -55,7 +56,9 @@ namespace anteRSS
 
 	void ItemDescControl::setText(std::wstring text)
 	{
-		SetWindowText(syslink, text.c_str());
+		WebformReady(syslink);
+		WebformSet(syslink, text.c_str());
+		WebformGo(syslink, 0);
 	}
 
 }
