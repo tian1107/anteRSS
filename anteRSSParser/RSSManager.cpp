@@ -68,11 +68,7 @@ namespace anteRSSParser
 			//OutputDebugString(L"Opened it success!\n");
 		}
 
-		// create tables if not already there
-		simpleSQL(db, 
-			"CREATE TABLE IF NOT EXISTS \"FeedItems\" (\n\t`guid`\tTEXT NOT NULL UNIQUE,\n\t`title`\tTEXT NOT NULL,\n\t`description`\tTEXT NOT NULL,\n\t`feedid`\tINTEGER NOT NULL,\n\t`date`\tTEXT NOT NULL,\n\t`actualdate`\tTEXT,\n\t`status`\tINTEGER NOT NULL DEFAULT 0,\n\t`link`\tTEXT,\n\t`contentencoded`\tTEXT,\n\tPRIMARY KEY(guid)\n);");
-		simpleSQL(db, 
-			"CREATE TABLE IF NOT EXISTS \"FeedInfo\" (\n\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n\t`name`\tTEXT NOT NULL,\n\t`url`\tTEXT NOT NULL UNIQUE\n)");
+		updateDatabaseFormat();
 
 		std::string feedStr = "insert into FeedInfo (name, url) values (?1, ?2);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
@@ -113,6 +109,8 @@ namespace anteRSSParser
 		sqlite3_finalize(removeFeedItemStmt);
 		sqlite3_finalize(updateFeedStmt);
 		sqlite3_finalize(markItemStmt);
+		sqlite3_finalize(getProgramInfoStmt);
+		sqlite3_finalize(setProgramInfoStmt);
 		sqlite3_close(db);
 	}
 
@@ -248,6 +246,34 @@ namespace anteRSSParser
 			item.contentEncoded = "";
 
 		return item;
+	}
+
+	// for when the tables need to be updated
+	void RSSManager::updateDatabaseFormat()
+	{
+		// create tables if not already there
+		simpleSQL(db,
+			"CREATE TABLE IF NOT EXISTS \"FeedItems\" (\n\t`guid`\tTEXT NOT NULL UNIQUE,\n\t`title`\tTEXT NOT NULL,\n\t`description`\tTEXT NOT NULL,\n\t`feedid`\tINTEGER NOT NULL,\n\t`date`\tTEXT NOT NULL,\n\t`actualdate`\tTEXT,\n\t`status`\tINTEGER NOT NULL DEFAULT 0,\n\t`link`\tTEXT,\n\t`contentencoded`\tTEXT,\n\tPRIMARY KEY(guid)\n);");
+		simpleSQL(db,
+			"CREATE TABLE IF NOT EXISTS \"FeedInfo\" (\n\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n\t`name`\tTEXT NOT NULL,\n\t`url`\tTEXT NOT NULL UNIQUE\n)");
+		simpleSQL(db, 
+			"CREATE TABLE IF NOT EXISTS `ProgramInfo` (\n\t`infoname`\tTEXT NOT NULL UNIQUE,\n\t`value`\tTEXT,\n\tPRIMARY KEY(infoname)\n);");
+
+		// these statements need to be created first
+		std::string feedStr = "select value from ProgramInfo where infoname=?1;";
+		int rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getProgramInfoStmt, NULL);
+		feedStr = "insert or replace into ProgramInfo (infoname, value) values (?1, ?2);";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &setProgramInfoStmt, NULL);
+
+		// get version of databse
+		std::string version = getProgramInfo("version", "0.0");
+		if (!version.compare("0.0"))	// version 0, before content encoded, and ProgramInfo
+		{
+			simpleSQL(db, "alter table FeedItems add column `contentencoded` TEXT;");
+		}
+
+		// current version
+		setProgramInfo("version", "0.1");
 	}
 
 	RSSFeedItemVector RSSManager::getItemsOfFeed(int feedId)
@@ -403,6 +429,39 @@ namespace anteRSSParser
 	{
 		sqlite3_step(markAllReadStmt);
 		sqlite3_reset(markAllReadStmt);
+	}
+
+	std::string RSSManager::getProgramInfo(std::string infoname, std::string defaultValue)
+	{
+		std::string result;
+
+		sqlite3_clear_bindings(getProgramInfoStmt);
+		sqlite3_bind_text(getProgramInfoStmt, 1, infoname.c_str(), -1, SQLITE_STATIC);
+		int rc = sqlite3_step(getProgramInfoStmt);
+
+		if (rc == SQLITE_ROW)
+		{
+			const char * value = (const char*)sqlite3_column_text(getProgramInfoStmt, 0);
+			if (value)
+				result = value;
+			else
+				result = defaultValue;
+		}
+		else
+			result = defaultValue;
+
+		sqlite3_reset(getProgramInfoStmt);
+
+		return result;
+	}
+
+	void RSSManager::setProgramInfo(std::string infoname, std::string value)
+	{
+		sqlite3_clear_bindings(setProgramInfoStmt);
+		sqlite3_bind_text(setProgramInfoStmt, 1, infoname.c_str(), -1, SQLITE_STATIC);
+		sqlite3_bind_text(setProgramInfoStmt, 2, value.c_str(), -1, SQLITE_STATIC);
+		int rc = sqlite3_step(setProgramInfoStmt);
+		sqlite3_reset(setProgramInfoStmt);
 	}
 
 }
