@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "resource.h"
 #include "ItemDescControl.h"
 #include "webform.h"
 
@@ -14,8 +15,8 @@ namespace anteRSS
 	void ItemDescControl::CreateControl(HWND parent)
 	{
 		syslink = CreateWindowEx(0, WEBFORM_CLASS, _T(""),
-			WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | WS_VSCROLL,
-			0, 0, 100, 100, parent, (HMENU)103, hInst, 0);
+			WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | WS_VSCROLL | WS_BORDER,
+			0, 0, 100, 100, parent, (HMENU)IDC_ANTERSS_RSSDESC, hInst, 0);
 		WebformReady(syslink);
 		WebformSet(syslink, L"nothing yet");
 		WebformGo(syslink, 0);
