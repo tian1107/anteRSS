@@ -19,6 +19,7 @@ namespace anteRSSParser
 		std::string date;
 		int status;
 		std::string link;
+		std::string contentEncoded;
 	};
 	typedef std::vector<RSSFeedItem> RSSFeedItemVector;
 
@@ -54,6 +55,7 @@ namespace anteRSSParser
 		sqlite3_stmt * markAllReadStmt;
 
 		RSSFeedItemVector updateFeedFromDoc(RSSDocument * doc, int feedId);
+		RSSFeedItem getFeedItemFromStatement(sqlite3_stmt * stmt);
 	public:
 		RSSManager(std::string dbFile);
 		~RSSManager();

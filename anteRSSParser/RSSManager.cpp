@@ -27,6 +27,7 @@ namespace anteRSSParser
 			sqlite3_bind_text(updateFeedStmt, 5, item.getDate().c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_text(updateFeedStmt, 6, item.getActualDate().c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_text(updateFeedStmt, 7, item.getLink().c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(updateFeedStmt, 8, item.getContentEncoded().c_str(), -1, SQLITE_TRANSIENT);
 			int rc = sqlite3_step(updateFeedStmt);
 
 			// new thing!
@@ -39,6 +40,8 @@ namespace anteRSSParser
 				feedItem.guid = item.getUniqueId();
 				feedItem.status = 0;
 				feedItem.title = item.getTitle();
+				feedItem.link = item.getLink();
+				feedItem.contentEncoded = item.getContentEncoded();
 				result.push_back(feedItem);
 			}
 
@@ -81,15 +84,15 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedFromUrlStmt, NULL);
 		feedStr = "select feed.id, feed.name, feed.url, count(case when item.status = 0 then 1 else null end) as \"unread\" from FeedInfo feed left join FeedItems item on feed.id = item.feedid group by feed.id order by name collate nocase;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getAllFeedsStmt, NULL);
-		feedStr = "select guid, title, description, feedid, status, date, link from FeedItems where feedid=?1 order by date desc;";
+		feedStr = "select guid, title, description, feedid, status, date, link, contentencoded from FeedItems where feedid=?1 order by date desc;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getItemsofFeedStmt, NULL);
-		feedStr = "select guid, title, description, feedid, status, date, link from FeedItems where status=?1 order by date desc;";
+		feedStr = "select guid, title, description, feedid, status, date, link, contentencoded from FeedItems where status=?1 order by date desc;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getItemsofStatusStmt, NULL);
 		feedStr = "delete from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedStmt, NULL);
 		feedStr = "delete from FeedItems where feedid=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedItemStmt, NULL);
-		feedStr = "insert into FeedItems (guid, title, description, feedid, date, actualdate, link) values (?1, ?2, ?3, ?4, ?5, ?6, ?7);";
+		feedStr = "insert into FeedItems (guid, title, description, feedid, date, actualdate, link, contentencoded) values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &updateFeedStmt, NULL);
 		feedStr = "update FeedItems set status=?1 where guid=?2;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markItemStmt, NULL);
@@ -224,11 +227,11 @@ namespace anteRSSParser
 		return result;
 	}
 
-	RSSFeedItem getFeedItemFromStatement(sqlite3_stmt * stmt)
+	RSSFeedItem RSSManager::getFeedItemFromStatement(sqlite3_stmt * stmt)
 	{
 		RSSFeedItem item;
 
-		// guid, title, description, feedid, status, date
+		// guid, title, description, feedid, status, date, link, contentEncoded
 
 		item.guid = (const char *)sqlite3_column_text(stmt, 0);
 		item.title = (const char *)sqlite3_column_text(stmt, 1);
@@ -237,6 +240,12 @@ namespace anteRSSParser
 		item.status = sqlite3_column_int(stmt, 4);
 		item.date = (const char *)sqlite3_column_text(stmt, 5);
 		item.link = (const char *)sqlite3_column_text(stmt, 6);
+
+		const char * contentEncoded = (const char *) sqlite3_column_text(stmt, 7);
+		if (contentEncoded)
+			item.contentEncoded = contentEncoded;
+		else
+			item.contentEncoded = "";
 
 		return item;
 	}

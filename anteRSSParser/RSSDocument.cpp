@@ -85,6 +85,23 @@ namespace anteRSSParser
 		return std::string();
 	}
 
+	std::string RSSItem::getContentEncoded()
+	{
+		if (format == RSSFormat::INVALID)
+			return "invalid";
+
+		if (format == RSSFormat::RSS2)
+		{
+			tinyxml2::XMLElement * desc;
+			if (desc = asXML->FirstChildElement("content:encoded"))
+				return desc->GetText();
+			else
+				return "";
+		}
+
+		return std::string();
+	}
+
 	std::string RSSItem::getDate()
 	{
 		if (format == RSSFormat::INVALID)
