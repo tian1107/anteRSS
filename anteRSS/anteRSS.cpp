@@ -306,6 +306,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				ShowWindow(hWnd, SW_SHOW);
 				UpdateWindow(hWnd);
 			}
+			if (GetForegroundWindow() != hWnd)
+				SetForegroundWindow(hWnd);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
