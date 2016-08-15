@@ -10,5 +10,5 @@ namespace anteRSSParser
 	std::string getCurrentTime();
 
 	// a query where nothing is returned, and nothing is inputted
-	void simpleSQL(sqlite3 * db, std::string query);
+	int simpleSQL(sqlite3 * db, std::string query);
 }

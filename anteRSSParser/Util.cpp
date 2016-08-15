@@ -38,12 +38,17 @@ namespace anteRSSParser
 		return str.str();
 	}
 
-	void simpleSQL(sqlite3 * db, std::string query)
+	int simpleSQL(sqlite3 * db, std::string query)
 	{
-		sqlite3_stmt * statement;
-		sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &statement, NULL);
-		sqlite3_step(statement);
+		sqlite3_stmt * statement = 0;
+		int rc = sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &statement, NULL);
+		if (rc == SQLITE_OK)
+		{
+			rc = sqlite3_step(statement);
+		}
 		sqlite3_finalize(statement);
+
+		return rc;
 	}
 
 }
