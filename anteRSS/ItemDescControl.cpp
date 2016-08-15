@@ -33,16 +33,6 @@ namespace anteRSS
 
 		switch (source->code)
 		{
-		case NM_CLICK:
-		case NM_RETURN:
-		{
-			PNMLINK pNMLink = (PNMLINK)lParam;
-			LITEM   item = pNMLink->item;
-
-			ShellExecute(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
-
-			break;
-		}
 		default:
 			break;
 		}
@@ -53,6 +43,28 @@ namespace anteRSS
 	void ItemDescControl::notifyResize(RECT rect)
 	{
 		MoveWindow(syslink, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
+	}
+
+	void ItemDescControl::notifyCommand(WPARAM wParam, LPARAM lParam)
+	{
+		int wmId = LOWORD(wParam);
+		int code = HIWORD(wParam);
+
+		if (wmId != IDC_ANTERSS_RSSDESC)
+			return;
+
+		switch (code)
+		{
+		case WEBFN_CLICKED:
+		{
+			const wchar_t * url = WebformLastClick(syslink);
+			ShellExecute(NULL, L"open", url, NULL, NULL, SW_SHOW);
+			break;
+		}
+		default:
+
+			break;
+		}
 	}
 
 	void ItemDescControl::setText(std::wstring text)

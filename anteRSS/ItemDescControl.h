@@ -13,6 +13,7 @@ namespace anteRSS
 		void CreateControl(HWND parent);
 		int notifyNotify(LPARAM lParam);
 		void notifyResize(RECT rect);
+		void notifyCommand(WPARAM wParam, LPARAM lParam);
 		void setText(std::wstring text);
 	};
 }

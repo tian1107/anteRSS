@@ -287,6 +287,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
+		case IDC_ANTERSS_RSSDESC:
+		{
+			rssDesc->notifyCommand(wParam, lParam);
+			break;
+		}
 		case IDM_ABOUT:
 		{
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
