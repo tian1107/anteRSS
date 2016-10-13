@@ -53,6 +53,7 @@ namespace anteRSSParser
 		sqlite3_stmt * updateFeedStmt;
 		sqlite3_stmt * markItemStmt;
 		sqlite3_stmt * markAllReadStmt;
+		sqlite3_stmt * markAllFeedReadStmt;
 		sqlite3_stmt * getProgramInfoStmt;
 		sqlite3_stmt * setProgramInfoStmt;
 
@@ -74,7 +75,7 @@ namespace anteRSSParser
 		void updateFeed(int feedId, RSSManagerCallback callback, void * data);
 		void updateAll(RSSManagerCallback callback, void * data);
 		void markStatus(std::string guid, int status);
-		void markAllAsRead();
+		void markAllAsRead(int feedid);
 		std::string getProgramInfo(std::string infoname, std::string defaultValue);
 		void setProgramInfo(std::string infoname, std::string value);
 		std::string getLastError();

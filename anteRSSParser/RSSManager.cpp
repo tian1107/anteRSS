@@ -94,6 +94,8 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markItemStmt, NULL);
 		feedStr = "update FeedItems set status=1 where status=0;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markAllReadStmt, NULL);
+		feedStr = "update FeedItems set status=1 where status=0 and feedid=?1;";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markAllFeedReadStmt, NULL);
 	}
 
 	RSSManager::~RSSManager()
@@ -109,6 +111,8 @@ namespace anteRSSParser
 		sqlite3_finalize(removeFeedItemStmt);
 		sqlite3_finalize(updateFeedStmt);
 		sqlite3_finalize(markItemStmt);
+		sqlite3_finalize(markAllReadStmt);
+		sqlite3_finalize(markAllFeedReadStmt);
 		sqlite3_finalize(getProgramInfoStmt);
 		sqlite3_finalize(setProgramInfoStmt);
 		sqlite3_close(db);
@@ -429,10 +433,20 @@ namespace anteRSSParser
 		sqlite3_reset(markItemStmt);
 	}
 
-	void RSSManager::markAllAsRead()
+	void RSSManager::markAllAsRead(int feedid)
 	{
-		sqlite3_step(markAllReadStmt);
-		sqlite3_reset(markAllReadStmt);
+		if (feedid == 0)
+		{
+			sqlite3_step(markAllReadStmt);
+			sqlite3_reset(markAllReadStmt);
+		}
+		else
+		{
+			sqlite3_clear_bindings(markAllFeedReadStmt);
+			sqlite3_bind_int(markAllFeedReadStmt, 1, feedid);
+			int rc = sqlite3_step(markAllFeedReadStmt);
+			sqlite3_reset(markAllFeedReadStmt);
+		}
 	}
 
 	std::string RSSManager::getProgramInfo(std::string infoname, std::string defaultValue)
