@@ -57,8 +57,10 @@ namespace anteRSS
 		{
 		case WEBFN_CLICKED:
 		{
-			const wchar_t * url = WebformLastClick(syslink);
-			ShellExecute(NULL, L"open", url, NULL, NULL, SW_SHOW);
+			std::wstring url = WebformLastClick(syslink);
+			// local stuff
+			if (url.compare(0, strlen("about:"), L"about:") != 0)
+				ShellExecute(NULL, L"open", url.c_str(), NULL, NULL, SW_SHOW);
 			break;
 		}
 		default:

@@ -125,7 +125,7 @@ struct TWebf : public IUnknown
         // http://msdn2.microsoft.com/en-us/library/ms671911(VS.80).aspx
         case DISPID_AMBIENT_DLCONTROL: 
         { pVarResult->vt = VT_I4;
-          pVarResult->lVal = DLCTL_DLIMAGES | DLCTL_VIDEOS | DLCTL_BGSOUNDS | DLCTL_SILENT;
+          pVarResult->lVal = DLCTL_NO_SCRIPTS | DLCTL_NO_JAVA | DLCTL_NO_RUNACTIVEXCTLS | DLCTL_NO_DLACTIVEXCTLS | DLCTL_DLIMAGES | DLCTL_SILENT;
         }
         default: return DISP_E_MEMBERNOTFOUND;
       }
@@ -296,6 +296,7 @@ void TWebf::Go(const TCHAR *url)
   wchar_t ws[MAX_PATH]; TCharToWide(url,ws,MAX_PATH);
   isnaving = 7;
   VARIANT v; v.vt=VT_I4; v.lVal=0; //v.lVal=navNoHistory;
+  ibrowser->put_Silent(VARIANT_TRUE);
   ibrowser->Navigate(ws,&v,NULL,NULL,NULL);
   // nb. the events know not to bother us for currentlynav.
   // (Special case: maybe it's already loaded by the time we get here!)
