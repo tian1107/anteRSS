@@ -156,6 +156,7 @@ namespace anteRSS
 		//ListView_DeleteAllItems(listControl);
 
 		ListView_SetItemCountEx(listControl, itemCache.size(), LVSICF_NOSCROLL);
+		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 
 		/*int index = 0;
 		for (RSSFeedItemVector::iterator it = itemCache.begin(); it != itemCache.end(); ++it, ++index)
