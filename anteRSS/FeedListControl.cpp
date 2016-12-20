@@ -146,7 +146,7 @@ namespace anteRSS
 			{
 				control->feedStatus[feedid] = FeedStatus::NORMAL;
 
-				if (newItem.size() > 0)
+				//if (newItem.size() > 0)
 					control->notifyFeedListChanged();
 			}
 			else
@@ -235,7 +235,7 @@ namespace anteRSS
 
 		// notify change in content?
 		ListView_SetItemCountEx(listControl, 3 + feedCache.size(), LVSICF_NOSCROLL);
-		UpdateWindow(listControl);
+		InvalidateRect(listControl, NULL, false);
 	}
 
 	void FeedListControl::notifyResize(RECT rect)
@@ -485,6 +485,8 @@ namespace anteRSS
 		{
 			feedStatus[it->id] = FeedStatus::UPDATING;
 		}
+
+		notifyFeedListChanged();
 
 		std::thread thread(&FeedListControl::updateAllThread, this, newNotify);
 		thread.detach();
