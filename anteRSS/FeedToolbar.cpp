@@ -125,7 +125,11 @@ namespace anteRSS
 			}
 			case BTN_ANTERSS_RDA:
 			{
-				manager->markAllAsRead();
+				RSSFeed * selected = feed->getSelectedFeed();
+				if (selected)
+					manager->markAllAsRead(selected->id);
+				else
+					manager->markAllAsRead(0);
 				feed->notifyFeedListChanged();
 				item->notifyItemListChanged(-1);
 				break;

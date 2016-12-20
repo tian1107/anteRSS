@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
+#include "resource.h"
 #include "ItemDescControl.h"
+#include "webform.h"
 
 namespace anteRSS
 {
@@ -12,12 +14,12 @@ namespace anteRSS
 
 	void ItemDescControl::CreateControl(HWND parent)
 	{
-		syslink = CreateWindowEx(0, WC_LINK,
-			L"For more information, <A HREF=\"http://www.microsoft.com\">click here</A> " \
-			L"or <A ID=\"idInfo\">here</A>.",
-			WS_VISIBLE | WS_CHILD | WS_TABSTOP,
-			0, 0, 0, 0,
-			parent, NULL, hInst, NULL);
+		syslink = CreateWindowEx(0, WEBFORM_CLASS, _T(""),
+			WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | WS_VSCROLL | WS_BORDER,
+			0, 0, 100, 100, parent, (HMENU)IDC_ANTERSS_RSSDESC, hInst, 0);
+		WebformReady(syslink);
+		WebformSet(syslink, L"nothing yet");
+		WebformGo(syslink, 0);
 	}
 
 	int ItemDescControl::notifyNotify(LPARAM lParam)
@@ -31,16 +33,6 @@ namespace anteRSS
 
 		switch (source->code)
 		{
-		case NM_CLICK:
-		case NM_RETURN:
-		{
-			PNMLINK pNMLink = (PNMLINK)lParam;
-			LITEM   item = pNMLink->item;
-
-			ShellExecute(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
-
-			break;
-		}
 		default:
 			break;
 		}
@@ -53,9 +45,33 @@ namespace anteRSS
 		MoveWindow(syslink, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
 	}
 
+	void ItemDescControl::notifyCommand(WPARAM wParam, LPARAM lParam)
+	{
+		int wmId = LOWORD(wParam);
+		int code = HIWORD(wParam);
+
+		if (wmId != IDC_ANTERSS_RSSDESC)
+			return;
+
+		switch (code)
+		{
+		case WEBFN_CLICKED:
+		{
+			const wchar_t * url = WebformLastClick(syslink);
+			ShellExecute(NULL, L"open", url, NULL, NULL, SW_SHOW);
+			break;
+		}
+		default:
+
+			break;
+		}
+	}
+
 	void ItemDescControl::setText(std::wstring text)
 	{
-		SetWindowText(syslink, text.c_str());
+		WebformReady(syslink);
+		WebformSet(syslink, text.c_str());
+		WebformGo(syslink, 0);
 	}
 
 }

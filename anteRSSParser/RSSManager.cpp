@@ -27,6 +27,7 @@ namespace anteRSSParser
 			sqlite3_bind_text(updateFeedStmt, 5, item.getDate().c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_text(updateFeedStmt, 6, item.getActualDate().c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_text(updateFeedStmt, 7, item.getLink().c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(updateFeedStmt, 8, item.getContentEncoded().c_str(), -1, SQLITE_TRANSIENT);
 			int rc = sqlite3_step(updateFeedStmt);
 
 			// new thing!
@@ -39,6 +40,8 @@ namespace anteRSSParser
 				feedItem.guid = item.getUniqueId();
 				feedItem.status = 0;
 				feedItem.title = item.getTitle();
+				feedItem.link = item.getLink();
+				feedItem.contentEncoded = item.getContentEncoded();
 				result.push_back(feedItem);
 			}
 
@@ -65,11 +68,7 @@ namespace anteRSSParser
 			//OutputDebugString(L"Opened it success!\n");
 		}
 
-		// create tables if not already there
-		simpleSQL(db, 
-			"CREATE TABLE IF NOT EXISTS \"FeedItems\" (\n\t`guid`\tTEXT NOT NULL UNIQUE,\n\t`title`\tTEXT NOT NULL,\n\t`description`\tTEXT NOT NULL,\n\t`feedid`\tINTEGER NOT NULL,\n\t`date`\tTEXT NOT NULL,\n\t`actualdate`\tTEXT,\n\t`status`\tINTEGER NOT NULL DEFAULT 0,\n\t`link`\tTEXT,\n\tPRIMARY KEY(guid)\n);");
-		simpleSQL(db, 
-			"CREATE TABLE IF NOT EXISTS \"FeedInfo\" (\n\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n\t`name`\tTEXT NOT NULL,\n\t`url`\tTEXT NOT NULL UNIQUE\n)");
+		updateDatabaseFormat();
 
 		std::string feedStr = "insert into FeedInfo (name, url) values (?1, ?2);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
@@ -81,20 +80,22 @@ namespace anteRSSParser
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getFeedFromUrlStmt, NULL);
 		feedStr = "select feed.id, feed.name, feed.url, count(case when item.status = 0 then 1 else null end) as \"unread\" from FeedInfo feed left join FeedItems item on feed.id = item.feedid group by feed.id order by name collate nocase;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getAllFeedsStmt, NULL);
-		feedStr = "select guid, title, description, feedid, status, date, link from FeedItems where feedid=?1 order by date desc;";
+		feedStr = "select guid, title, description, feedid, status, date, link, contentencoded from FeedItems where feedid=?1 order by date desc;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getItemsofFeedStmt, NULL);
-		feedStr = "select guid, title, description, feedid, status, date, link from FeedItems where status=?1 order by date desc;";
+		feedStr = "select guid, title, description, feedid, status, date, link, contentencoded from FeedItems where status=?1 order by date desc;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getItemsofStatusStmt, NULL);
 		feedStr = "delete from FeedInfo where id=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedStmt, NULL);
 		feedStr = "delete from FeedItems where feedid=?1;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &removeFeedItemStmt, NULL);
-		feedStr = "insert into FeedItems (guid, title, description, feedid, date, actualdate, link) values (?1, ?2, ?3, ?4, ?5, ?6, ?7);";
+		feedStr = "insert into FeedItems (guid, title, description, feedid, date, actualdate, link, contentencoded) values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &updateFeedStmt, NULL);
 		feedStr = "update FeedItems set status=?1 where guid=?2;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markItemStmt, NULL);
 		feedStr = "update FeedItems set status=1 where status=0;";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markAllReadStmt, NULL);
+		feedStr = "update FeedItems set status=1 where status=0 and feedid=?1;";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &markAllFeedReadStmt, NULL);
 	}
 
 	RSSManager::~RSSManager()
@@ -110,6 +111,10 @@ namespace anteRSSParser
 		sqlite3_finalize(removeFeedItemStmt);
 		sqlite3_finalize(updateFeedStmt);
 		sqlite3_finalize(markItemStmt);
+		sqlite3_finalize(markAllReadStmt);
+		sqlite3_finalize(markAllFeedReadStmt);
+		sqlite3_finalize(getProgramInfoStmt);
+		sqlite3_finalize(setProgramInfoStmt);
 		sqlite3_close(db);
 	}
 
@@ -224,11 +229,11 @@ namespace anteRSSParser
 		return result;
 	}
 
-	RSSFeedItem getFeedItemFromStatement(sqlite3_stmt * stmt)
+	RSSFeedItem RSSManager::getFeedItemFromStatement(sqlite3_stmt * stmt)
 	{
 		RSSFeedItem item;
 
-		// guid, title, description, feedid, status, date
+		// guid, title, description, feedid, status, date, link, contentEncoded
 
 		item.guid = (const char *)sqlite3_column_text(stmt, 0);
 		item.title = (const char *)sqlite3_column_text(stmt, 1);
@@ -238,7 +243,45 @@ namespace anteRSSParser
 		item.date = (const char *)sqlite3_column_text(stmt, 5);
 		item.link = (const char *)sqlite3_column_text(stmt, 6);
 
+		const char * contentEncoded = (const char *) sqlite3_column_text(stmt, 7);
+		if (contentEncoded)
+			item.contentEncoded = contentEncoded;
+		else
+			item.contentEncoded = "";
+
 		return item;
+	}
+
+	// for when the tables need to be updated
+	void RSSManager::updateDatabaseFormat()
+	{
+		// create tables if not already there
+		int createRC = simpleSQL(db,
+			"CREATE TABLE \"FeedItems\" (\n\t`guid`\tTEXT NOT NULL UNIQUE,\n\t`title`\tTEXT NOT NULL,\n\t`description`\tTEXT NOT NULL,\n\t`feedid`\tINTEGER NOT NULL,\n\t`date`\tTEXT NOT NULL,\n\t`actualdate`\tTEXT,\n\t`status`\tINTEGER NOT NULL DEFAULT 0,\n\t`link`\tTEXT,\n\t`contentencoded`\tTEXT,\n\tPRIMARY KEY(guid)\n);");
+		simpleSQL(db,
+			"CREATE TABLE IF NOT EXISTS \"FeedInfo\" (\n\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n\t`name`\tTEXT NOT NULL,\n\t`url`\tTEXT NOT NULL UNIQUE\n)");
+		simpleSQL(db, 
+			"CREATE TABLE IF NOT EXISTS `ProgramInfo` (\n\t`infoname`\tTEXT NOT NULL UNIQUE,\n\t`value`\tTEXT,\n\tPRIMARY KEY(infoname)\n);");
+
+		// these statements need to be created first
+		std::string feedStr = "select value from ProgramInfo where infoname=?1;";
+		int rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &getProgramInfoStmt, NULL);
+		feedStr = "insert or replace into ProgramInfo (infoname, value) values (?1, ?2);";
+		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &setProgramInfoStmt, NULL);
+
+		// when the tables already exist, update the table format
+		if (createRC == SQLITE_ERROR)
+		{
+			// get version of databse
+			std::string version = getProgramInfo("version", "0.0");
+			if (!version.compare("0.0"))	// version 0, before content encoded, and ProgramInfo
+			{
+				simpleSQL(db, "alter table FeedItems add column `contentencoded` TEXT;");
+			}
+		}
+
+		// current version
+		setProgramInfo("version", "0.1");
 	}
 
 	RSSFeedItemVector RSSManager::getItemsOfFeed(int feedId)
@@ -390,10 +433,53 @@ namespace anteRSSParser
 		sqlite3_reset(markItemStmt);
 	}
 
-	void RSSManager::markAllAsRead()
+	void RSSManager::markAllAsRead(int feedid)
 	{
-		sqlite3_step(markAllReadStmt);
-		sqlite3_reset(markAllReadStmt);
+		if (feedid == 0)
+		{
+			sqlite3_step(markAllReadStmt);
+			sqlite3_reset(markAllReadStmt);
+		}
+		else
+		{
+			sqlite3_clear_bindings(markAllFeedReadStmt);
+			sqlite3_bind_int(markAllFeedReadStmt, 1, feedid);
+			int rc = sqlite3_step(markAllFeedReadStmt);
+			sqlite3_reset(markAllFeedReadStmt);
+		}
+	}
+
+	std::string RSSManager::getProgramInfo(std::string infoname, std::string defaultValue)
+	{
+		std::string result;
+
+		sqlite3_clear_bindings(getProgramInfoStmt);
+		sqlite3_bind_text(getProgramInfoStmt, 1, infoname.c_str(), -1, SQLITE_STATIC);
+		int rc = sqlite3_step(getProgramInfoStmt);
+
+		if (rc == SQLITE_ROW)
+		{
+			const char * value = (const char*)sqlite3_column_text(getProgramInfoStmt, 0);
+			if (value)
+				result = value;
+			else
+				result = defaultValue;
+		}
+		else
+			result = defaultValue;
+
+		sqlite3_reset(getProgramInfoStmt);
+
+		return result;
+	}
+
+	void RSSManager::setProgramInfo(std::string infoname, std::string value)
+	{
+		sqlite3_clear_bindings(setProgramInfoStmt);
+		sqlite3_bind_text(setProgramInfoStmt, 1, infoname.c_str(), -1, SQLITE_STATIC);
+		sqlite3_bind_text(setProgramInfoStmt, 2, value.c_str(), -1, SQLITE_STATIC);
+		int rc = sqlite3_step(setProgramInfoStmt);
+		sqlite3_reset(setProgramInfoStmt);
 	}
 
 }

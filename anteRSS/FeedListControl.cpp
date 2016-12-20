@@ -372,6 +372,7 @@ namespace anteRSS
 		return 0;
 	}
 
+	// Returns the FeedListControl's selected feed if a specific feed, else nullptr
 	anteRSSParser::RSSFeed * FeedListControl::getSelectedFeed()
 	{
 		// Get the first selected item

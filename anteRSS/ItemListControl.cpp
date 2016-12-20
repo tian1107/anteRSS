@@ -281,7 +281,11 @@ namespace anteRSS
 					changeIcon(pnmv->iItem, imageRead);
 				}
 
-				descControl->setText(convertToWide(item->description));
+				// use contentEncoded if it exists, else use the description
+				if (item->contentEncoded.size())
+					descControl->setText(convertToWide(item->contentEncoded));
+				else
+					descControl->setText(convertToWide(item->description));
 			}
 			break;
 		}

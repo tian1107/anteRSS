@@ -24,6 +24,7 @@ namespace anteRSSParser
 		std::string getUniqueId();
 		std::string getDescription();
 		std::string getLink();
+		std::string getContentEncoded();
 		std::string getDate();
 		std::string getActualDate();
 		RSSItem getNext();

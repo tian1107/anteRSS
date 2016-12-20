@@ -57,7 +57,12 @@ namespace anteRSSParser
 		char * str;
 		curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &str);
 
-		std::string result(str);
+		std::string result = "";
+
+		if (str)
+		{
+			result = str;
+		}
 
 		curl_easy_cleanup(curl);
 
