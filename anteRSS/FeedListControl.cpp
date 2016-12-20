@@ -235,6 +235,7 @@ namespace anteRSS
 
 		// notify change in content?
 		ListView_SetItemCountEx(listControl, 3 + feedCache.size(), LVSICF_NOSCROLL);
+		UpdateWindow(listControl);
 	}
 
 	void FeedListControl::notifyResize(RECT rect)
