@@ -77,52 +77,18 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 	}
 
-	int ItemListControl::insertRow(int index, RSSFeedItem * item)
+	anteRSSParser::RSSFeedItem & ItemListControl::getFeedItem(int listIndex)
 	{
-		// TODO dynamic allocation
-		const size_t length = 256;
-
-		LVITEM lvI;
-		wchar_t buf[length];
-
-		// Initialize LVITEM members that are common to all items.
-		lvI.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE | LVIF_PARAM;
-		lvI.stateMask = 0;
-		lvI.iSubItem = 0;
-		lvI.state = 0;
-		switch (item->status)
+		if (itemCacheIndexStart <= listIndex && listIndex <= itemCacheIndexEnd)
 		{
-		case 0:
-			lvI.iImage = imageUnread;
-			break;
-		case 1:
-			lvI.iImage = imageRead;
-			break;
-		case 2:
-			lvI.iImage = imageArchived;
-			break;
-		default:
-			lvI.iImage = imageUnread;
+			return itemCache.at(listIndex - itemCacheIndexStart);
 		}
-		lvI.iItem = index;
-		lvI.lParam = (LPARAM)item;
-
-		StringCchCopy(buf, length, convertToWide(item->title).c_str());
-		lvI.pszText = buf;
-
-		int result = ListView_InsertItem(listControl, &lvI);
-		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
-		return result;
-	}
-
-	void ItemListControl::changeIcon(int index, int imageIndex)
-	{
-		LVITEM lvI;
-		lvI.mask = LVIF_IMAGE;
-		lvI.iImage = imageIndex;
-		lvI.iItem = index;
-
-		ListView_SetItem(listControl, &lvI);
+		else
+		{
+			// TODO update cache
+			RSSFeedItem empty;
+			return empty;
+		}
 	}
 
 	ItemListControl::ItemListControl(HINSTANCE hInst, ItemDescControl * descControl, anteRSSParser::RSSManager * manager)
@@ -147,7 +113,7 @@ namespace anteRSS
 			WC_LISTVIEW,                // list view class
 			L"",                         // no default text
 			WS_VISIBLE | WS_CHILD | LVS_REPORT | WS_BORDER | LVS_NOCOLUMNHEADER |
-			LVS_SINGLESEL,
+			LVS_OWNERDATA | LVS_SINGLESEL,
 			(rcClient.right - rcClient.left) / 5, 0,
 			(rcClient.right - rcClient.left) - (rcClient.right - rcClient.left) / 5, (rcClient.bottom - rcClient.top)/2,
 			parent,
@@ -184,14 +150,19 @@ namespace anteRSS
 		else
 			itemCache = manager->getItemsOfFeed(feedId);
 
-		ListView_DeleteAllItems(listControl);
+		itemCacheIndexStart = 0;
+		itemCacheIndexEnd = itemCache.size() - 1;
 
-		int index = 0;
+		//ListView_DeleteAllItems(listControl);
+
+		ListView_SetItemCountEx(listControl, itemCache.size(), LVSICF_NOSCROLL);
+
+		/*int index = 0;
 		for (RSSFeedItemVector::iterator it = itemCache.begin(); it != itemCache.end(); ++it, ++index)
 		{
 			std::stringstream str;
 			insertRow(index, &(*it));
-		}
+		}*/
 	}
 
 	void ItemListControl::notifyResize(RECT rect)
@@ -244,6 +215,40 @@ namespace anteRSS
 
 		switch (source->code)
 		{
+		case LVN_GETDISPINFO:
+		{
+			NMLVDISPINFO* plvdi = (NMLVDISPINFO*)source;
+			int index = plvdi->item.iItem;
+			RSSFeedItem & item = itemCache.at(index);
+
+			if (plvdi->item.mask & LVIF_IMAGE)
+			{
+				switch (item.status)
+				{
+				case 0:
+					plvdi->item.iImage = imageUnread;
+					break;
+				case 1:
+					plvdi->item.iImage = imageRead;
+					break;
+				case 2:
+					plvdi->item.iImage = imageArchived;
+					break;
+				default:
+					plvdi->item.iImage = imageUnread;
+				}
+			}
+
+			if (plvdi->item.mask & LVIF_TEXT)
+			{
+				// TODO dynamic allocation
+				StringCchCopy(plvdi->item.pszText, 256, convertToWide(item.title).c_str());
+			}
+
+			//ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
+
+			break;
+		}
 		// when an item is double clicked
 		case NM_DBLCLK:
 		{
@@ -257,9 +262,9 @@ namespace anteRSS
 
 				ListView_GetItem(listControl, &item);
 
-				RSSFeedItem * feedItem = (RSSFeedItem *) item.lParam;
+				RSSFeedItem & feedItem = getFeedItem(item.iItem);
 
-				std::thread thread(openThread, &dManager, feedItem->link);
+				std::thread thread(openThread, &dManager, feedItem.link);
 				thread.detach();
 			}
 
@@ -271,21 +276,21 @@ namespace anteRSS
 			LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
 			if (pnmv->uNewState & LVIS_SELECTED)
 			{
-				RSSFeedItem * item = (RSSFeedItem *)(pnmv->lParam);
+				RSSFeedItem & item = getFeedItem(pnmv->iItem);
 
-				if (item->status == 0)
+				if (item.status == 0)
 				{
-					item->status = 1;
-					manager->markStatus(item->guid, 1);
+					item.status = 1;
+					manager->markStatus(item.guid, 1);
 					PostMessage(GetParent(listControl), MSG_LIST_NOTIFY, 0, 0);
-					changeIcon(pnmv->iItem, imageRead);
+					ListView_RedrawItems(listControl, pnmv->iItem, pnmv->iItem);
 				}
 
 				// use contentEncoded if it exists, else use the description
-				if (item->contentEncoded.size())
-					descControl->setText(convertToWide(item->contentEncoded));
+				if (item.contentEncoded.size())
+					descControl->setText(convertToWide(item.contentEncoded));
 				else
-					descControl->setText(convertToWide(item->description));
+					descControl->setText(convertToWide(item.description));
 			}
 			break;
 		}
@@ -314,20 +319,20 @@ namespace anteRSS
 
 			ListView_GetItem(listControl, &item);
 
-			RSSFeedItem * feedItem = (RSSFeedItem *)(item.lParam);
+			RSSFeedItem & feedItem = getFeedItem(item.iItem);
 
 			// TODO that magic numbers below (2)
-			if (feedItem->status != 2)
+			if (feedItem.status != 2)
 			{
-				manager->markStatus(feedItem->guid, 2);
-				feedItem->status = 2;
-				changeIcon(index, imageArchived);
+				manager->markStatus(feedItem.guid, 2);
+				feedItem.status = 2;
+				ListView_RedrawItems(listControl, item.iItem, item.iItem);
 			}
 			else
 			{
-				manager->markStatus(feedItem->guid, 1);
-				feedItem->status = 1;
-				changeIcon(index, imageRead);
+				manager->markStatus(feedItem.guid, 1);
+				feedItem.status = 1;
+				ListView_RedrawItems(listControl, item.iItem, item.iItem);
 			}
 		}
 

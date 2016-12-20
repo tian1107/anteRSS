@@ -14,6 +14,8 @@ namespace anteRSS
 
 		// rss stuff
 		anteRSSParser::RSSManager * manager;
+		int itemCacheIndexStart;
+		int itemCacheIndexEnd;
 		anteRSSParser::RSSFeedItemVector itemCache;
 		anteRSSParser::DownloadManager dManager;
 
@@ -25,8 +27,7 @@ namespace anteRSS
 		// functions
 		void createImageLists();
 		void createColumns();
-		int insertRow(int index, anteRSSParser::RSSFeedItem * feed);
-		void changeIcon(int index, int imageIndex);
+		anteRSSParser::RSSFeedItem & getFeedItem(int listIndex);
 	public:
 		ItemListControl(HINSTANCE hInst, ItemDescControl * descControl, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
