@@ -47,6 +47,7 @@ namespace anteRSS
 		FeedListControl(HINSTANCE hInst, anteRSSParser::RSSManager * manager);
 		~FeedListControl();
 		void CreateControl(HWND parent);
+		void notifyFeedListItemChanged(int feedid);
 		void notifyFeedListChanged();
 		void notifyResize(RECT rect);
 		int notifyNotify(LPARAM lParam);

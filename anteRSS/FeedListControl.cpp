@@ -145,15 +145,13 @@ namespace anteRSS
 			if (success)
 			{
 				control->feedStatus[feedid] = FeedStatus::NORMAL;
-
-				//if (newItem.size() > 0)
-					control->notifyFeedListChanged();
 			}
 			else
 			{
 				control->feedStatus[feedid] = FeedStatus::FAILED;
-				control->notifyFeedListChanged();
 			}
+
+			control->notifyFeedListItemChanged(feedid);
 		}
 	}
 
@@ -210,6 +208,29 @@ namespace anteRSS
 		createColumns();
 
 		notifyFeedListChanged();
+	}
+
+	void FeedListControl::notifyFeedListItemChanged(int feedid)
+	{
+		feedCache = manager->getAllFeeds();
+		unreadPseudoFeed.id = 0;
+		unreadPseudoFeed.name = "Unread";
+
+		unreadPseudoFeed.unread = 0;
+		int index = 3;
+		int feedIndex = 0;
+		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
+		{
+			unreadPseudoFeed.unread += it->unread;
+			if (it->id == feedid)
+			{
+				feedIndex = index;
+				ListView_Update(listControl, index);
+			}
+		}
+
+		ListView_Update(listControl, 2);
+		ListView_RedrawItems(listControl, feedIndex, feedIndex);
 	}
 
 	void FeedListControl::notifyFeedListChanged()
