@@ -376,7 +376,7 @@ namespace anteRSS
 
 				manager->renameFeed(feed->id, convertToUtf8(pdi->item.pszText));
 
-				notifyFeedListChanged();
+				notifyFeedListItemChanged(feed->id);
 
 				// "did not accept" so that it would not overwrite changes by notifyFeedListChanged();
 				return 0;
@@ -459,7 +459,7 @@ namespace anteRSS
 				feedStatus[feedId] = FeedStatus::FAILED;
 			}
 
-			notifyFeedListChanged();
+			notifyFeedListItemChanged(feedId);
 		}
 	}
 
