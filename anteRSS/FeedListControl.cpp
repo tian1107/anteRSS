@@ -354,7 +354,11 @@ namespace anteRSS
 		}
 		case NM_CLICK:
 		{
-			PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, -3);
+			LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE)lParam;
+			// Only update when it is not handled by LVN_ITEMCHANGED
+			if(ListView_GetItemState(listControl, lpnmitem->iItem, LVIS_FOCUSED | LVIS_SELECTED) & (LVIS_FOCUSED | LVIS_SELECTED))
+				PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, -3);
+
 			break;
 		}
 		case LVN_BEGINLABELEDIT:
