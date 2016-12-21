@@ -213,25 +213,24 @@ namespace anteRSS
 
 	void FeedListControl::notifyFeedListItemChanged(int feedid)
 	{
-		feedCache = manager->getAllFeeds();
 		unreadPseudoFeed.id = 0;
 		unreadPseudoFeed.name = "Unread";
 
 		unreadPseudoFeed.unread = 0;
 		int index = 3;
-		int feedIndex = 0;
 		for (RSSFeedVector::iterator it = feedCache.begin(); it != feedCache.end(); ++it, ++index)
 		{
 			unreadPseudoFeed.unread += it->unread;
 			if (it->id == feedid)
 			{
-				feedIndex = index;
 				ListView_Update(listControl, index);
+				ListView_RedrawItems(listControl, index, index);
 			}
 		}
 
 		ListView_Update(listControl, 2);
-		ListView_RedrawItems(listControl, feedIndex, feedIndex);
+		ListView_RedrawItems(listControl, 2, 2);
+		UpdateWindow(listControl);
 	}
 
 	void FeedListControl::notifyFeedListChanged()
@@ -406,14 +405,7 @@ namespace anteRSS
 		// Get the first selected item
 		int iPos = getSelectedIndex();
 		if (iPos > 2) {
-			LVITEM item;
-			item.iItem = iPos;
-			item.iSubItem = 0;
-			item.mask = LVIF_PARAM;
-
-			ListView_GetItem(listControl, &item);
-
-			return (RSSFeed *)item.lParam;
+			return &(*(feedCache.begin() + (iPos - 3)));
 		}
 
 		return nullptr;
@@ -481,6 +473,8 @@ namespace anteRSS
 			OutputDebugString(str.str().c_str());
 
 			feedStatus[feed->id] = FeedStatus::UPDATING;
+			notifyFeedListItemChanged(feed->id);
+
 			std::thread thread(&FeedListControl::updateSingleThread, this, *feed, select);
 			thread.detach();
 		}
