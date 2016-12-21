@@ -91,6 +91,24 @@ namespace anteRSS
 		}
 	}
 
+	void ItemListControl::selectItem(int iItem)
+	{
+		RSSFeedItem & item = getFeedItem(iItem);
+		if (item.status == 0)
+		{
+			item.status = 1;
+			manager->markStatus(item.guid, 1);
+			PostMessage(GetParent(listControl), MSG_LIST_NOTIFY, 0, 0);
+			ListView_RedrawItems(listControl, iItem, iItem);
+		}
+
+		// use contentEncoded if it exists, else use the description
+		if (item.contentEncoded.size())
+			descControl->setText(convertToWide(item.contentEncoded));
+		else
+			descControl->setText(convertToWide(item.description));
+	}
+
 	ItemListControl::ItemListControl(HINSTANCE hInst, ItemDescControl * descControl, anteRSSParser::RSSManager * manager)
 	{
 		this->hInst = hInst;
@@ -132,6 +150,7 @@ namespace anteRSS
 
 	void ItemListControl::notifyItemListChanged(int feedId)
 	{
+		static int prevInput = -1;
 		// means all of it
 		if (feedId == 0)
 		{
@@ -147,6 +166,12 @@ namespace anteRSS
 		{
 			itemCache = manager->getItemsOfStatus(2);
 		}
+		// just update it
+		else if (feedId == -3)
+		{
+			notifyItemListChanged(prevInput);
+			return;
+		}
 		else
 			itemCache = manager->getItemsOfFeed(feedId);
 
@@ -159,12 +184,7 @@ namespace anteRSS
 		ListView_SetColumnWidth(listControl, 0, LVSCW_AUTOSIZE_USEHEADER);
 		ListView_SetItemState(listControl, -1, 0, LVIS_SELECTED | LVIS_FOCUSED);
 
-		/*int index = 0;
-		for (RSSFeedItemVector::iterator it = itemCache.begin(); it != itemCache.end(); ++it, ++index)
-		{
-			std::stringstream str;
-			insertRow(index, &(*it));
-		}*/
+		prevInput = feedId;
 	}
 
 	void ItemListControl::notifyResize(RECT rect)
@@ -272,28 +292,20 @@ namespace anteRSS
 
 			break;
 		}
-		// when selection changes
+		// when something is clicked
 		case LVN_ITEMCHANGED:
 		{
 			LPNMLISTVIEW pnmv = (LPNMLISTVIEW)lParam;
 			if (pnmv->uNewState & LVIS_SELECTED)
 			{
-				RSSFeedItem & item = getFeedItem(pnmv->iItem);
-
-				if (item.status == 0)
-				{
-					item.status = 1;
-					manager->markStatus(item.guid, 1);
-					PostMessage(GetParent(listControl), MSG_LIST_NOTIFY, 0, 0);
-					ListView_RedrawItems(listControl, pnmv->iItem, pnmv->iItem);
-				}
-
-				// use contentEncoded if it exists, else use the description
-				if (item.contentEncoded.size())
-					descControl->setText(convertToWide(item.contentEncoded));
-				else
-					descControl->setText(convertToWide(item.description));
+				selectItem(pnmv->iItem);
 			}
+			break;
+		}
+		case NM_CLICK:
+		{
+			LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE)lParam;
+			selectItem(lpnmitem->iItem);
 			break;
 		}
 		// disable editing

@@ -137,6 +137,7 @@ namespace anteRSS
 			}
 			control->feedStatus[0] = FeedStatus::NORMAL;
 			control->notifyFeedListChanged();
+			PostMessage(GetParent(control->listControl), MSG_ITEM_NOTIFY, 0, -3);
 		}
 		else
 		{
@@ -350,6 +351,11 @@ namespace anteRSS
 					PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, id);
 				}
 			}
+			break;
+		}
+		case NM_CLICK:
+		{
+			PostMessage(GetParent(listControl), MSG_ITEM_NOTIFY, 0, -3);
 			break;
 		}
 		case LVN_BEGINLABELEDIT:

@@ -28,6 +28,7 @@ namespace anteRSS
 		void createImageLists();
 		void createColumns();
 		anteRSSParser::RSSFeedItem & getFeedItem(int listIndex);
+		void selectItem(int iItem);
 	public:
 		ItemListControl(HINSTANCE hInst, ItemDescControl * descControl, anteRSSParser::RSSManager * manager);
 		void CreateControl(HWND parent);
