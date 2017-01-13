@@ -276,6 +276,32 @@ namespace anteRSS
 
 		switch (source->code)
 		{
+		case NM_CUSTOMDRAW:
+		{
+			LPNMLVCUSTOMDRAW lplvcd = (LPNMLVCUSTOMDRAW) lParam;
+			RSSFeed feed;
+			int index;
+
+			switch (lplvcd->nmcd.dwDrawStage)
+			{
+				case CDDS_PREPAINT:
+					return CDRF_NOTIFYITEMDRAW;
+				case CDDS_ITEMPREPAINT:
+					index = lplvcd->nmcd.dwItemSpec;
+					if (index >= 3)
+					{
+						feed = feedCache.at(index - 3);
+						if (feed.unread > 0)
+							lplvcd->clrText = RGB(0, 0, 255);
+					}
+					return CDRF_NEWFONT;
+				//There would be some bits here for subitem drawing but they don't seem neccesary as you seem to want a full row color only
+				case CDDS_SUBITEM | CDDS_ITEMPREPAINT:
+					return CDRF_NEWFONT;
+			}
+
+			return TRUE;
+		}
 		case LVN_GETDISPINFO:
 		{
 			NMLVDISPINFO* plvdi = (NMLVDISPINFO*) source;
