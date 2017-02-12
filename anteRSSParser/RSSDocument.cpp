@@ -25,7 +25,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * title;
 			if (title = asXML->FirstChildElement("title"))
-				return title->GetText();
+				return getSubText(title);
 			else
 				return "no title";
 		}
@@ -42,7 +42,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * guid;
 			if (guid = asXML->FirstChildElement("guid"))
-				return guid->GetText();
+				return getSubText(guid);
 			else
 				// TODO generate a deterministic guid
 				return "no guid";
@@ -51,7 +51,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * guid;
 			if (guid = asXML->FirstChildElement("id"))
-				return guid->GetText();
+				return getSubText(guid);
 			else
 				// TODO generate a deterministic guid
 				return "no guid";
@@ -69,7 +69,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * desc;
 			if (desc = asXML->FirstChildElement("description"))
-				return desc->GetText();
+				return getSubText(desc);
 			else
 				return "no description";
 		}
@@ -77,7 +77,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * desc;
 			if (desc = asXML->FirstChildElement("summary"))
-				return desc->GetText();
+				return getSubText(desc);
 			else
 				return "no description";
 		}
@@ -94,7 +94,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * desc;
 			if (desc = asXML->FirstChildElement("link"))
-				return desc->GetText();
+				return getSubText(desc);
 			else
 				return "no link";
 		}
@@ -103,7 +103,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * desc;
 			if (desc = asXML->FirstChildElement("id"))
-				return desc->GetText();
+				return getSubText(desc);
 			else
 				return "no link";
 		}
@@ -120,7 +120,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * desc;
 			if (desc = asXML->FirstChildElement("content:encoded"))
-				return desc->GetText();
+				return getSubText(desc);
 			else
 				return "";
 		}
@@ -128,7 +128,7 @@ namespace anteRSSParser
 		{
 			tinyxml2::XMLElement * desc;
 			if (desc = asXML->FirstChildElement("content"))
-				return desc->GetText();
+				return getSubText(desc);
 			else
 				return "";
 		}

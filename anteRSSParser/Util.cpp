@@ -2,6 +2,8 @@
 
 #include "Util.h"
 
+#include <tinyxml2\tinyxml2.h>
+
 #include <sstream>
 #include <iomanip>
 
@@ -49,6 +51,32 @@ namespace anteRSSParser
 		sqlite3_finalize(statement);
 
 		return rc;
+	}
+
+	std::string getSubText(tinyxml2::XMLElement * element)
+	{
+		std::string result = "";
+		tinyxml2::XMLPrinter printer;
+		tinyxml2::XMLNode * current = element->FirstChild();
+
+		while (current)
+		{
+			if (current->ToText())
+			{
+				result += current->ToText()->Value();
+			}
+			else
+			{
+				current->Accept(&printer);
+				result += printer.CStr();
+				printer.ClearBuffer();
+			}
+
+			current = current->NextSibling();
+		}
+		
+
+		return result;
 	}
 
 }
