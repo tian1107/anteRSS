@@ -199,8 +199,8 @@ namespace anteRSS
 
 		std::string cType = dManager->getContentType(url);
 
-		// if a webpage
-		if (cType.compare(0, html.length(), html) == 0)
+		// if a webpage, or of empty content type (most likely a protocol of some sort)
+		if (cType.compare(0, html.length(), html) == 0 || cType.size() == 0)
 		{
 			ShellExecute(NULL, L"open", convertToWide(url).c_str(), NULL, NULL, SW_SHOW);
 		}
