@@ -60,6 +60,7 @@ namespace anteRSScplusnet {
 	private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  helpToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
+	private: System::Windows::Forms::ColumnHeader^  columnFeedList;
 
 
 
@@ -99,9 +100,10 @@ namespace anteRSScplusnet {
 			this->splitHorizontal = (gcnew System::Windows::Forms::SplitContainer());
 			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->columnFeedList = (gcnew System::Windows::Forms::ColumnHeader());
 			this->topBar->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitVertical))->BeginInit();
 			this->splitVertical->Panel1->SuspendLayout();
@@ -119,11 +121,13 @@ namespace anteRSScplusnet {
 			this->listFeedList->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
+			this->listFeedList->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(1) { this->columnFeedList });
 			this->listFeedList->Location = System::Drawing::Point(3, 3);
 			this->listFeedList->Name = L"listFeedList";
 			this->listFeedList->Size = System::Drawing::Size(190, 478);
 			this->listFeedList->TabIndex = 0;
 			this->listFeedList->UseCompatibleStateImageBehavior = false;
+			this->listFeedList->View = System::Windows::Forms::View::Details;
 			// 
 			// listFeedItem
 			// 
@@ -284,6 +288,12 @@ namespace anteRSScplusnet {
 			this->fileToolStripMenuItem->Size = System::Drawing::Size(37, 20);
 			this->fileToolStripMenuItem->Text = L"&File";
 			// 
+			// exitToolStripMenuItem
+			// 
+			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(92, 22);
+			this->exitToolStripMenuItem->Text = L"E&xit";
+			// 
 			// helpToolStripMenuItem
 			// 
 			this->helpToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->aboutToolStripMenuItem });
@@ -291,17 +301,16 @@ namespace anteRSScplusnet {
 			this->helpToolStripMenuItem->Size = System::Drawing::Size(44, 20);
 			this->helpToolStripMenuItem->Text = L"&Help";
 			// 
-			// exitToolStripMenuItem
-			// 
-			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
-			this->exitToolStripMenuItem->Text = L"E&xit";
-			// 
 			// aboutToolStripMenuItem
 			// 
 			this->aboutToolStripMenuItem->Name = L"aboutToolStripMenuItem";
-			this->aboutToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
 			this->aboutToolStripMenuItem->Text = L"About";
+			// 
+			// columnFeedList
+			// 
+			this->columnFeedList->Text = L"Feeds";
+			this->columnFeedList->Width = 186;
 			// 
 			// MainWindow
 			// 
