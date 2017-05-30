@@ -1,5 +1,7 @@
 #pragma once
 
+#include "RSSManagerWrapper.h"
+
 namespace anteRSScplusnet {
 
 	using namespace System;
@@ -15,12 +17,13 @@ namespace anteRSScplusnet {
 	public ref class MainWindow : public System::Windows::Forms::Form
 	{
 	public:
-		MainWindow(void)
+		MainWindow(RSSManagerWrapper ^ manager)
 		{
 			InitializeComponent();
 			//
 			//TODO: Add the constructor code here
 			//
+			this->manager = manager;
 		}
 
 	protected:
@@ -122,13 +125,16 @@ namespace anteRSScplusnet {
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->listFeedList->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(1) { this->columnFeedList });
+			this->listFeedList->FullRowSelect = true;
 			this->listFeedList->Location = System::Drawing::Point(3, 3);
 			this->listFeedList->Name = L"listFeedList";
 			this->listFeedList->Size = System::Drawing::Size(190, 478);
 			this->listFeedList->TabIndex = 0;
 			this->listFeedList->UseCompatibleStateImageBehavior = false;
 			this->listFeedList->View = System::Windows::Forms::View::Details;
+			this->listFeedList->VirtualMode = true;
 			this->listFeedList->ColumnWidthChanging += gcnew System::Windows::Forms::ColumnWidthChangingEventHandler(this, &MainWindow::listFeedList_ColumnWidthChanging);
+			this->listFeedList->RetrieveVirtualItem += gcnew System::Windows::Forms::RetrieveVirtualItemEventHandler(this, &MainWindow::listFeedList_RetrieveVirtualItem);
 			this->listFeedList->Resize += gcnew System::EventHandler(this, &MainWindow::listFeedList_Resize);
 			// 
 			// columnFeedList
@@ -326,6 +332,7 @@ namespace anteRSScplusnet {
 			this->MainMenuStrip = this->menuStrip1;
 			this->Name = L"MainWindow";
 			this->Text = L"anteRSS";
+			this->Load += gcnew System::EventHandler(this, &MainWindow::MainWindow_Load);
 			this->topBar->ResumeLayout(false);
 			this->topBar->PerformLayout();
 			this->splitVertical->Panel1->ResumeLayout(false);
@@ -344,8 +351,13 @@ namespace anteRSScplusnet {
 		}
 #pragma endregion
 	
+private: RSSManagerWrapper^ manager;
 
 private: System::Void listFeedList_Resize(System::Object^  sender, System::EventArgs^  e);
 private: System::Void listFeedList_ColumnWidthChanging(System::Object^  sender, System::Windows::Forms::ColumnWidthChangingEventArgs^  e);
+private: System::Void listFeedList_RetrieveVirtualItem(System::Object^  sender, System::Windows::Forms::RetrieveVirtualItemEventArgs^  e);
+
+public: System::Void listFeedList_UpdateList();
+private: System::Void MainWindow_Load(System::Object^  sender, System::EventArgs^  e);
 };
 }
