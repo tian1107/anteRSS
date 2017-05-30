@@ -246,4 +246,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
-/anteRSS/wd/history.db
+/anteRSS/wd
+/anteRSS cplusnet/wd
