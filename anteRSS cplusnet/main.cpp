@@ -2,6 +2,8 @@
 
 #include "RSSManagerWrapper.h"
 
+#include <windows.h>
+
 #include <vcclr.h>
 
 using namespace System;
@@ -12,7 +14,16 @@ gcroot<anteRSScplusnet::RSSManagerWrapper^> manager;
 void InitRSSManager();
 
 [STAThread]
+#ifdef NDEBUG
+int WINAPI CALLBACK WinMain(
+	_In_ HINSTANCE hInstance,
+	_In_ HINSTANCE hPrevInstance,
+	_In_ LPSTR     lpCmdLine,
+	_In_ int       nCmdShow
+)
+#else
 int main(array<String^>^args)
+#endif
 {
 	InitRSSManager();
 
