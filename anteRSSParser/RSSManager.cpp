@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "RSSManager.h"
+#include "DownloadManager.h"
 #include "Util.h"
 
 #include <ctime>
@@ -70,6 +71,9 @@ namespace anteRSSParser
 
 		updateDatabaseFormat();
 
+		// initialize Download Manager
+		manager = new DownloadManager();
+
 		std::string feedStr = "insert into FeedInfo (name, url) values (?1, ?2);";
 		rc = sqlite3_prepare_v2(db, feedStr.c_str(), feedStr.length() + 1, &addFeedStmt, NULL);
 		feedStr = "update FeedInfo set name=?1 where id=?2;";
@@ -100,6 +104,8 @@ namespace anteRSSParser
 
 	RSSManager::~RSSManager()
 	{
+		delete manager;
+
 		sqlite3_finalize(addFeedStmt);
 		sqlite3_finalize(renameFeedStmt);
 		sqlite3_finalize(getFeedStmt);
@@ -136,7 +142,7 @@ namespace anteRSSParser
 		
 		bool success = false;
 		RSSDocument doc;
-		std::vector<char> & file = manager.downloadSingle(feed.url, success);
+		std::vector<char> & file = manager->downloadSingle(feed.url, success);
 
 		if (success)
 		{
@@ -360,7 +366,7 @@ namespace anteRSSParser
 #endif
 		{
 			bool success = false;
-			std::vector<char> & file = manager.downloadSingle(feed.url, success);
+			std::vector<char> & file = manager->downloadSingle(feed.url, success);
 
 			if (success)
 			{
@@ -370,7 +376,7 @@ namespace anteRSSParser
 			{
 				if (callback)
 				{
-					callback(feedId, false, result, data, manager.getLastError());
+					callback(feedId, false, result, data, manager->getLastError());
 				}
 				return;
 			}
@@ -415,7 +421,7 @@ namespace anteRSSParser
 
 		void * buf[3] = { this, callback, data };
 
-		manager.downloadMultiple(urls, updateAllCallbackSingle, buf);
+		manager->downloadMultiple(urls, updateAllCallbackSingle, buf);
 
 		// mark the end
 		if (callback)

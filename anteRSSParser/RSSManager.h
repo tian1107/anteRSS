@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "DownloadManager.h"
 #include "RSSDocument.h"
 
 namespace anteRSSParser
 {
+	class DownloadManager;
 
 	struct RSSFeedItem
 	{
@@ -39,7 +39,7 @@ namespace anteRSSParser
 	{
 		friend void updateAllCallbackSingle(std::string url, std::vector<char> content, void * data, bool success);
 	private:
-		DownloadManager manager;
+		DownloadManager * manager;
 		sqlite3* db;
 		sqlite3_stmt * addFeedStmt;
 		sqlite3_stmt * renameFeedStmt;
