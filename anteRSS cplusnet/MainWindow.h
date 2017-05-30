@@ -84,6 +84,7 @@ namespace anteRSScplusnet {
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainWindow::typeid));
 			this->listFeedList = (gcnew System::Windows::Forms::ListView());
+			this->columnFeedList = (gcnew System::Windows::Forms::ColumnHeader());
 			this->listFeedItem = (gcnew System::Windows::Forms::ListView());
 			this->topBar = (gcnew System::Windows::Forms::ToolStrip());
 			this->buttonNewFeed = (gcnew System::Windows::Forms::ToolStripButton());
@@ -103,7 +104,6 @@ namespace anteRSScplusnet {
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->columnFeedList = (gcnew System::Windows::Forms::ColumnHeader());
 			this->topBar->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitVertical))->BeginInit();
 			this->splitVertical->Panel1->SuspendLayout();
@@ -128,6 +128,13 @@ namespace anteRSScplusnet {
 			this->listFeedList->TabIndex = 0;
 			this->listFeedList->UseCompatibleStateImageBehavior = false;
 			this->listFeedList->View = System::Windows::Forms::View::Details;
+			this->listFeedList->ColumnWidthChanging += gcnew System::Windows::Forms::ColumnWidthChangingEventHandler(this, &MainWindow::listFeedList_ColumnWidthChanging);
+			this->listFeedList->Resize += gcnew System::EventHandler(this, &MainWindow::listFeedList_Resize);
+			// 
+			// columnFeedList
+			// 
+			this->columnFeedList->Text = L"Feeds";
+			this->columnFeedList->Width = 186;
 			// 
 			// listFeedItem
 			// 
@@ -307,11 +314,6 @@ namespace anteRSScplusnet {
 			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
 			this->aboutToolStripMenuItem->Text = L"About";
 			// 
-			// columnFeedList
-			// 
-			this->columnFeedList->Text = L"Feeds";
-			this->columnFeedList->Width = 186;
-			// 
 			// MainWindow
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -343,5 +345,7 @@ namespace anteRSScplusnet {
 #pragma endregion
 	
 
+private: System::Void listFeedList_Resize(System::Object^  sender, System::EventArgs^  e);
+private: System::Void listFeedList_ColumnWidthChanging(System::Object^  sender, System::Windows::Forms::ColumnWidthChangingEventArgs^  e);
 };
 }
