@@ -28,6 +28,7 @@ inline System::Void anteRSScplusnet::MainWindow::MainWindow_Load(System::Object 
 	// make lists better
 	// though still requires winapi
 	SetWindowTheme(static_cast<HWND>(listFeedList->Handle.ToPointer()), TEXT("Explorer"), NULL);
+	SetWindowTheme(static_cast<HWND>(listFeedItem->Handle.ToPointer()), TEXT("Explorer"), NULL);
 	
 	listFeedList_UpdateList();
 }
