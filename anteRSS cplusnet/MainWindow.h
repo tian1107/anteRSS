@@ -412,5 +412,8 @@ private: System::Void listFeedList_RetrieveVirtualItem(System::Object^  sender, 
 
 public: System::Void listFeedList_UpdateList();
 private: System::Void MainWindow_Load(System::Object^  sender, System::EventArgs^  e);
+#ifndef NDEBUG
+private: System::Void buttonDebug_Click(System::Object^  sender, System::EventArgs^  e);
+#endif
 };
 }

@@ -30,5 +30,21 @@ inline System::Void anteRSScplusnet::MainWindow::MainWindow_Load(System::Object 
 	SetWindowTheme(static_cast<HWND>(listFeedList->Handle.ToPointer()), TEXT("Explorer"), NULL);
 	SetWindowTheme(static_cast<HWND>(listFeedItem->Handle.ToPointer()), TEXT("Explorer"), NULL);
 	
+	// fill up feed list
 	listFeedList_UpdateList();
+
+#ifndef NDEBUG
+	// debug button thing
+	ToolStripButton ^ buttonDebug = gcnew ToolStripButton("debug button");
+	buttonDebug->Click += gcnew System::EventHandler(this, &MainWindow::buttonDebug_Click);
+	topBar->Items->Add(buttonDebug);
+#endif
 }
+
+#ifndef NDEBUG
+System::Void anteRSScplusnet::MainWindow::buttonDebug_Click(System::Object ^ sender, System::EventArgs ^ e)
+{
+	MessageBox::Show(this, "debug!", "caption", MessageBoxButtons::OK);
+	return System::Void();
+}
+#endif
