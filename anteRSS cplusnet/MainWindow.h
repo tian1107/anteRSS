@@ -65,6 +65,8 @@ namespace anteRSScplusnet {
 	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
 	private: System::Windows::Forms::ColumnHeader^  columnFeedList;
 	private: System::Windows::Forms::ImageList^  imageListFeeds;
+	private: System::Windows::Forms::ColumnHeader^  columnFeedItemSource;
+	private: System::Windows::Forms::ColumnHeader^  columnFeedItemTitle;
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -111,6 +113,8 @@ namespace anteRSScplusnet {
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->columnFeedItemSource = (gcnew System::Windows::Forms::ColumnHeader());
+			this->columnFeedItemTitle = (gcnew System::Windows::Forms::ColumnHeader());
 			this->topBar->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitVertical))->BeginInit();
 			this->splitVertical->Panel1->SuspendLayout();
@@ -135,7 +139,7 @@ namespace anteRSScplusnet {
 			this->listFeedList->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
 			this->listFeedList->MultiSelect = false;
 			this->listFeedList->Name = L"listFeedList";
-			this->listFeedList->Size = System::Drawing::Size(189, 467);
+			this->listFeedList->Size = System::Drawing::Size(189, 473);
 			this->listFeedList->SmallImageList = this->imageListFeeds;
 			this->listFeedList->TabIndex = 0;
 			this->listFeedList->UseCompatibleStateImageBehavior = false;
@@ -162,12 +166,23 @@ namespace anteRSScplusnet {
 			this->listFeedItem->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
+			this->listFeedItem->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(2) {
+				this->columnFeedItemSource,
+					this->columnFeedItemTitle
+			});
+			this->listFeedItem->FullRowSelect = true;
+			this->listFeedItem->GridLines = true;
+			this->listFeedItem->HideSelection = false;
 			this->listFeedItem->Location = System::Drawing::Point(0, 0);
 			this->listFeedItem->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
+			this->listFeedItem->MultiSelect = false;
 			this->listFeedItem->Name = L"listFeedItem";
-			this->listFeedItem->Size = System::Drawing::Size(574, 212);
+			this->listFeedItem->Size = System::Drawing::Size(574, 233);
+			this->listFeedItem->SmallImageList = this->imageListFeeds;
 			this->listFeedItem->TabIndex = 1;
 			this->listFeedItem->UseCompatibleStateImageBehavior = false;
+			this->listFeedItem->View = System::Windows::Forms::View::Details;
+			this->listFeedItem->VirtualMode = true;
 			// 
 			// topBar
 			// 
@@ -257,11 +272,11 @@ namespace anteRSScplusnet {
 			this->feedFeedItemDesc->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->feedFeedItemDesc->Location = System::Drawing::Point(2, 4);
+			this->feedFeedItemDesc->Location = System::Drawing::Point(0, 4);
 			this->feedFeedItemDesc->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
 			this->feedFeedItemDesc->MinimumSize = System::Drawing::Size(26, 23);
 			this->feedFeedItemDesc->Name = L"feedFeedItemDesc";
-			this->feedFeedItemDesc->Size = System::Drawing::Size(572, 237);
+			this->feedFeedItemDesc->Size = System::Drawing::Size(574, 232);
 			this->feedFeedItemDesc->TabIndex = 4;
 			// 
 			// splitVertical
@@ -302,8 +317,8 @@ namespace anteRSScplusnet {
 			// splitHorizontal.Panel2
 			// 
 			this->splitHorizontal->Panel2->Controls->Add(this->feedFeedItemDesc);
-			this->splitHorizontal->Size = System::Drawing::Size(580, 469);
-			this->splitHorizontal->SplitterDistance = 232;
+			this->splitHorizontal->Size = System::Drawing::Size(580, 473);
+			this->splitHorizontal->SplitterDistance = 233;
 			this->splitHorizontal->TabIndex = 5;
 			// 
 			// menuStrip1
@@ -345,6 +360,14 @@ namespace anteRSScplusnet {
 			this->aboutToolStripMenuItem->Name = L"aboutToolStripMenuItem";
 			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
 			this->aboutToolStripMenuItem->Text = L"About";
+			// 
+			// columnFeedItemSource
+			// 
+			this->columnFeedItemSource->Text = L"Source";
+			// 
+			// columnFeedItemTitle
+			// 
+			this->columnFeedItemTitle->Text = L"Title";
 			// 
 			// MainWindow
 			// 
