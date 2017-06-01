@@ -28,7 +28,7 @@ int main(array<String^>^args)
 	InitRSSManager();
 
 	Application::EnableVisualStyles();
-	Application::SetCompatibleTextRenderingDefault(false);
+	Application::SetCompatibleTextRenderingDefault(true);
 
 	anteRSScplusnet::MainWindow mainWindow(manager);
 

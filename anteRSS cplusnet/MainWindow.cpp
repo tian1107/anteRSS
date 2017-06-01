@@ -1,5 +1,8 @@
 #include "MainWindow.h"
 
+#include <Windows.h>
+#include <Uxtheme.h>
+
 inline System::Void anteRSScplusnet::MainWindow::listFeedList_Resize(System::Object ^ sender, System::EventArgs ^ e) {
 	Control^ control = dynamic_cast<Control^>(sender);
 	columnFeedList->Width = control->ClientSize.Width - 1;
@@ -22,5 +25,9 @@ System::Void anteRSScplusnet::MainWindow::listFeedList_UpdateList()
 }
 
 inline System::Void anteRSScplusnet::MainWindow::MainWindow_Load(System::Object ^ sender, System::EventArgs ^ e) {
+	// make lists better
+	// though still requires winapi
+	SetWindowTheme(static_cast<HWND>(listFeedList->Handle.ToPointer()), TEXT("Explorer"), NULL);
+	
 	listFeedList_UpdateList();
 }

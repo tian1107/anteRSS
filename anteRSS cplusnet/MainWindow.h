@@ -91,6 +91,7 @@ namespace anteRSScplusnet {
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainWindow::typeid));
 			this->listFeedList = (gcnew System::Windows::Forms::ListView());
 			this->columnFeedList = (gcnew System::Windows::Forms::ColumnHeader());
+			this->imageListFeeds = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->listFeedItem = (gcnew System::Windows::Forms::ListView());
 			this->topBar = (gcnew System::Windows::Forms::ToolStrip());
 			this->buttonNewFeed = (gcnew System::Windows::Forms::ToolStripButton());
@@ -110,7 +111,6 @@ namespace anteRSScplusnet {
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->imageListFeeds = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->topBar->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitVertical))->BeginInit();
 			this->splitVertical->Panel1->SuspendLayout();
@@ -130,9 +130,12 @@ namespace anteRSScplusnet {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->listFeedList->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(1) { this->columnFeedList });
 			this->listFeedList->FullRowSelect = true;
-			this->listFeedList->Location = System::Drawing::Point(3, 3);
+			this->listFeedList->LabelEdit = true;
+			this->listFeedList->Location = System::Drawing::Point(2, 4);
+			this->listFeedList->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
+			this->listFeedList->MultiSelect = false;
 			this->listFeedList->Name = L"listFeedList";
-			this->listFeedList->Size = System::Drawing::Size(190, 478);
+			this->listFeedList->Size = System::Drawing::Size(189, 467);
 			this->listFeedList->SmallImageList = this->imageListFeeds;
 			this->listFeedList->TabIndex = 0;
 			this->listFeedList->UseCompatibleStateImageBehavior = false;
@@ -147,19 +150,29 @@ namespace anteRSScplusnet {
 			this->columnFeedList->Text = L"Feeds";
 			this->columnFeedList->Width = 186;
 			// 
+			// imageListFeeds
+			// 
+			this->imageListFeeds->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imageListFeeds.ImageStream")));
+			this->imageListFeeds->TransparentColor = System::Drawing::Color::Transparent;
+			this->imageListFeeds->Images->SetKeyName(0, L"itemunread.ico");
+			this->imageListFeeds->Images->SetKeyName(1, L"itemread.ico");
+			// 
 			// listFeedItem
 			// 
 			this->listFeedItem->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->listFeedItem->Location = System::Drawing::Point(0, 0);
+			this->listFeedItem->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
 			this->listFeedItem->Name = L"listFeedItem";
-			this->listFeedItem->Size = System::Drawing::Size(575, 236);
+			this->listFeedItem->Size = System::Drawing::Size(574, 212);
 			this->listFeedItem->TabIndex = 1;
 			this->listFeedItem->UseCompatibleStateImageBehavior = false;
 			// 
 			// topBar
 			// 
+			this->topBar->AutoSize = false;
+			this->topBar->BackColor = System::Drawing::SystemColors::Window;
 			this->topBar->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(8) {
 				this->buttonNewFeed, this->buttonRemoveFeed,
 					this->toolStripSeparator1, this->buttonUpdateSelected, this->buttonUpdateAll, this->toolStripSeparator2, this->buttonToggleArchive,
@@ -167,7 +180,8 @@ namespace anteRSScplusnet {
 			});
 			this->topBar->Location = System::Drawing::Point(0, 24);
 			this->topBar->Name = L"topBar";
-			this->topBar->Size = System::Drawing::Size(784, 25);
+			this->topBar->Padding = System::Windows::Forms::Padding(0, 0, 2, 0);
+			this->topBar->Size = System::Drawing::Size(784, 30);
 			this->topBar->TabIndex = 2;
 			this->topBar->Text = L"toolStrip1";
 			// 
@@ -176,7 +190,7 @@ namespace anteRSScplusnet {
 			this->buttonNewFeed->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"buttonNewFeed.Image")));
 			this->buttonNewFeed->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->buttonNewFeed->Name = L"buttonNewFeed";
-			this->buttonNewFeed->Size = System::Drawing::Size(79, 22);
+			this->buttonNewFeed->Size = System::Drawing::Size(79, 27);
 			this->buttonNewFeed->Text = L"New Feed";
 			// 
 			// buttonRemoveFeed
@@ -184,20 +198,20 @@ namespace anteRSScplusnet {
 			this->buttonRemoveFeed->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"buttonRemoveFeed.Image")));
 			this->buttonRemoveFeed->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->buttonRemoveFeed->Name = L"buttonRemoveFeed";
-			this->buttonRemoveFeed->Size = System::Drawing::Size(98, 22);
+			this->buttonRemoveFeed->Size = System::Drawing::Size(98, 27);
 			this->buttonRemoveFeed->Text = L"Remove Feed";
 			// 
 			// toolStripSeparator1
 			// 
 			this->toolStripSeparator1->Name = L"toolStripSeparator1";
-			this->toolStripSeparator1->Size = System::Drawing::Size(6, 25);
+			this->toolStripSeparator1->Size = System::Drawing::Size(6, 30);
 			// 
 			// buttonUpdateSelected
 			// 
 			this->buttonUpdateSelected->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"buttonUpdateSelected.Image")));
 			this->buttonUpdateSelected->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->buttonUpdateSelected->Name = L"buttonUpdateSelected";
-			this->buttonUpdateSelected->Size = System::Drawing::Size(112, 22);
+			this->buttonUpdateSelected->Size = System::Drawing::Size(112, 27);
 			this->buttonUpdateSelected->Text = L"Update Selected";
 			// 
 			// buttonUpdateAll
@@ -205,20 +219,20 @@ namespace anteRSScplusnet {
 			this->buttonUpdateAll->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"buttonUpdateAll.Image")));
 			this->buttonUpdateAll->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->buttonUpdateAll->Name = L"buttonUpdateAll";
-			this->buttonUpdateAll->Size = System::Drawing::Size(82, 22);
+			this->buttonUpdateAll->Size = System::Drawing::Size(82, 27);
 			this->buttonUpdateAll->Text = L"Update All";
 			// 
 			// toolStripSeparator2
 			// 
 			this->toolStripSeparator2->Name = L"toolStripSeparator2";
-			this->toolStripSeparator2->Size = System::Drawing::Size(6, 25);
+			this->toolStripSeparator2->Size = System::Drawing::Size(6, 30);
 			// 
 			// buttonToggleArchive
 			// 
 			this->buttonToggleArchive->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"buttonToggleArchive.Image")));
 			this->buttonToggleArchive->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->buttonToggleArchive->Name = L"buttonToggleArchive";
-			this->buttonToggleArchive->Size = System::Drawing::Size(113, 22);
+			this->buttonToggleArchive->Size = System::Drawing::Size(113, 27);
 			this->buttonToggleArchive->Text = L"Toggle Archived";
 			// 
 			// buttonMarkAllAsRead
@@ -226,13 +240,14 @@ namespace anteRSScplusnet {
 			this->buttonMarkAllAsRead->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"buttonMarkAllAsRead.Image")));
 			this->buttonMarkAllAsRead->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->buttonMarkAllAsRead->Name = L"buttonMarkAllAsRead";
-			this->buttonMarkAllAsRead->Size = System::Drawing::Size(116, 22);
+			this->buttonMarkAllAsRead->Size = System::Drawing::Size(116, 27);
 			this->buttonMarkAllAsRead->Text = L"Mark All As Read";
 			// 
 			// statusBar
 			// 
 			this->statusBar->Location = System::Drawing::Point(0, 539);
 			this->statusBar->Name = L"statusBar";
+			this->statusBar->Padding = System::Windows::Forms::Padding(2, 0, 16, 0);
 			this->statusBar->Size = System::Drawing::Size(784, 22);
 			this->statusBar->TabIndex = 3;
 			this->statusBar->Text = L"statusStrip1";
@@ -242,10 +257,11 @@ namespace anteRSScplusnet {
 			this->feedFeedItemDesc->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->feedFeedItemDesc->Location = System::Drawing::Point(0, 3);
-			this->feedFeedItemDesc->MinimumSize = System::Drawing::Size(20, 20);
+			this->feedFeedItemDesc->Location = System::Drawing::Point(2, 4);
+			this->feedFeedItemDesc->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
+			this->feedFeedItemDesc->MinimumSize = System::Drawing::Size(26, 23);
 			this->feedFeedItemDesc->Name = L"feedFeedItemDesc";
-			this->feedFeedItemDesc->Size = System::Drawing::Size(575, 229);
+			this->feedFeedItemDesc->Size = System::Drawing::Size(572, 237);
 			this->feedFeedItemDesc->TabIndex = 4;
 			// 
 			// splitVertical
@@ -253,7 +269,8 @@ namespace anteRSScplusnet {
 			this->splitVertical->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->splitVertical->Location = System::Drawing::Point(0, 52);
+			this->splitVertical->Location = System::Drawing::Point(0, 58);
+			this->splitVertical->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
 			this->splitVertical->Name = L"splitVertical";
 			// 
 			// splitVertical.Panel1
@@ -263,8 +280,9 @@ namespace anteRSScplusnet {
 			// splitVertical.Panel2
 			// 
 			this->splitVertical->Panel2->Controls->Add(this->splitHorizontal);
-			this->splitVertical->Size = System::Drawing::Size(784, 484);
-			this->splitVertical->SplitterDistance = 196;
+			this->splitVertical->Size = System::Drawing::Size(784, 477);
+			this->splitVertical->SplitterDistance = 195;
+			this->splitVertical->SplitterWidth = 2;
 			this->splitVertical->TabIndex = 5;
 			// 
 			// splitHorizontal
@@ -272,7 +290,8 @@ namespace anteRSScplusnet {
 			this->splitHorizontal->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->splitHorizontal->Location = System::Drawing::Point(3, 3);
+			this->splitHorizontal->Location = System::Drawing::Point(2, 4);
+			this->splitHorizontal->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
 			this->splitHorizontal->Name = L"splitHorizontal";
 			this->splitHorizontal->Orientation = System::Windows::Forms::Orientation::Horizontal;
 			// 
@@ -283,18 +302,20 @@ namespace anteRSScplusnet {
 			// splitHorizontal.Panel2
 			// 
 			this->splitHorizontal->Panel2->Controls->Add(this->feedFeedItemDesc);
-			this->splitHorizontal->Size = System::Drawing::Size(578, 478);
-			this->splitHorizontal->SplitterDistance = 239;
+			this->splitHorizontal->Size = System::Drawing::Size(580, 469);
+			this->splitHorizontal->SplitterDistance = 232;
 			this->splitHorizontal->TabIndex = 5;
 			// 
 			// menuStrip1
 			// 
+			this->menuStrip1->BackColor = System::Drawing::SystemColors::Window;
 			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
 				this->fileToolStripMenuItem,
 					this->helpToolStripMenuItem
 			});
 			this->menuStrip1->Location = System::Drawing::Point(0, 0);
 			this->menuStrip1->Name = L"menuStrip1";
+			this->menuStrip1->Padding = System::Windows::Forms::Padding(7, 2, 0, 2);
 			this->menuStrip1->Size = System::Drawing::Size(784, 24);
 			this->menuStrip1->TabIndex = 6;
 			this->menuStrip1->Text = L"menuStrip1";
@@ -309,7 +330,7 @@ namespace anteRSScplusnet {
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(92, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->exitToolStripMenuItem->Text = L"E&xit";
 			// 
 			// helpToolStripMenuItem
@@ -325,23 +346,20 @@ namespace anteRSScplusnet {
 			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
 			this->aboutToolStripMenuItem->Text = L"About";
 			// 
-			// imageListFeeds
-			// 
-			this->imageListFeeds->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imageListFeeds.ImageStream")));
-			this->imageListFeeds->TransparentColor = System::Drawing::Color::Transparent;
-			this->imageListFeeds->Images->SetKeyName(0, L"itemunread.ico");
-			this->imageListFeeds->Images->SetKeyName(1, L"itemread.ico");
-			// 
 			// MainWindow
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(7, 15);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->BackColor = System::Drawing::SystemColors::Control;
 			this->ClientSize = System::Drawing::Size(784, 561);
 			this->Controls->Add(this->splitVertical);
 			this->Controls->Add(this->statusBar);
 			this->Controls->Add(this->topBar);
 			this->Controls->Add(this->menuStrip1);
+			this->Font = (gcnew System::Drawing::Font(L"Segoe UI", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->MainMenuStrip = this->menuStrip1;
+			this->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
 			this->Name = L"MainWindow";
 			this->Text = L"anteRSS";
 			this->Load += gcnew System::EventHandler(this, &MainWindow::MainWindow_Load);
