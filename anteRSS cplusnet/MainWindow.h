@@ -45,7 +45,9 @@ namespace anteRSScplusnet {
 
 	private: System::Windows::Forms::ToolStrip^  topBar;
 	private: System::Windows::Forms::StatusStrip^  statusBar;
-	private: System::Windows::Forms::WebBrowser^  feedFeedItemDesc;
+	private: System::Windows::Forms::WebBrowser^  browserFeedItemDesc;
+
+
 	private: System::Windows::Forms::SplitContainer^  splitVertical;
 	private: System::Windows::Forms::SplitContainer^  splitHorizontal;
 
@@ -96,6 +98,7 @@ namespace anteRSScplusnet {
 			this->columnFeedList = (gcnew System::Windows::Forms::ColumnHeader());
 			this->imageListFeeds = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->listFeedItem = (gcnew System::Windows::Forms::ListView());
+			this->columnFeedItemImage = (gcnew System::Windows::Forms::ColumnHeader());
 			this->columnFeedItemSource = (gcnew System::Windows::Forms::ColumnHeader());
 			this->columnFeedItemTitle = (gcnew System::Windows::Forms::ColumnHeader());
 			this->topBar = (gcnew System::Windows::Forms::ToolStrip());
@@ -108,7 +111,7 @@ namespace anteRSScplusnet {
 			this->buttonToggleArchive = (gcnew System::Windows::Forms::ToolStripButton());
 			this->buttonMarkAllAsRead = (gcnew System::Windows::Forms::ToolStripButton());
 			this->statusBar = (gcnew System::Windows::Forms::StatusStrip());
-			this->feedFeedItemDesc = (gcnew System::Windows::Forms::WebBrowser());
+			this->browserFeedItemDesc = (gcnew System::Windows::Forms::WebBrowser());
 			this->splitVertical = (gcnew System::Windows::Forms::SplitContainer());
 			this->splitHorizontal = (gcnew System::Windows::Forms::SplitContainer());
 			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
@@ -116,7 +119,6 @@ namespace anteRSScplusnet {
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->columnFeedItemImage = (gcnew System::Windows::Forms::ColumnHeader());
 			this->topBar->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitVertical))->BeginInit();
 			this->splitVertical->Panel1->SuspendLayout();
@@ -136,6 +138,7 @@ namespace anteRSScplusnet {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->listFeedList->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(1) { this->columnFeedList });
 			this->listFeedList->FullRowSelect = true;
+			this->listFeedList->HideSelection = false;
 			this->listFeedList->LabelEdit = true;
 			this->listFeedList->Location = System::Drawing::Point(2, 4);
 			this->listFeedList->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
@@ -179,13 +182,20 @@ namespace anteRSScplusnet {
 			this->listFeedItem->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
 			this->listFeedItem->MultiSelect = false;
 			this->listFeedItem->Name = L"listFeedItem";
-			this->listFeedItem->Size = System::Drawing::Size(578, 233);
+			this->listFeedItem->Size = System::Drawing::Size(582, 233);
 			this->listFeedItem->SmallImageList = this->imageListFeeds;
 			this->listFeedItem->TabIndex = 1;
 			this->listFeedItem->UseCompatibleStateImageBehavior = false;
 			this->listFeedItem->View = System::Windows::Forms::View::Details;
 			this->listFeedItem->VirtualMode = true;
+			this->listFeedItem->ItemActivate += gcnew System::EventHandler(this, &MainWindow::listFeedItem_ItemActivate);
+			this->listFeedItem->ItemSelectionChanged += gcnew System::Windows::Forms::ListViewItemSelectionChangedEventHandler(this, &MainWindow::listFeedItem_ItemSelectionChanged);
 			this->listFeedItem->RetrieveVirtualItem += gcnew System::Windows::Forms::RetrieveVirtualItemEventHandler(this, &MainWindow::listFeedItem_RetrieveVirtualItem);
+			// 
+			// columnFeedItemImage
+			// 
+			this->columnFeedItemImage->Text = L"";
+			this->columnFeedItemImage->Width = 24;
 			// 
 			// columnFeedItemSource
 			// 
@@ -278,17 +288,17 @@ namespace anteRSScplusnet {
 			this->statusBar->TabIndex = 3;
 			this->statusBar->Text = L"statusStrip1";
 			// 
-			// feedFeedItemDesc
+			// browserFeedItemDesc
 			// 
-			this->feedFeedItemDesc->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+			this->browserFeedItemDesc->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->feedFeedItemDesc->Location = System::Drawing::Point(0, 4);
-			this->feedFeedItemDesc->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
-			this->feedFeedItemDesc->MinimumSize = System::Drawing::Size(26, 23);
-			this->feedFeedItemDesc->Name = L"feedFeedItemDesc";
-			this->feedFeedItemDesc->Size = System::Drawing::Size(578, 232);
-			this->feedFeedItemDesc->TabIndex = 4;
+			this->browserFeedItemDesc->Location = System::Drawing::Point(0, 4);
+			this->browserFeedItemDesc->Margin = System::Windows::Forms::Padding(2, 4, 2, 4);
+			this->browserFeedItemDesc->MinimumSize = System::Drawing::Size(26, 23);
+			this->browserFeedItemDesc->Name = L"browserFeedItemDesc";
+			this->browserFeedItemDesc->Size = System::Drawing::Size(582, 232);
+			this->browserFeedItemDesc->TabIndex = 4;
 			// 
 			// splitVertical
 			// 
@@ -327,8 +337,8 @@ namespace anteRSScplusnet {
 			// 
 			// splitHorizontal.Panel2
 			// 
-			this->splitHorizontal->Panel2->Controls->Add(this->feedFeedItemDesc);
-			this->splitHorizontal->Size = System::Drawing::Size(584, 473);
+			this->splitHorizontal->Panel2->Controls->Add(this->browserFeedItemDesc);
+			this->splitHorizontal->Size = System::Drawing::Size(588, 473);
 			this->splitHorizontal->SplitterDistance = 233;
 			this->splitHorizontal->TabIndex = 5;
 			// 
@@ -372,11 +382,6 @@ namespace anteRSScplusnet {
 			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
 			this->aboutToolStripMenuItem->Text = L"About";
 			// 
-			// columnFeedItemImage
-			// 
-			this->columnFeedItemImage->Text = L"";
-			this->columnFeedItemImage->Width = 24;
-			// 
 			// MainWindow
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(7, 15);
@@ -419,10 +424,13 @@ private: System::Void listFeedList_ColumnWidthChanging(System::Object^  sender, 
 private: System::Void listFeedList_RetrieveVirtualItem(System::Object^  sender, System::Windows::Forms::RetrieveVirtualItemEventArgs^  e);
 
 public: System::Void listFeedList_UpdateList();
+private: System::Void browserFeedItemDesc_changeDescription(System::Int32 selectedIndex);
 private: System::Void MainWindow_Load(System::Object^  sender, System::EventArgs^  e);
 #ifndef NDEBUG
 private: System::Void buttonDebug_Click(System::Object^  sender, System::EventArgs^  e);
 #endif
 private: System::Void listFeedItem_RetrieveVirtualItem(System::Object^  sender, System::Windows::Forms::RetrieveVirtualItemEventArgs^  e);
+private: System::Void listFeedItem_ItemActivate(System::Object^  sender, System::EventArgs^  e);
+private: System::Void listFeedItem_ItemSelectionChanged(System::Object^  sender, System::Windows::Forms::ListViewItemSelectionChangedEventArgs^  e);
 };
 }

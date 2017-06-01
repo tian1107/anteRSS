@@ -24,6 +24,17 @@ System::Void anteRSScplusnet::MainWindow::listFeedList_UpdateList()
 	return System::Void();
 }
 
+System::Void anteRSScplusnet::MainWindow::browserFeedItemDesc_changeDescription(System::Int32 selectedIndex)
+{
+	browserFeedItemDesc->Navigate("about:blank");
+	if (browserFeedItemDesc->Document != nullptr)
+	{
+		browserFeedItemDesc->Document->Write("");
+	}
+
+	browserFeedItemDesc->DocumentText = "" + selectedIndex;
+}
+
 inline System::Void anteRSScplusnet::MainWindow::MainWindow_Load(System::Object ^ sender, System::EventArgs ^ e) {
 	// make lists better
 	// though still requires winapi
@@ -54,7 +65,20 @@ inline System::Void anteRSScplusnet::MainWindow::listFeedItem_RetrieveVirtualIte
 
 	row[0] = "";
 	row[1] = "test1";
-	row[2] = "test2";
+	row[2] = "test2" + e->ItemIndex;
 
 	e->Item = gcnew ListViewItem(row, 0);
+}
+
+
+
+inline System::Void anteRSScplusnet::MainWindow::listFeedItem_ItemActivate(System::Object ^ sender, System::EventArgs ^ e) {
+	browserFeedItemDesc_changeDescription(listFeedItem->SelectedIndices[0]);
+}
+
+inline System::Void anteRSScplusnet::MainWindow::listFeedItem_ItemSelectionChanged(System::Object ^ sender, System::Windows::Forms::ListViewItemSelectionChangedEventArgs ^ e) {
+	if (e->IsSelected)
+	{
+		browserFeedItemDesc_changeDescription(e->ItemIndex);
+	}
 }
