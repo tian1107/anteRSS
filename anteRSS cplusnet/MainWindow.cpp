@@ -12,6 +12,7 @@ inline System::Void anteRSScplusnet::MainWindow::listFeedList_ColumnWidthChangin
 
 inline System::Void anteRSScplusnet::MainWindow::listFeedList_RetrieveVirtualItem(System::Object ^ sender, System::Windows::Forms::RetrieveVirtualItemEventArgs ^ e) {
 	e->Item = gcnew ListViewItem(manager->getFeedListCacheAt(e->ItemIndex)->Name);
+	e->Item->ImageIndex = e->ItemIndex & 0x1;
 }
 
 System::Void anteRSScplusnet::MainWindow::listFeedList_UpdateList()
@@ -22,5 +23,4 @@ System::Void anteRSScplusnet::MainWindow::listFeedList_UpdateList()
 
 inline System::Void anteRSScplusnet::MainWindow::MainWindow_Load(System::Object ^ sender, System::EventArgs ^ e) {
 	listFeedList_UpdateList();
-	columnFeedList->Width = listFeedList->ClientSize.Width - 1;
 }

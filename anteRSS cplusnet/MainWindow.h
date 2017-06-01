@@ -64,6 +64,8 @@ namespace anteRSScplusnet {
 	private: System::Windows::Forms::ToolStripMenuItem^  helpToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
 	private: System::Windows::Forms::ColumnHeader^  columnFeedList;
+	private: System::Windows::Forms::ImageList^  imageListFeeds;
+	private: System::ComponentModel::IContainer^  components;
 
 
 
@@ -76,7 +78,7 @@ namespace anteRSScplusnet {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -85,6 +87,7 @@ namespace anteRSScplusnet {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainWindow::typeid));
 			this->listFeedList = (gcnew System::Windows::Forms::ListView());
 			this->columnFeedList = (gcnew System::Windows::Forms::ColumnHeader());
@@ -107,6 +110,7 @@ namespace anteRSScplusnet {
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->imageListFeeds = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->topBar->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitVertical))->BeginInit();
 			this->splitVertical->Panel1->SuspendLayout();
@@ -129,6 +133,7 @@ namespace anteRSScplusnet {
 			this->listFeedList->Location = System::Drawing::Point(3, 3);
 			this->listFeedList->Name = L"listFeedList";
 			this->listFeedList->Size = System::Drawing::Size(190, 478);
+			this->listFeedList->SmallImageList = this->imageListFeeds;
 			this->listFeedList->TabIndex = 0;
 			this->listFeedList->UseCompatibleStateImageBehavior = false;
 			this->listFeedList->View = System::Windows::Forms::View::Details;
@@ -319,6 +324,13 @@ namespace anteRSScplusnet {
 			this->aboutToolStripMenuItem->Name = L"aboutToolStripMenuItem";
 			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
 			this->aboutToolStripMenuItem->Text = L"About";
+			// 
+			// imageListFeeds
+			// 
+			this->imageListFeeds->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imageListFeeds.ImageStream")));
+			this->imageListFeeds->TransparentColor = System::Drawing::Color::Transparent;
+			this->imageListFeeds->Images->SetKeyName(0, L"itemunread.ico");
+			this->imageListFeeds->Images->SetKeyName(1, L"itemread.ico");
 			// 
 			// MainWindow
 			// 
