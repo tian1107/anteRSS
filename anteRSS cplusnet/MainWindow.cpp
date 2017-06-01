@@ -44,7 +44,17 @@ inline System::Void anteRSScplusnet::MainWindow::MainWindow_Load(System::Object 
 #ifndef NDEBUG
 System::Void anteRSScplusnet::MainWindow::buttonDebug_Click(System::Object ^ sender, System::EventArgs ^ e)
 {
-	MessageBox::Show(this, "debug!", "caption", MessageBoxButtons::OK);
+	listFeedItem->VirtualListSize++;
 	return System::Void();
 }
 #endif
+
+inline System::Void anteRSScplusnet::MainWindow::listFeedItem_RetrieveVirtualItem(System::Object ^ sender, System::Windows::Forms::RetrieveVirtualItemEventArgs ^ e) {
+	array<System::String ^>^ row = gcnew array<System::String ^>(listFeedItem->Columns->Count);
+
+	row[0] = "";
+	row[1] = "test1";
+	row[2] = "test2";
+
+	e->Item = gcnew ListViewItem(row, 0);
+}
