@@ -30,7 +30,11 @@ namespace anteRSS_csharpnet
 		{
 			e.Item = tempListFeedItem;
 			e.Item.Text = manager.getFeedListCacheAt(e.ItemIndex).Name;
+#if DEBUG
 			e.Item.ImageIndex = e.ItemIndex & 1;
+#else
+			e.Item.ImageIndex = 0;
+#endif
 		}
 	}
 }
