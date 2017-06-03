@@ -185,6 +185,7 @@
             this.listFeeds.UseCompatibleStateImageBehavior = false;
             this.listFeeds.View = System.Windows.Forms.View.Details;
             this.listFeeds.VirtualMode = true;
+            this.listFeeds.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listFeeds_RetrieveVirtualItem);
             // 
             // listItems
             // 
