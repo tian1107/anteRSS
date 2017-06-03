@@ -39,7 +39,7 @@
             this.splitLeftRight = new System.Windows.Forms.SplitContainer();
             this.splitUpDown = new System.Windows.Forms.SplitContainer();
             this.listFeeds = new System.Windows.Forms.ListView();
-            this.listView2 = new System.Windows.Forms.ListView();
+            this.listItems = new System.Windows.Forms.ListView();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.buttonNewFeed = new System.Windows.Forms.ToolStripButton();
             this.buttomRemoveFeed = new System.Windows.Forms.ToolStripButton();
@@ -50,6 +50,9 @@
             this.buttonMarkAllAsRead = new System.Windows.Forms.ToolStripButton();
             this.buttonToggleArchived = new System.Windows.Forms.ToolStripButton();
             this.columnFeedName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnItemImage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnItemSource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnItemTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.topBar.SuspendLayout();
             this.buttonBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLeftRight)).BeginInit();
@@ -155,7 +158,7 @@
             // 
             // splitUpDown.Panel1
             // 
-            this.splitUpDown.Panel1.Controls.Add(this.listView2);
+            this.splitUpDown.Panel1.Controls.Add(this.listItems);
             // 
             // splitUpDown.Panel2
             // 
@@ -183,14 +186,22 @@
             this.listFeeds.View = System.Windows.Forms.View.Details;
             this.listFeeds.VirtualMode = true;
             // 
-            // listView2
+            // listItems
             // 
-            this.listView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView2.Location = new System.Drawing.Point(0, 0);
-            this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(581, 245);
-            this.listView2.TabIndex = 0;
-            this.listView2.UseCompatibleStateImageBehavior = false;
+            this.listItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnItemImage,
+            this.columnItemSource,
+            this.columnItemTitle});
+            this.listItems.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listItems.FullRowSelect = true;
+            this.listItems.Location = new System.Drawing.Point(0, 0);
+            this.listItems.MultiSelect = false;
+            this.listItems.Name = "listItems";
+            this.listItems.Size = new System.Drawing.Size(581, 245);
+            this.listItems.TabIndex = 0;
+            this.listItems.UseCompatibleStateImageBehavior = false;
+            this.listItems.View = System.Windows.Forms.View.Details;
+            this.listItems.VirtualMode = true;
             // 
             // webBrowser1
             // 
@@ -269,6 +280,19 @@
             this.columnFeedName.Text = "Feeds";
             this.columnFeedName.Width = 189;
             // 
+            // columnItemImage
+            // 
+            this.columnItemImage.Text = "";
+            // 
+            // columnItemSource
+            // 
+            this.columnItemSource.Text = "Source Feed";
+            // 
+            // columnItemTitle
+            // 
+            this.columnItemTitle.Text = "Title";
+            this.columnItemTitle.Width = 457;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -310,7 +334,7 @@
         private System.Windows.Forms.SplitContainer splitLeftRight;
         private System.Windows.Forms.SplitContainer splitUpDown;
         private System.Windows.Forms.ListView listFeeds;
-        private System.Windows.Forms.ListView listView2;
+        private System.Windows.Forms.ListView listItems;
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.ToolStripButton buttonNewFeed;
         private System.Windows.Forms.ToolStripButton buttomRemoveFeed;
@@ -321,6 +345,9 @@
         private System.Windows.Forms.ToolStripButton buttonMarkAllAsRead;
         private System.Windows.Forms.ToolStripButton buttonToggleArchived;
         private System.Windows.Forms.ColumnHeader columnFeedName;
+        private System.Windows.Forms.ColumnHeader columnItemImage;
+        private System.Windows.Forms.ColumnHeader columnItemSource;
+        private System.Windows.Forms.ColumnHeader columnItemTitle;
     }
 }
 
