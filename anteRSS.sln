@@ -16,6 +16,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "anteRSSTest", "anteRSSTest\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "anteRSS cplusnet", "anteRSS cplusnet\anteRSS cplusnet.vcxproj", "{E3C00ABE-C2B0-4F7C-9694-B83FDD47338A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682} = {3FF27A33-2DEC-4D04-8866-7E3F08DA1682}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "anteRSSParserWrapper", "anteRSSParserWrapper\anteRSSParserWrapper.vcxproj", "{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}"
+	ProjectSection(ProjectDependencies) = postProject
 		{B1DF20E0-BA76-451E-A0AD-1F1CA1A0A96A} = {B1DF20E0-BA76-451E-A0AD-1F1CA1A0A96A}
 	EndProjectSection
 EndProject
@@ -67,6 +72,14 @@ Global
 		{E3C00ABE-C2B0-4F7C-9694-B83FDD47338A}.Release|x64.Build.0 = Release|x64
 		{E3C00ABE-C2B0-4F7C-9694-B83FDD47338A}.Release|x86.ActiveCfg = Release|Win32
 		{E3C00ABE-C2B0-4F7C-9694-B83FDD47338A}.Release|x86.Build.0 = Release|Win32
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}.Debug|x64.ActiveCfg = Debug|x64
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}.Debug|x64.Build.0 = Debug|x64
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}.Debug|x86.ActiveCfg = Debug|Win32
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}.Debug|x86.Build.0 = Debug|Win32
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}.Release|x64.ActiveCfg = Release|x64
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}.Release|x64.Build.0 = Release|x64
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}.Release|x86.ActiveCfg = Release|Win32
+		{3FF27A33-2DEC-4D04-8866-7E3F08DA1682}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

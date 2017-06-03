@@ -2,7 +2,7 @@
 
 #include "anteRSSParser\RSSManager.h"
 
-namespace anteRSScplusnet
+namespace anteRSSParserWrapper
 {
 	public ref class RSSFeedWrapper
 	{

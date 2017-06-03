@@ -1,7 +1,5 @@
 #include "MainWindow.h"
 
-#include "RSSManagerWrapper.h"
-
 #include <windows.h>
 
 #include <vcclr.h>
@@ -9,7 +7,7 @@
 using namespace System;
 using namespace System::Windows::Forms;
 
-gcroot<anteRSScplusnet::RSSManagerWrapper^> manager;
+gcroot<anteRSSParserWrapper::RSSManagerWrapper^> manager;
 
 void InitRSSManager();
 
@@ -39,6 +37,6 @@ int main(array<String^>^args)
 
 void InitRSSManager()
 {
-	manager = gcnew anteRSScplusnet::RSSManagerWrapper("history.db");
+	manager = gcnew anteRSSParserWrapper::RSSManagerWrapper("history.db");
 	manager->updateFeedListCache();
 }

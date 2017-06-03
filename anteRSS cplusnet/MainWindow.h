@@ -1,7 +1,5 @@
 #pragma once
 
-#include "RSSManagerWrapper.h"
-
 namespace anteRSScplusnet {
 
 	using namespace System;
@@ -17,7 +15,7 @@ namespace anteRSScplusnet {
 	public ref class MainWindow : public System::Windows::Forms::Form
 	{
 	public:
-		MainWindow(RSSManagerWrapper ^ manager)
+		MainWindow(anteRSSParserWrapper::RSSManagerWrapper ^ manager)
 		{
 			InitializeComponent();
 			//
@@ -417,7 +415,7 @@ namespace anteRSScplusnet {
 		}
 #pragma endregion
 	
-private: RSSManagerWrapper^ manager;
+private: anteRSSParserWrapper::RSSManagerWrapper^ manager;
 
 private: System::Void listFeedList_Resize(System::Object^  sender, System::EventArgs^  e);
 private: System::Void listFeedList_ColumnWidthChanging(System::Object^  sender, System::Windows::Forms::ColumnWidthChangingEventArgs^  e);
