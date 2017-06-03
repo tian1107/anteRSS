@@ -36,5 +36,15 @@ namespace anteRSS_csharpnet
 			e.Item.ImageIndex = 0;
 #endif
 		}
+
+		private void splitLeftRight_SplitterMoved(object sender, SplitterEventArgs e)
+		{
+			Properties.Settings.Default.formLeftRightSplitter = splitLeftRight.SplitterDistance;
+		}
+
+		private void splitUpDown_SplitterMoved(object sender, SplitterEventArgs e)
+		{
+			Properties.Settings.Default.formUpDownSplitter = splitUpDown.SplitterDistance;
+		}
 	}
 }

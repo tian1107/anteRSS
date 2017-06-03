@@ -17,6 +17,9 @@ namespace anteRSS_csharpnet
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow());
+
+			// save settings
+			Properties.Settings.Default.Save();
         }
     }
 }

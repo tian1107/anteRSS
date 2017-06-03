@@ -45,6 +45,7 @@
 			this.buttonMarkAllAsRead = new System.Windows.Forms.ToolStripButton();
 			this.buttonToggleArchived = new System.Windows.Forms.ToolStripButton();
 			this.statusStrip = new System.Windows.Forms.StatusStrip();
+			this.imageListFeeds = new System.Windows.Forms.ImageList(this.components);
 			this.splitLeftRight = new System.Windows.Forms.SplitContainer();
 			this.listFeeds = new System.Windows.Forms.ListView();
 			this.columnFeedName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -54,7 +55,6 @@
 			this.columnItemSource = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnItemTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.browserItemDescription = new System.Windows.Forms.WebBrowser();
-			this.imageListFeeds = new System.Windows.Forms.ImageList(this.components);
 			this.topBar.SuspendLayout();
 			this.buttonBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitLeftRight)).BeginInit();
@@ -195,8 +195,16 @@
 			this.statusStrip.TabIndex = 2;
 			this.statusStrip.Text = "statusStrip";
 			// 
+			// imageListFeeds
+			// 
+			this.imageListFeeds.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListFeeds.ImageStream")));
+			this.imageListFeeds.TransparentColor = System.Drawing.Color.Transparent;
+			this.imageListFeeds.Images.SetKeyName(0, "itemread.ico");
+			this.imageListFeeds.Images.SetKeyName(1, "itemunread.ico");
+			// 
 			// splitLeftRight
 			// 
+			this.splitLeftRight.DataBindings.Add(new System.Windows.Forms.Binding("SplitterDistance", global::anteRSS_csharpnet.Properties.Settings.Default, "formLeftRightSplitter", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
 			this.splitLeftRight.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.splitLeftRight.Location = new System.Drawing.Point(0, 49);
 			this.splitLeftRight.Name = "splitLeftRight";
@@ -211,8 +219,9 @@
 			this.splitLeftRight.Panel2.Controls.Add(this.splitUpDown);
 			this.splitLeftRight.Panel2.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
 			this.splitLeftRight.Size = new System.Drawing.Size(784, 490);
-			this.splitLeftRight.SplitterDistance = 196;
+			this.splitLeftRight.SplitterDistance = global::anteRSS_csharpnet.Properties.Settings.Default.formLeftRightSplitter;
 			this.splitLeftRight.TabIndex = 3;
+			this.splitLeftRight.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitLeftRight_SplitterMoved);
 			// 
 			// listFeeds
 			// 
@@ -242,6 +251,7 @@
 			// 
 			// splitUpDown
 			// 
+			this.splitUpDown.DataBindings.Add(new System.Windows.Forms.Binding("SplitterDistance", global::anteRSS_csharpnet.Properties.Settings.Default, "formUpDownSplitter", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
 			this.splitUpDown.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.splitUpDown.Location = new System.Drawing.Point(0, 0);
 			this.splitUpDown.Name = "splitUpDown";
@@ -255,8 +265,9 @@
 			// 
 			this.splitUpDown.Panel2.Controls.Add(this.browserItemDescription);
 			this.splitUpDown.Size = new System.Drawing.Size(581, 490);
-			this.splitUpDown.SplitterDistance = 245;
+			this.splitUpDown.SplitterDistance = global::anteRSS_csharpnet.Properties.Settings.Default.formUpDownSplitter;
 			this.splitUpDown.TabIndex = 0;
+			this.splitUpDown.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitUpDown_SplitterMoved);
 			// 
 			// listItems
 			// 
@@ -298,13 +309,6 @@
 			this.browserItemDescription.ScriptErrorsSuppressed = true;
 			this.browserItemDescription.Size = new System.Drawing.Size(581, 241);
 			this.browserItemDescription.TabIndex = 0;
-			// 
-			// imageListFeeds
-			// 
-			this.imageListFeeds.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListFeeds.ImageStream")));
-			this.imageListFeeds.TransparentColor = System.Drawing.Color.Transparent;
-			this.imageListFeeds.Images.SetKeyName(0, "itemread.ico");
-			this.imageListFeeds.Images.SetKeyName(1, "itemunread.ico");
 			// 
 			// MainWindow
 			// 
