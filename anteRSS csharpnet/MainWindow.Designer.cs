@@ -40,7 +40,7 @@
             this.splitUpDown = new System.Windows.Forms.SplitContainer();
             this.listFeeds = new System.Windows.Forms.ListView();
             this.listItems = new System.Windows.Forms.ListView();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.browserItemDescription = new System.Windows.Forms.WebBrowser();
             this.buttonNewFeed = new System.Windows.Forms.ToolStripButton();
             this.buttomRemoveFeed = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -162,7 +162,7 @@
             // 
             // splitUpDown.Panel2
             // 
-            this.splitUpDown.Panel2.Controls.Add(this.webBrowser1);
+            this.splitUpDown.Panel2.Controls.Add(this.browserItemDescription);
             this.splitUpDown.Size = new System.Drawing.Size(581, 490);
             this.splitUpDown.SplitterDistance = 245;
             this.splitUpDown.TabIndex = 0;
@@ -203,14 +203,16 @@
             this.listItems.View = System.Windows.Forms.View.Details;
             this.listItems.VirtualMode = true;
             // 
-            // webBrowser1
+            // browserItemDescription
             // 
-            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(581, 241);
-            this.webBrowser1.TabIndex = 0;
+            this.browserItemDescription.AllowWebBrowserDrop = false;
+            this.browserItemDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.browserItemDescription.Location = new System.Drawing.Point(0, 0);
+            this.browserItemDescription.MinimumSize = new System.Drawing.Size(20, 20);
+            this.browserItemDescription.Name = "browserItemDescription";
+            this.browserItemDescription.ScriptErrorsSuppressed = true;
+            this.browserItemDescription.Size = new System.Drawing.Size(581, 241);
+            this.browserItemDescription.TabIndex = 0;
             // 
             // buttonNewFeed
             // 
@@ -335,7 +337,7 @@
         private System.Windows.Forms.SplitContainer splitUpDown;
         private System.Windows.Forms.ListView listFeeds;
         private System.Windows.Forms.ListView listItems;
-        private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.WebBrowser browserItemDescription;
         private System.Windows.Forms.ToolStripButton buttonNewFeed;
         private System.Windows.Forms.ToolStripButton buttomRemoveFeed;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
