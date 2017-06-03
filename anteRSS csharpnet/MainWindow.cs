@@ -13,9 +13,12 @@ namespace anteRSS_csharpnet
 	public partial class MainWindow : Form
 	{
 		private anteRSSParserWrapper.RSSManagerWrapper manager;
+		private ListViewItem tempListFeedItem;
 
 		public MainWindow()
 		{
+			tempListFeedItem = new ListViewItem("####");
+
 			manager = new anteRSSParserWrapper.RSSManagerWrapper("history.db");
 			manager.updateFeedListCache();
 
@@ -25,7 +28,9 @@ namespace anteRSS_csharpnet
 
 		private void listFeeds_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
 		{
-			e.Item = new ListViewItem(manager.getFeedListCacheAt(e.ItemIndex).Name);
+			e.Item = tempListFeedItem;
+			e.Item.Text = manager.getFeedListCacheAt(e.ItemIndex).Name;
+			e.Item.ImageIndex = e.ItemIndex & 1;
 		}
 	}
 }
