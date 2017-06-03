@@ -38,7 +38,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitLeftRight = new System.Windows.Forms.SplitContainer();
             this.splitUpDown = new System.Windows.Forms.SplitContainer();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listFeeds = new System.Windows.Forms.ListView();
             this.listView2 = new System.Windows.Forms.ListView();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.buttonNewFeed = new System.Windows.Forms.ToolStripButton();
@@ -49,6 +49,7 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonMarkAllAsRead = new System.Windows.Forms.ToolStripButton();
             this.buttonToggleArchived = new System.Windows.Forms.ToolStripButton();
+            this.columnFeedName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.topBar.SuspendLayout();
             this.buttonBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLeftRight)).BeginInit();
@@ -134,7 +135,7 @@
             // 
             // splitLeftRight.Panel1
             // 
-            this.splitLeftRight.Panel1.Controls.Add(this.listView1);
+            this.splitLeftRight.Panel1.Controls.Add(this.listFeeds);
             this.splitLeftRight.Panel1.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
             // 
             // splitLeftRight.Panel2
@@ -163,14 +164,24 @@
             this.splitUpDown.SplitterDistance = 245;
             this.splitUpDown.TabIndex = 0;
             // 
-            // listView1
+            // listFeeds
             // 
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Location = new System.Drawing.Point(3, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(193, 490);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listFeeds.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnFeedName});
+            this.listFeeds.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listFeeds.FullRowSelect = true;
+            this.listFeeds.HideSelection = false;
+            this.listFeeds.LabelEdit = true;
+            this.listFeeds.LabelWrap = false;
+            this.listFeeds.Location = new System.Drawing.Point(3, 0);
+            this.listFeeds.MultiSelect = false;
+            this.listFeeds.Name = "listFeeds";
+            this.listFeeds.ShowGroups = false;
+            this.listFeeds.Size = new System.Drawing.Size(193, 490);
+            this.listFeeds.TabIndex = 0;
+            this.listFeeds.UseCompatibleStateImageBehavior = false;
+            this.listFeeds.View = System.Windows.Forms.View.Details;
+            this.listFeeds.VirtualMode = true;
             // 
             // listView2
             // 
@@ -253,6 +264,11 @@
             this.buttonToggleArchived.Text = "Toggle Archived";
             this.buttonToggleArchived.ToolTipText = "Mark/Unmark item as Archived";
             // 
+            // columnFeedName
+            // 
+            this.columnFeedName.Text = "Feeds";
+            this.columnFeedName.Width = 189;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -293,7 +309,7 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitLeftRight;
         private System.Windows.Forms.SplitContainer splitUpDown;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView listFeeds;
         private System.Windows.Forms.ListView listView2;
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.ToolStripButton buttonNewFeed;
@@ -304,6 +320,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton buttonMarkAllAsRead;
         private System.Windows.Forms.ToolStripButton buttonToggleArchived;
+        private System.Windows.Forms.ColumnHeader columnFeedName;
     }
 }
 
