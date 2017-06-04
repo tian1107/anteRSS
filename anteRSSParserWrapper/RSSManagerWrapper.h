@@ -16,9 +16,9 @@ namespace anteRSSParserWrapper
 			System::String ^get();
 		}
 
-		property System::Int32 ^Unread
+		property System::Int32 Unread
 		{
-			System::Int32 ^get();
+			System::Int32 get();
 		}
 	};
 

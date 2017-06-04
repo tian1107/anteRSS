@@ -15,12 +15,9 @@ namespace anteRSS_csharpnet
 		private const int NUM_META_FEEDS = 2;
 
 		private anteRSSParserWrapper.RSSManagerWrapper manager;
-		private ListViewItem tempListFeedItem;
 
 		public MainWindow()
 		{
-			tempListFeedItem = new ListViewItem("####");
-
 			manager = new anteRSSParserWrapper.RSSManagerWrapper("history.db");
 			manager.updateFeedListCache();
 
@@ -30,7 +27,7 @@ namespace anteRSS_csharpnet
 
 		private void listFeeds_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
 		{
-			e.Item = tempListFeedItem;
+			e.Item = new ListViewItem();
 			// Unread
 			if (e.ItemIndex == 0)
 			{
@@ -45,6 +42,15 @@ namespace anteRSS_csharpnet
 			{
 				anteRSSParserWrapper.RSSFeedWrapper current = manager.getFeedListCacheAt(e.ItemIndex - NUM_META_FEEDS);
 				e.Item.Text = current.Name + " (" + current.Unread + ")";
+				if (current.Unread > 0)
+				{
+					e.Item.ForeColor = Color.Blue;
+				}
+				else
+				{
+					e.Item.ForeColor = SystemColors.WindowText;
+				}
+
 #if DEBUG
 				e.Item.ImageIndex = e.ItemIndex & 1;
 #else

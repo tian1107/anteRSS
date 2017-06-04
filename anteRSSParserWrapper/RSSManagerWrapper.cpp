@@ -50,7 +50,7 @@ System::String ^ anteRSSParserWrapper::RSSFeedWrapper::Name::get()
 	return marshal_as<System::String ^>(content->name);
 }
 
-System::Int32 ^ anteRSSParserWrapper::RSSFeedWrapper::Unread::get()
+System::Int32 anteRSSParserWrapper::RSSFeedWrapper::Unread::get()
 {
 	return content->unread;
 }
