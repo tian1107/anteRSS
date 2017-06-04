@@ -12,6 +12,8 @@ namespace anteRSS_csharpnet
 {
 	public partial class MainWindow : Form
 	{
+		private const int NUM_META_FEEDS = 2;
+
 		private anteRSSParserWrapper.RSSManagerWrapper manager;
 		private ListViewItem tempListFeedItem;
 
@@ -29,12 +31,25 @@ namespace anteRSS_csharpnet
 		private void listFeeds_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
 		{
 			e.Item = tempListFeedItem;
-			e.Item.Text = manager.getFeedListCacheAt(e.ItemIndex).Name;
+			// Unread
+			if (e.ItemIndex == 0)
+			{
+				e.Item.Text = "Unread (0)";
+			}
+			// Archived
+			else if (e.ItemIndex == 1)
+			{
+				e.Item.Text = "Archived (0)";
+			}
+			else
+			{
+				e.Item.Text = manager.getFeedListCacheAt(e.ItemIndex - NUM_META_FEEDS).Name;
 #if DEBUG
-			e.Item.ImageIndex = e.ItemIndex & 1;
+				e.Item.ImageIndex = e.ItemIndex & 1;
 #else
-			e.Item.ImageIndex = 0;
+				e.Item.ImageIndex = 0;
 #endif
+			}
 		}
 
 		private void splitLeftRight_SplitterMoved(object sender, SplitterEventArgs e)
