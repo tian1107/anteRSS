@@ -243,6 +243,7 @@
 			this.listFeeds.View = System.Windows.Forms.View.Details;
 			this.listFeeds.VirtualMode = true;
 			this.listFeeds.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listFeeds_RetrieveVirtualItem);
+			this.listFeeds.SelectedIndexChanged += new System.EventHandler(this.listFeeds_SelectedIndexChanged);
 			// 
 			// columnFeedName
 			// 
@@ -285,6 +286,7 @@
 			this.listItems.UseCompatibleStateImageBehavior = false;
 			this.listItems.View = System.Windows.Forms.View.Details;
 			this.listItems.VirtualMode = true;
+			this.listItems.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listItems_RetrieveVirtualItem);
 			// 
 			// columnItemImage
 			// 

@@ -68,5 +68,36 @@ namespace anteRSS_csharpnet
 		{
 			Properties.Settings.Default.formUpDownSplitter = splitUpDown.SplitterDistance;
 		}
+
+		private void listFeeds_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (listFeeds.SelectedIndices.Count < 1)
+				return; 
+
+			int index = listFeeds.SelectedIndices[0];
+			// get feed
+			if (index < NUM_META_FEEDS)
+			{
+
+			}
+			else
+			{
+				// the feed in question
+				anteRSSParserWrapper.RSSFeedWrapper current = manager.getFeedListCacheAt(index - NUM_META_FEEDS);
+
+				manager.cacheFeedItems(current.FeedId);
+				listItems.VirtualListSize = manager.getItemListCacheLength();
+				listItems.Invalidate();
+			}
+		}
+
+		private void listItems_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+		{
+			anteRSSParserWrapper.RSSFeedItemWrapper current = manager.getItemListCacheAt(e.ItemIndex);
+
+			e.Item = new ListViewItem("");
+			e.Item.SubItems.Add("test");
+			e.Item.SubItems.Add(current.Title);
+		}
 	}
 }

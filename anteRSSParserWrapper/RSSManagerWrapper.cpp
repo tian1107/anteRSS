@@ -12,6 +12,7 @@ anteRSSParserWrapper::RSSManagerWrapper::RSSManagerWrapper(System::String^ dbFil
 {
 	manager = new anteRSSParser::RSSManager(marshal_as<std::string>(dbFile));
 	feedCache = new anteRSSParser::RSSFeedVector();
+	itemCache = new anteRSSParser::RSSFeedItemVector();
 }
 
 void anteRSSParserWrapper::RSSManagerWrapper::updateFeedListCache()
@@ -29,8 +30,24 @@ System::Int32 anteRSSParserWrapper::RSSManagerWrapper::getFeedListCacheLength()
 	return feedCache->size();
 }
 
+System::Void anteRSSParserWrapper::RSSManagerWrapper::cacheFeedItems(System::Int32 feedId)
+{
+	itemCache->swap(manager->getItemsOfFeed(feedId));
+}
+
+RSSFeedItemWrapper ^ anteRSSParserWrapper::RSSManagerWrapper::getItemListCacheAt(System::Int32 index)
+{
+	return gcnew RSSFeedItemWrapper(&(itemCache->at(index)));
+}
+
+System::Int32 anteRSSParserWrapper::RSSManagerWrapper::getItemListCacheLength()
+{
+	return itemCache->size();
+}
+
 anteRSSParserWrapper::RSSManagerWrapper::!RSSManagerWrapper()
 {
+	delete itemCache;
 	delete feedCache;
 	delete manager;
 }
@@ -45,6 +62,11 @@ anteRSSParserWrapper::RSSFeedWrapper::RSSFeedWrapper(anteRSSParser::RSSFeed * co
 	this->content = content;
 }
 
+System::Int32 anteRSSParserWrapper::RSSFeedWrapper::FeedId::get()
+{
+	return content->id;
+}
+
 System::String ^ anteRSSParserWrapper::RSSFeedWrapper::Name::get()
 {
 	return marshal_as<System::String ^>(content->name);
@@ -53,4 +75,19 @@ System::String ^ anteRSSParserWrapper::RSSFeedWrapper::Name::get()
 System::Int32 anteRSSParserWrapper::RSSFeedWrapper::Unread::get()
 {
 	return content->unread;
+}
+
+anteRSSParserWrapper::RSSFeedItemWrapper::RSSFeedItemWrapper(anteRSSParser::RSSFeedItem * content)
+{
+	this->content = content;
+}
+
+System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Title::get()
+{
+	return marshal_as<System::String ^>(content->title);
+}
+
+System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Description::get()
+{
+	return marshal_as<System::String ^>(content->description);
 }
