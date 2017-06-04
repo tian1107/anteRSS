@@ -89,5 +89,8 @@ System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Title::get()
 
 System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Description::get()
 {
-	return marshal_as<System::String ^>(content->description);
+	if(content->contentEncoded.empty())
+		return marshal_as<System::String ^>(content->description);
+	else
+		return marshal_as<System::String ^>(content->contentEncoded);
 }

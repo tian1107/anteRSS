@@ -22,7 +22,9 @@ namespace anteRSS_csharpnet
 			manager.updateFeedListCache();
 
 			InitializeComponent();
+
 			listFeeds.VirtualListSize = manager.getFeedListCacheLength();
+			browserItemDescription_changeContent("nothing yet");
 		}
 
 		private void listFeeds_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -87,6 +89,7 @@ namespace anteRSS_csharpnet
 
 				manager.cacheFeedItems(current.FeedId);
 				listItems.VirtualListSize = manager.getItemListCacheLength();
+				listItems.SelectedIndices.Clear();
 				listItems.Invalidate();
 			}
 		}
@@ -98,6 +101,29 @@ namespace anteRSS_csharpnet
 			e.Item = new ListViewItem("");
 			e.Item.SubItems.Add("test");
 			e.Item.SubItems.Add(current.Title);
+		}
+
+		// from https://stackoverflow.com/a/20351048
+		private void browserItemDescription_changeContent(string content)
+		{
+			browserItemDescription.Navigate("about:blank");
+			if(browserItemDescription.Document == null)
+			{
+				browserItemDescription.Document.Write(string.Empty);
+			}
+
+			browserItemDescription.DocumentText = content;
+		}
+
+		private void listItems_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (listItems.SelectedIndices.Count < 1)
+				return;
+
+			int index = listItems.SelectedIndices[0];
+			anteRSSParserWrapper.RSSFeedItemWrapper current = manager.getItemListCacheAt(index);
+
+			browserItemDescription_changeContent(current.Description);
 		}
 	}
 }
