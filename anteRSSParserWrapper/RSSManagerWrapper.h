@@ -59,6 +59,7 @@ namespace anteRSSParserWrapper
 		System::Int32 getFeedListCacheLength();
 
 		System::Void cacheFeedItems(System::Int32 feedId);
+		System::Void cacheFeedItemsByStatus(System::Int32 status);
 		RSSFeedItemWrapper ^ getItemListCacheAt(System::Int32 index);
 		System::Int32 getItemListCacheLength();
 

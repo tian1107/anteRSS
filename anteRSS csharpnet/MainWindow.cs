@@ -24,6 +24,7 @@ namespace anteRSS_csharpnet
 			InitializeComponent();
 
 			listFeeds.VirtualListSize = manager.getFeedListCacheLength();
+
 			browserItemDescription_changeContent("nothing yet");
 		}
 
@@ -80,7 +81,10 @@ namespace anteRSS_csharpnet
 			// get feed
 			if (index < NUM_META_FEEDS)
 			{
-
+				// unread
+				if (index == 0) manager.cacheFeedItemsByStatus(0);
+				// archived
+				else if (index == 1) manager.cacheFeedItemsByStatus(2);
 			}
 			else
 			{
@@ -88,10 +92,11 @@ namespace anteRSS_csharpnet
 				anteRSSParserWrapper.RSSFeedWrapper current = manager.getFeedListCacheAt(index - NUM_META_FEEDS);
 
 				manager.cacheFeedItems(current.FeedId);
-				listItems.VirtualListSize = manager.getItemListCacheLength();
-				listItems.SelectedIndices.Clear();
-				listItems.Invalidate();
 			}
+
+			listItems.VirtualListSize = manager.getItemListCacheLength();
+			listItems.SelectedIndices.Clear();
+			listItems.Invalidate();
 		}
 
 		private void listItems_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -124,6 +129,14 @@ namespace anteRSS_csharpnet
 			anteRSSParserWrapper.RSSFeedItemWrapper current = manager.getItemListCacheAt(index);
 
 			browserItemDescription_changeContent(Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Description)));
+		}
+
+		private void MainWindow_Load(object sender, EventArgs e)
+		{
+			// select unread feed
+			listFeeds.SelectedIndices.Clear();
+			listFeeds.SelectedIndices.Add(0);
+			listFeeds.Select();
 		}
 	}
 }

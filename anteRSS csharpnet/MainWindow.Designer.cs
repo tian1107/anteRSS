@@ -326,6 +326,7 @@
 			this.MainMenuStrip = this.topBar;
 			this.Name = "MainWindow";
 			this.Text = "anteRSS csharpnet";
+			this.Load += new System.EventHandler(this.MainWindow_Load);
 			this.topBar.ResumeLayout(false);
 			this.topBar.PerformLayout();
 			this.buttonBar.ResumeLayout(false);

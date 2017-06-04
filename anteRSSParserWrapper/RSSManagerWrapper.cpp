@@ -35,6 +35,12 @@ System::Void anteRSSParserWrapper::RSSManagerWrapper::cacheFeedItems(System::Int
 	itemCache->swap(manager->getItemsOfFeed(feedId));
 }
 
+System::Void anteRSSParserWrapper::RSSManagerWrapper::cacheFeedItemsByStatus(System::Int32 status)
+{
+	itemCache->swap(manager->getItemsOfStatus(status));
+	return System::Void();
+}
+
 RSSFeedItemWrapper ^ anteRSSParserWrapper::RSSManagerWrapper::getItemListCacheAt(System::Int32 index)
 {
 	return gcnew RSSFeedItemWrapper(&(itemCache->at(index)));
