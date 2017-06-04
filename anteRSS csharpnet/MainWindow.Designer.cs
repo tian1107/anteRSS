@@ -278,6 +278,7 @@
             this.columnItemTitle});
 			this.listItems.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listItems.FullRowSelect = true;
+			this.listItems.HideSelection = false;
 			this.listItems.Location = new System.Drawing.Point(0, 0);
 			this.listItems.MultiSelect = false;
 			this.listItems.Name = "listItems";
