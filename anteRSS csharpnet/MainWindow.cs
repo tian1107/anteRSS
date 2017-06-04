@@ -100,7 +100,7 @@ namespace anteRSS_csharpnet
 
 			e.Item = new ListViewItem("");
 			e.Item.SubItems.Add("test");
-			e.Item.SubItems.Add(current.Title);
+			e.Item.SubItems.Add(Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Title)));
 		}
 
 		// from https://stackoverflow.com/a/20351048
@@ -123,7 +123,7 @@ namespace anteRSS_csharpnet
 			int index = listItems.SelectedIndices[0];
 			anteRSSParserWrapper.RSSFeedItemWrapper current = manager.getItemListCacheAt(index);
 
-			browserItemDescription_changeContent(current.Description);
+			browserItemDescription_changeContent(Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Description)));
 		}
 	}
 }
