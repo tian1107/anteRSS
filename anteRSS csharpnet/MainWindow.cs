@@ -43,7 +43,8 @@ namespace anteRSS_csharpnet
 			}
 			else
 			{
-				e.Item.Text = manager.getFeedListCacheAt(e.ItemIndex - NUM_META_FEEDS).Name;
+				anteRSSParserWrapper.RSSFeedWrapper current = manager.getFeedListCacheAt(e.ItemIndex - NUM_META_FEEDS);
+				e.Item.Text = current.Name + " (" + current.Unread + ")";
 #if DEBUG
 				e.Item.ImageIndex = e.ItemIndex & 1;
 #else

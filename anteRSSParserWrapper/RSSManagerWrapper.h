@@ -15,6 +15,11 @@ namespace anteRSSParserWrapper
 		{
 			System::String ^get();
 		}
+
+		property System::Int32 ^Unread
+		{
+			System::Int32 ^get();
+		}
 	};
 
 	public ref class RSSManagerWrapper
