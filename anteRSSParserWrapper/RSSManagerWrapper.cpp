@@ -100,3 +100,8 @@ System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Description::get()
 	else
 		return marshal_as<System::String ^>(content->contentEncoded);
 }
+
+System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Link::get()
+{
+	return marshal_as<System::String ^>(content->link);
+}

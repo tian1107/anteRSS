@@ -43,6 +43,11 @@ namespace anteRSSParserWrapper
 		{
 			System::String ^get();
 		}
+
+		property System::String ^Link
+		{
+			System::String ^get();
+		}
 	};
 
 	public ref class RSSManagerWrapper
