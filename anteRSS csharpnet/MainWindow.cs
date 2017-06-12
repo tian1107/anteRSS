@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using anteRSSParserWrapper;
 
 namespace anteRSS_csharpnet
 {
@@ -14,16 +10,16 @@ namespace anteRSS_csharpnet
 	{
 		private const int NUM_META_FEEDS = 2;
 
-		private anteRSSParserWrapper.RSSManagerWrapper manager;
+		private RSSManagerWrapper manager;
 
 		public MainWindow()
 		{
-			manager = new anteRSSParserWrapper.RSSManagerWrapper("history.db");
+			manager = new RSSManagerWrapper("history.db");
 			manager.updateFeedListCache();
 
 			InitializeComponent();
 
-			listFeeds.VirtualListSize = manager.getFeedListCacheLength();
+			listFeeds.VirtualListSize = manager.getFeedListCacheLength() + NUM_META_FEEDS;
 
 			browserItemDescription_changeContent("nothing yet");
 		}
@@ -43,7 +39,7 @@ namespace anteRSS_csharpnet
 			}
 			else
 			{
-				anteRSSParserWrapper.RSSFeedWrapper current = manager.getFeedListCacheAt(e.ItemIndex - NUM_META_FEEDS);
+				RSSFeedWrapper current = manager.getFeedListCacheAt(e.ItemIndex - NUM_META_FEEDS);
 				e.Item.Text = current.Name + " (" + current.Unread + ")";
 				if (current.Unread > 0)
 				{
@@ -89,7 +85,7 @@ namespace anteRSS_csharpnet
 			else
 			{
 				// the feed in question
-				anteRSSParserWrapper.RSSFeedWrapper current = manager.getFeedListCacheAt(index - NUM_META_FEEDS);
+				RSSFeedWrapper current = manager.getFeedListCacheAt(index - NUM_META_FEEDS);
 
 				manager.cacheFeedItems(current.FeedId);
 			}
@@ -101,7 +97,7 @@ namespace anteRSS_csharpnet
 
 		private void listItems_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
 		{
-			anteRSSParserWrapper.RSSFeedItemWrapper current = manager.getItemListCacheAt(e.ItemIndex);
+			RSSFeedItemWrapper current = manager.getItemListCacheAt(e.ItemIndex);
 
 			e.Item = new ListViewItem("");
 			e.Item.SubItems.Add("test");
@@ -126,7 +122,7 @@ namespace anteRSS_csharpnet
 				return;
 
 			int index = listItems.SelectedIndices[0];
-			anteRSSParserWrapper.RSSFeedItemWrapper current = manager.getItemListCacheAt(index);
+			RSSFeedItemWrapper current = manager.getItemListCacheAt(index);
 
 			browserItemDescription_changeContent(Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Description)));
 		}
@@ -137,6 +133,17 @@ namespace anteRSS_csharpnet
 			listFeeds.SelectedIndices.Clear();
 			listFeeds.SelectedIndices.Add(0);
 			listFeeds.Select();
+		}
+
+		private void listItems_ItemActivate(object sender, EventArgs e)
+		{
+			if (listItems.SelectedIndices.Count < 1)
+				return;
+
+			// selected item
+			RSSFeedItemWrapper current = manager.getItemListCacheAt(listItems.SelectedIndices[0]);
+
+			MessageBox.Show(this, current.Link, "Link to open", MessageBoxButtons.OK);
 		}
 	}
 }

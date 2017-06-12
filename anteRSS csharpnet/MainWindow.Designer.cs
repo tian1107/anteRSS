@@ -287,6 +287,7 @@
 			this.listItems.UseCompatibleStateImageBehavior = false;
 			this.listItems.View = System.Windows.Forms.View.Details;
 			this.listItems.VirtualMode = true;
+			this.listItems.ItemActivate += new System.EventHandler(this.listItems_ItemActivate);
 			this.listItems.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listItems_RetrieveVirtualItem);
 			this.listItems.SelectedIndexChanged += new System.EventHandler(this.listItems_SelectedIndexChanged);
 			// 
