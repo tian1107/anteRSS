@@ -40,7 +40,7 @@ namespace anteRSS_csharpnet
 			else
 			{
 				RSSFeedWrapper current = manager.getFeedListCacheAt(e.ItemIndex - NUM_META_FEEDS);
-				e.Item.Text = current.Name + " (" + current.Unread + ")";
+				e.Item.Text = Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Name)) + " (" + current.Unread + ")";
 				if (current.Unread > 0)
 				{
 					e.Item.ForeColor = Color.Blue;
