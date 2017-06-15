@@ -30,6 +30,7 @@ namespace anteRSS_csharpnet
 			// Unread
 			if (e.ItemIndex == 0)
 			{
+				// TODO compute total number of unread items
 				e.Item.Text = "Unread (0)";
 			}
 			// Archived
