@@ -105,3 +105,9 @@ System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Link::get()
 {
 	return marshal_as<System::String ^>(content->link);
 }
+
+System::Int32 anteRSSParserWrapper::RSSFeedItemWrapper::Status::get()
+{
+	return content->status;
+}
+

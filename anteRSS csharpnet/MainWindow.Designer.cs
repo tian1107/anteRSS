@@ -199,8 +199,8 @@
 			// 
 			this.imageListFeeds.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListFeeds.ImageStream")));
 			this.imageListFeeds.TransparentColor = System.Drawing.Color.Transparent;
-			this.imageListFeeds.Images.SetKeyName(0, "itemread.ico");
-			this.imageListFeeds.Images.SetKeyName(1, "itemunread.ico");
+			this.imageListFeeds.Images.SetKeyName(0, "itemunread.ico");
+			this.imageListFeeds.Images.SetKeyName(1, "itemread.ico");
 			// 
 			// splitLeftRight
 			// 
@@ -283,6 +283,7 @@
 			this.listItems.MultiSelect = false;
 			this.listItems.Name = "listItems";
 			this.listItems.Size = new System.Drawing.Size(581, 245);
+			this.listItems.SmallImageList = this.imageListFeeds;
 			this.listItems.TabIndex = 0;
 			this.listItems.UseCompatibleStateImageBehavior = false;
 			this.listItems.View = System.Windows.Forms.View.Details;

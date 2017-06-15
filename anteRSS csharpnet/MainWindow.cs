@@ -103,6 +103,9 @@ namespace anteRSS_csharpnet
 			e.Item = new ListViewItem("");
 			e.Item.SubItems.Add("test");
 			e.Item.SubItems.Add(Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Title)));
+
+			// TODO formalize conversion of Status
+			e.Item.ImageIndex = current.Status;
 		}
 
 		// from https://stackoverflow.com/a/20351048
