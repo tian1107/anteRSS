@@ -149,5 +149,23 @@ namespace anteRSS_csharpnet
 
 			MessageBox.Show(this, current.Link, "Link to open", MessageBoxButtons.OK);
 		}
+
+		private void buttonUpdate_Click(object sender, EventArgs e)
+		{
+			if (listFeeds.SelectedIndices.Count < 1)
+				return;
+
+			// TODO magic number
+			// unread
+			if (listFeeds.SelectedIndices[0] == 0)
+			{
+
+			}
+			else if (listFeeds.SelectedIndices[0] >= NUM_META_FEEDS)
+			{
+				// selected feed
+				RSSFeedWrapper current = manager.getFeedListCacheAt(listFeeds.SelectedIndices[0] - NUM_META_FEEDS);
+			}
+		}
 	}
 }

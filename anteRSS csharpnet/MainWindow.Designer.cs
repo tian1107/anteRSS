@@ -155,6 +155,7 @@
 			this.buttonUpdate.Size = new System.Drawing.Size(93, 22);
 			this.buttonUpdate.Text = "Update Feed";
 			this.buttonUpdate.ToolTipText = "Update currently selected feed";
+			this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
 			// 
 			// buttonUpdateAll
 			// 

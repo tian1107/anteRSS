@@ -55,12 +55,15 @@ namespace anteRSSParserWrapper
 		}
 	};
 
+	delegate System::Void RSSManagerCallbackWrapper(System::Int32 feedid, System::Boolean success, System::String^ errorMessage);
+
 	public ref class RSSManagerWrapper
 	{
 	private:
 		anteRSSParser::RSSManager * manager;
 		anteRSSParser::RSSFeedVector * feedCache;
 		anteRSSParser::RSSFeedItemVector * itemCache;
+		anteRSSParser::RSSFeedItemVector * itemCacheNew;
 	public:
 		RSSManagerWrapper(System::String^ dbFile);
 
@@ -72,6 +75,8 @@ namespace anteRSSParserWrapper
 		System::Void cacheFeedItemsByStatus(System::Int32 status);
 		RSSFeedItemWrapper ^ getItemListCacheAt(System::Int32 index);
 		System::Int32 getItemListCacheLength();
+
+		System::Void updateFeed(System::Int32 feedId, RSSManagerCallbackWrapper ^ callback);
 
 		!RSSManagerWrapper();
 		~RSSManagerWrapper();
