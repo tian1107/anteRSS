@@ -43,6 +43,8 @@ namespace anteRSSParser
 			tinyxml2::XMLElement * guid;
 			if (guid = asXML->FirstChildElement("guid"))
 				return getSubText(guid);
+			else if (guid = asXML->FirstChildElement("link"))
+				return getSubText(guid);
 			else
 				// TODO generate a deterministic guid
 				return "no guid";
