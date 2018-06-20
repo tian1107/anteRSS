@@ -32,5 +32,28 @@ namespace anteRSSTest_csharpnet
 
 			// TODO check file contents
 		}
+
+		[TestMethod]
+		public void AddFeedTest()
+		{
+			// The test file
+			String testFile = "test1.db";
+
+			// Delete the file
+			System.IO.File.Delete(testFile);
+
+			// Create a new one
+			using (RSSManager manager = new RSSManager(testFile))
+			{
+				// should work
+				Assert.AreEqual(1, manager.AddFeed("test", "a"));
+				Assert.AreEqual(2, manager.AddFeed("test", "b"));
+
+				// shouldn't work
+				Assert.AreEqual(-1, manager.AddFeed("test", "a"));
+
+				// TODO check file contents
+			}
+		}
 	}
 }

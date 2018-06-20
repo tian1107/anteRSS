@@ -110,25 +110,29 @@ namespace anteRSSParser_csharpnet
 
 		public Int32 AddFeed(String name, String url)
 		{
-			SQLiteCommand command = new SQLiteCommand("insert into FeedInfo (name, url) values (@name, @url);", db);
+			SQLiteCommand command = new SQLiteCommand("insert into FeedInfo (name, url) values (@name, @url); select last_insert_rowid();", db);
 			command.Parameters.AddWithValue("@name", name);
 			command.Parameters.AddWithValue("@url", url);
 
+			Int32 id = -1;
+
 			try
 			{
-				command.ExecuteNonQuery();
+				object temp = command.ExecuteScalar();
+				if (temp != null)
+					id = Convert.ToInt32(temp);
 			}
 			catch (SQLiteException ex)
 			{
-				if (ex.ResultCode == SQLiteErrorCode.Done)
+				// If something happens
+				if (ex.ResultCode != SQLiteErrorCode.Done)
 				{
-					Console.WriteLine("Done!");
+					id = -1;
 				}
 			}
-			
 
 			// Returns the feed id
-			return 0;
+			return id;
 		}
 
 		public Int32 AddFeed(String url)
