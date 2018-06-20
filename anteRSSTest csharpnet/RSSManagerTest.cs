@@ -47,10 +47,12 @@ namespace anteRSSTest_csharpnet
 			{
 				// should work
 				Assert.AreEqual(1, manager.AddFeed("test", "a"));
-				Assert.AreEqual(2, manager.AddFeed("test", "b"));
+				Assert.AreEqual(2, manager.AddFeed("test1", "b"));
+				Assert.AreEqual(3, manager.AddFeed("test2", "c"));
+				Assert.AreEqual(4, manager.AddFeed("あいうえお", "d"));
 
 				// shouldn't work
-				Assert.AreEqual(-1, manager.AddFeed("test", "a"));
+				Assert.AreEqual(-1, manager.AddFeed("test3", "b"));
 
 				// TODO check file contents
 			}
