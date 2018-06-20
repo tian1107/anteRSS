@@ -76,7 +76,7 @@ namespace anteRSSParserWrapper
 		RSSFeedItemWrapper ^ getItemListCacheAt(System::Int32 index);
 		System::Int32 getItemListCacheLength();
 
-		System::Void updateFeed(System::Int32 feedId, RSSManagerCallbackWrapper ^ callback);
+		//System::Void updateFeed(System::Int32 feedId, RSSManagerCallbackWrapper ^ callback);
 
 		!RSSManagerWrapper();
 		~RSSManagerWrapper();

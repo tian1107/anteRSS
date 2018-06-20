@@ -41,7 +41,7 @@ namespace anteRSS_csharpnet
 			else
 			{
 				RSSFeedWrapper current = manager.getFeedListCacheAt(e.ItemIndex - NUM_META_FEEDS);
-				e.Item.Text = Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Name)) + " (" + current.Unread + ")";
+				e.Item.Text = current.Name + " (" + current.Unread + ")";
 				if (current.Unread > 0)
 				{
 					e.Item.ForeColor = Color.Blue;
@@ -102,7 +102,7 @@ namespace anteRSS_csharpnet
 
 			e.Item = new ListViewItem("");
 			e.Item.SubItems.Add("test");
-			e.Item.SubItems.Add(Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Title)));
+			e.Item.SubItems.Add(current.Title);
 
 			// TODO formalize conversion of Status
 			e.Item.ImageIndex = current.Status;
@@ -128,7 +128,7 @@ namespace anteRSS_csharpnet
 			int index = listItems.SelectedIndices[0];
 			RSSFeedItemWrapper current = manager.getItemListCacheAt(index);
 
-			browserItemDescription_changeContent(Encoding.UTF8.GetString(Encoding.Default.GetBytes(current.Description)));
+			browserItemDescription_changeContent(current.Description);
 		}
 
 		private void MainWindow_Load(object sender, EventArgs e)

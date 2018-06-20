@@ -8,6 +8,17 @@
 using namespace anteRSSParserWrapper;
 using namespace msclr::interop;
 
+// Local function for converting std::string to String^
+System::String ^ stdStringtoCSString(std::string in)
+{
+	cli::array<System::Byte>^ a = gcnew cli::array<System::Byte>(in.length());
+	int i = in.length();
+	while (i-- > 0)
+		a[i] = in[i];
+
+	return System::Text::Encoding::UTF8->GetString(a);
+}
+
 anteRSSParserWrapper::RSSManagerWrapper::RSSManagerWrapper(System::String^ dbFile)
 {
 	manager = new anteRSSParser::RSSManager(marshal_as<std::string>(dbFile));
@@ -75,7 +86,7 @@ System::Int32 anteRSSParserWrapper::RSSFeedWrapper::FeedId::get()
 
 System::String ^ anteRSSParserWrapper::RSSFeedWrapper::Name::get()
 {
-	return marshal_as<System::String ^>(content->name);
+	return stdStringtoCSString(content->name);
 }
 
 System::Int32 anteRSSParserWrapper::RSSFeedWrapper::Unread::get()
@@ -90,20 +101,20 @@ anteRSSParserWrapper::RSSFeedItemWrapper::RSSFeedItemWrapper(anteRSSParser::RSSF
 
 System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Title::get()
 {
-	return marshal_as<System::String ^>(content->title);
+	return stdStringtoCSString(content->title);
 }
 
 System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Description::get()
 {
 	if(content->contentEncoded.empty())
-		return marshal_as<System::String ^>(content->description);
+		return stdStringtoCSString(content->description);
 	else
-		return marshal_as<System::String ^>(content->contentEncoded);
+		return stdStringtoCSString(content->contentEncoded);
 }
 
 System::String ^ anteRSSParserWrapper::RSSFeedItemWrapper::Link::get()
 {
-	return marshal_as<System::String ^>(content->link);
+	return stdStringtoCSString(content->link);
 }
 
 System::Int32 anteRSSParserWrapper::RSSFeedItemWrapper::Status::get()
