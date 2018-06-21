@@ -8,12 +8,20 @@ using System.Data.SQLite;
 
 namespace anteRSSParser_csharpnet
 {
-	public struct RSSFeed
+	public readonly struct RSSFeed
 	{
 		public readonly Int32 id;
-		public String name;
+		public readonly String name;
 		public readonly String url;
-		public Int32 unread;
+		public readonly Int32 unread;
+
+		public RSSFeed(Int32 id, String name, String url, Int32 unread)
+		{
+			this.id = id;
+			this.name = name;
+			this.url = url;
+			this.unread = unread;
+		}
 	}
 
 	public enum RSSFeedItemStatus:Int32
@@ -51,7 +59,7 @@ namespace anteRSSParser_csharpnet
 			UpdateDatabaseFormat();
 		}
 
-		protected String GetConnectionString(Boolean readOnly = true)
+		protected String GetConnectionString(Boolean readOnly)
 		{
 			if (readOnly)
 			{
@@ -169,10 +177,37 @@ namespace anteRSSParser_csharpnet
 
 		public RSSFeed GetFeed(Int32 id)
 		{
-			/*SQLiteCommand getFeed = new SQLiteCommand(
-				"select feed.id, feed.name, feed.url, count(case when item.status = 0 then 1 else null end) as \"unread\" from FeedInfo feed left join FeedItems item on feed.id = item.feedid where feed.id = @id;",
-				readDb);*/
-			throw new NotImplementedException();
+			RSSFeed result = new RSSFeed(0, "Not Found", "", 0);
+
+			using (SQLiteConnection conn = new SQLiteConnection(GetConnectionString(true)))
+			{
+				conn.Open();
+
+				SQLiteCommand getFeed = new SQLiteCommand(
+					"select feed.id, feed.name, feed.url, count(case when item.status = 0 then 1 else null end) as \"unread\" from FeedInfo feed left join FeedItems item on feed.id = item.feedid where feed.id = @id;",
+					conn);
+				getFeed.Parameters.AddWithValue("@id", id);
+
+				SQLiteDataReader reader = getFeed.ExecuteReader();
+
+				if (reader.HasRows)
+				{
+					// There should be only one result
+					reader.Read();
+
+					Int32 resultId = reader.GetInt32(0);
+					String resultName = reader.GetString(1);
+					String resultUrl = reader.GetString(2);
+					Int32 resultUnread = reader.GetInt32(3);
+
+					result = new RSSFeed(resultId, resultName, resultUrl, resultUnread);
+				}
+
+				getFeed.Dispose();
+				conn.Close();
+			}
+
+			return result;
 		}
 
 		public void RenameFeed(Int32 feedId, String name)

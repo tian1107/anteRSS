@@ -39,16 +39,27 @@ namespace anteRSSTest_csharpnet
 			// Create a new one
 			RSSManager manager = new RSSManager(testFile);
 
-			// should work
-			Assert.AreEqual(1, manager.AddFeed("test", "a"));
-			Assert.AreEqual(2, manager.AddFeed("test1", "b"));
-			Assert.AreEqual(3, manager.AddFeed("test2", "c"));
-			Assert.AreEqual(4, manager.AddFeed("あいうえお", "d"));
+			// Variables for test
+			String[] names = { "test1", "test2", "試し", "こうなる", "test1", "➝", "🆗" };
+			String[] urls = { "a", "b", "c", "d", "e", "http://a/", "test.xml" };
 
-			// shouldn't work
+			for (int i = 0; i < names.Length; ++i)
+			{
+				Assert.AreEqual(i + 1, manager.AddFeed(names[i], urls[i]));
+			}
+
+			// shouldn't work, same url
 			Assert.AreEqual(-1, manager.AddFeed("test3", "b"));
 
-			// TODO check file contents
+			// Check contents
+			for (int i = 0; i < names.Length; ++i)
+			{
+				RSSFeed result = manager.GetFeed(i + 1);
+				Assert.AreEqual(i + 1, result.id);
+				Assert.AreEqual(names[i], result.name);
+				Assert.AreEqual(urls[i], result.url);
+				Assert.AreEqual(0, result.unread);
+			}
 		}
 	}
 }
