@@ -216,49 +216,49 @@ namespace anteRSSParser_csharpnet
 
 		}
 
-		RSSFeed [] GetAllFeeds()
+		public RSSFeed [] GetAllFeeds()
 		{
 			throw new NotImplementedException();
 
 		}
 
-		RSSFeed [] GetItemsofFeed(Int32 feedId)
+		public RSSFeed[] GetItemsofFeed(Int32 feedId)
 		{
 			throw new NotImplementedException();
 
 		}
 
-		RSSFeed [] GetItemsofStatus(RSSFeedItemStatus status)
+		public RSSFeed[] GetItemsofStatus(RSSFeedItemStatus status)
 		{
 			throw new NotImplementedException();
 
 		}
 
-		void RemoveFeed(Int32 feedId)
+		public void RemoveFeed(Int32 feedId)
 		{
 			throw new NotImplementedException();
 
 		}
 
-		void UpdateFeed(Int32 feedId, OnFeedUpdateCallback callback)
+		public void UpdateFeed(Int32 feedId, OnFeedUpdateCallback callback)
 		{
 			throw new NotImplementedException();
 
 		}
 
-		void UpdateAllFeeds(OnFeedUpdateCallback callback)
+		public void UpdateAllFeeds(OnFeedUpdateCallback callback)
 		{
 			throw new NotImplementedException();
 
 		}
 
-		void ChangeFeedItemStatus(String guid, RSSFeedItemStatus status)
+		public void ChangeFeedItemStatus(String guid, RSSFeedItemStatus status)
 		{
 			throw new NotImplementedException();
 
 		}
 
-		void MarkAllAsRead(Int32 feedId)
+		public void MarkAllAsRead(Int32 feedId)
 		{
 			throw new NotImplementedException();
 
