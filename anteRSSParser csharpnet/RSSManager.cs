@@ -26,9 +26,9 @@ namespace anteRSSParser_csharpnet
 
 	public enum RSSFeedItemStatus:Int32
 	{
-		unread = 0,
-		read = 1,
-		archived = 2 
+		Unread = 0,
+		Read = 1,
+		Archived = 2 
 	}
 
 	public struct RSSFeedItem
