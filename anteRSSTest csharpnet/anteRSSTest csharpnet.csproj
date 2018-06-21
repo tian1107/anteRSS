@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="RSSManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RSSDocumentTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
