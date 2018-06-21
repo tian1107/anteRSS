@@ -17,18 +17,12 @@ namespace anteRSSTest_csharpnet
 			System.IO.File.Delete(testFile);
 
 			// Create new file
-			using (RSSManager manager = new RSSManager(testFile))
-			{
-
-			}
+			RSSManager manager = new RSSManager(testFile);
 
 			Assert.IsTrue(System.IO.File.Exists(testFile));
 
 			// Reopen it
-			using (RSSManager manager = new RSSManager(testFile))
-			{
-
-			}
+			RSSManager manager2 = new RSSManager(testFile);
 
 			// TODO check file contents
 		}
@@ -43,19 +37,18 @@ namespace anteRSSTest_csharpnet
 			System.IO.File.Delete(testFile);
 
 			// Create a new one
-			using (RSSManager manager = new RSSManager(testFile))
-			{
-				// should work
-				Assert.AreEqual(1, manager.AddFeed("test", "a"));
-				Assert.AreEqual(2, manager.AddFeed("test1", "b"));
-				Assert.AreEqual(3, manager.AddFeed("test2", "c"));
-				Assert.AreEqual(4, manager.AddFeed("あいうえお", "d"));
+			RSSManager manager = new RSSManager(testFile);
 
-				// shouldn't work
-				Assert.AreEqual(-1, manager.AddFeed("test3", "b"));
+			// should work
+			Assert.AreEqual(1, manager.AddFeed("test", "a"));
+			Assert.AreEqual(2, manager.AddFeed("test1", "b"));
+			Assert.AreEqual(3, manager.AddFeed("test2", "c"));
+			Assert.AreEqual(4, manager.AddFeed("あいうえお", "d"));
 
-				// TODO check file contents
-			}
+			// shouldn't work
+			Assert.AreEqual(-1, manager.AddFeed("test3", "b"));
+
+			// TODO check file contents
 		}
 	}
 }
