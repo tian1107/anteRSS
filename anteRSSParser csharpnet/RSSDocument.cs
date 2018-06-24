@@ -26,7 +26,7 @@ namespace anteRSSParser_csharpnet
 		{
 			format = RSSDocumentFormat.Unknown;
 			error = "No Error";
-			title = "Untitled";
+			title = "Unknown Title";
 
 			try
 			{
@@ -38,12 +38,12 @@ namespace anteRSSParser_csharpnet
 				error = e.Message;
 			}
 
-			// TODO get title, format
+			// Get format and title
 			DetermineFormat();
-			throw new NotImplementedException();
+			DetermineTitle();
 		}
 
-		public RSSItem [] getItems()
+		public RSSItem [] GetItems()
 		{
 			throw new NotImplementedException();
 		}
@@ -80,12 +80,42 @@ namespace anteRSSParser_csharpnet
 			}
 		}
 
-		public String getTitle()
+		private void DetermineTitle()
+		{
+			if (format == RSSDocumentFormat.RSS2)
+			{
+				try
+				{
+					title = document.Element("channel").Element("title").Value;
+				}
+				catch (NullReferenceException)
+				{
+					title = "No title";
+				}
+			}
+			else if (format == RSSDocumentFormat.ATOM1)
+			{
+				try
+				{
+					title = document.Element("title").Value;
+				}
+				catch (NullReferenceException)
+				{
+					title = "No title";
+				}
+			}
+			else
+			{
+				title = "Error Title";
+			}
+		}
+
+		public String GetTitle()
 		{
 			return title;
 		}
 
-		public String getError()
+		public String GetError()
 		{
 			return error;
 		}
