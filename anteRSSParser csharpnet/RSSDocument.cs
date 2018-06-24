@@ -49,7 +49,7 @@ namespace anteRSSParser_csharpnet
 
 			if (format == RSSDocumentFormat.RSS2)
 			{
-				XElement list = document.Element("channel");
+				XElement list = document.Root.Element("channel");
 				if (list == null)
 				{
 					items = Enumerable.Empty<XElement>();
@@ -61,7 +61,7 @@ namespace anteRSSParser_csharpnet
 			}
 			else if (format == RSSDocumentFormat.ATOM1)
 			{
-				items = document.Elements("entry");
+				items = document.Root.Elements("entry");
 			}
 			else
 			{
@@ -117,7 +117,7 @@ namespace anteRSSParser_csharpnet
 			{
 				try
 				{
-					title = document.Element("channel").Element("title").Value;
+					title = document.Root.Element("channel").Element("title").Value;
 				}
 				catch (NullReferenceException)
 				{
@@ -128,7 +128,7 @@ namespace anteRSSParser_csharpnet
 			{
 				try
 				{
-					title = document.Element("title").Value;
+					title = document.Root.Element("title").Value;
 				}
 				catch (NullReferenceException)
 				{
