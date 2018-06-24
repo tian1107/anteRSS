@@ -45,7 +45,38 @@ namespace anteRSSParser_csharpnet
 
 		public RSSItem [] GetItems()
 		{
-			throw new NotImplementedException();
+			IEnumerable<XElement> items;
+
+			if (format == RSSDocumentFormat.RSS2)
+			{
+				XElement list = document.Element("channel");
+				if (list == null)
+				{
+					items = Enumerable.Empty<XElement>();
+				}
+				else
+				{
+					items = list.Elements("item");
+				}
+			}
+			else if (format == RSSDocumentFormat.ATOM1)
+			{
+				items = document.Elements("entry");
+			}
+			else
+			{
+				items = Enumerable.Empty<XElement>();
+			}
+
+			// Convert to RSSItem
+			RSSItem[] result = new RSSItem[items.Count()];
+
+			for (int i = 0; i < items.Count(); ++i)
+			{
+				result[i] = new RSSItem(format, items.ElementAt(i));
+			}
+
+			return result;
 		}
 
 		private void DetermineFormat()

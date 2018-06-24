@@ -6,12 +6,12 @@ namespace anteRSSParser_csharpnet
 	public class RSSItem
 	{
 		private readonly RSSDocumentFormat format;
-		private readonly XNode node;
+		private readonly XElement element;
 
-		public RSSItem(RSSDocumentFormat format, XNode node)
+		public RSSItem(RSSDocumentFormat format, XElement element)
 		{
 			this.format = format;
-			this.node = node;
+			this.element = element;
 		}
 
 		public String Title
